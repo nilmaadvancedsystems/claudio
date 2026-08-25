@@ -1,0 +1,14 @@
+# Lista de permissão (allowlist): ignora tudo por padrão, só libera
+# exatamente o Dicionário e os arquivos de agente (.md). Nunca versionar
+# LOGS, MANIFESTO, BACKUP ROTINA, STAGING, dados agentes, HISTORICO ou
+# MANUAIS — são dado de cliente ou runtime, não regra de sistema.
+
+*
+
+!*/
+
+!/.gitignore
+!/00-DICIONARIO-CANONICO.md
+!/necessario para o claude/
+!/necessario para o claude/agentes/
+!/necessario para o claude/agentes/*.md
