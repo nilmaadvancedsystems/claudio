@@ -285,7 +285,22 @@ da Fase 0, dias depois).
 Em PRODUCAO, limpe fragmentos em `STAGING\<id_execucao>\` de
 itens totalmente resolvidos (fragmentos de itens não resolvidos ficam pra próxima
 execução). Em SIMULACAO, apague `STAGING-SIMULACAO\<id_execucao>\` **inteira**, sempre,
-mesmo com item não resolvido — simulação não preserva estado entre execuções. Registre
+mesmo com item não resolvido — simulação não preserva estado entre execuções.
+
+**Limpeza de pastas vazias na origem** (só em PRODUCAO, procedimento mecânico): depois que
+todos os itens desta execução foram movidos/copiados pra seus destinos, alguma subpasta da
+origem pode ter ficado sem nenhum arquivo dentro (a pasta em si nunca é removida quando um
+arquivo sai dela — só o arquivo se move). Percorra a árvore da origem recursivamente e
+remova toda subpasta vazia (sem arquivo em nenhuma profundidade abaixo dela), de baixo pra
+cima (remove a mais funda primeiro, senão a de cima nunca fica "vazia" pra você notar).
+**Nunca remova**: a raiz da origem em si, `NÃO IDENTIFICADOS` (mesmo se estiver vazia hoje —
+é permanente por desenho, ver Dicionário), nem qualquer pasta iniciada por `_`. Se uma pasta
+"vazia" não sair mesmo depois de confirmado que está vazia (ex. sincronização do Google
+Drive recriando ela sozinha), não insista em loop — registre como pendência no relatório
+("pasta vazia não removida: [caminho], possível sincronização em andamento") e siga o
+fechamento normalmente; não é erro crítico, não trava a execução.
+
+Registre
 `timestamp_fim`. Aplique 09-RELATOR.md entregando: itens completos, `N_pais`,
 `mapa_original_fragmentos`, `ciclos_correcao`, `id_execucao`, `timestamp_inicio`, `timestamp_fim`,
 `modo`, `veredito_execucao`, relatório do Verificador, saída do Conferente, saída do
