@@ -21,20 +21,23 @@ Criar pasta · renomear · mover arquivo · adivinhar cliente/setor/regime · mo
 <regra n="1" titulo="Cliente">
 Pastas em `2026\[NÚMERO] - [RAZÃO SOCIAL]`. Match sempre pelo código numérico, nunca por razão social isolada.
 
-**Fontes locais** (PDFs de relatório, não planilha estruturada — leia com atenção a
-colunas coladas em nomes longos). **Carregue uma vez só, na primeira vez que precisar
-identificar um cliente nesta execução, e reaproveite pra todos os itens seguintes** — a
-lista de clientes não muda no meio da execução, reler a cada item é desperdício:
-`_CLAUDIO_CONTROLE\necessario para o claude\dados agentes\razão social.PDF` (primária)
-`_CLAUDIO_CONTROLE\necessario para o claude\dados agentes\nome fantasia.PDF` (auxiliar)
+**Fonte única** (desde 26/08/2026 — substitui as antigas `razão social.PDF` +
+`nome fantasia.PDF` + `regime.xls`, arquivadas em `HISTORICO\fontes-cliente-antigas-pre-unificacao\`):
+`_CLAUDIO_CONTROLE\necessario para o claude\dados agentes\cadastro_empresas_unificado.xlsx`.
+**Carregue uma vez só, na primeira vez que precisar identificar um cliente ou regime nesta
+execução, e reaproveite pra todos os itens seguintes** — a planilha não muda no meio da
+execução, reler a cada item é desperdício.
 
-**Colunas reais**: `Código | Nome | CNPJ | Insc.Estadual | Telefone`. Não existe coluna
-RAZÃO SOCIAL separada de NOME nessas fontes — use `Nome` no lugar de RAZÃO SOCIAL em
-toda regra que citar RAZÃO SOCIAL.
+**Colunas**: `Código | Razão Social | Nome Fantasia | CNPJ | Insc.Estadual | Telefone | Enquadramento`.
 
-- Divergência entre as duas fontes em Código/CNPJ (não grafia) → `NAO_IDENTIFICADO / PLANILHAS_DIVERGENTES`.
+**Antes de comparar CNPJ**, normalize os dois lados removendo pontuação (`.`/`/`/`-`/espaço)
+— a planilha traz CNPJ formatado (`36.462.778/0001-60`) e o documento pode trazer só
+dígitos, ou vice-versa; comparar sem normalizar gera falso `CLIENTE_NAO_LOCALIZADO`.
+Clientes Pessoa Física têm CPF (11 dígitos) na coluna CNPJ, não confundir com CNPJ inválido.
+
 - Ordem: CNPJ no doc > Inscrição Estadual > nome exato e único (ambíguo → `CLIENTE_AMBIGUO`).
 - Pasta existe → `pasta_cliente_existe=true`. Não existe → regra 2.
+- `CNPJ` vazio na planilha pra um código que bate por nome (hoje: código 41 MJ ELETRODOMESTICOS LTDA e 590 TORIBA TECNOLOGIA E GESTAO EMPRESARIAL LTDA — pendência de cadastro conhecida) → não crie pasta nova pra esse cliente mesmo se o nome bater exatamente (regra 2 exige CNPJ). Trate como `CLIENTE_NAO_LOCALIZADO` até o CNPJ ser cadastrado, e reporte a pendência específica, não um `NAO_IDENTIFICADO` genérico.
 </regra>
 
 <regra n="2" titulo="Fallback (pasta ainda não existe)">
@@ -42,12 +45,8 @@ Só se cliente identificado por CNPJ (match por nome não autoriza criar pasta).
 </regra>
 
 <regra n="3" titulo="Regime">
-**Fonte**: `_CLAUDIO_CONTROLE\necessario para o claude\dados agentes\regime.xls` (colunas
-`ERP | Cliente | Enquadramento`). `ERP` é o mesmo código de `Código` na fonte de cliente
-(regra 1) — cruze por esse código, nunca por nome. Se o `.xls` não puder ser lido diretamente,
-converta primeiro para CSV (ex.: via Excel/COM ou LibreOffice headless) antes de consultar.
-**Carregue/converta uma vez só nesta execução**, junto com a fonte de cliente da regra 1, e
-reaproveite pra todos os itens — mesmo motivo: a planilha não muda no meio da execução.
+**Fonte**: mesma planilha da regra 1 (`cadastro_empresas_unificado.xlsx`), coluna
+`Enquadramento` — já carregada, não recarregue. `Código` é a chave de cruzamento, nunca nome.
 
 Normalize `Enquadramento` para o valor canônico via a tabela do Dicionário §2.1:
 
@@ -80,7 +79,11 @@ Classifique sempre, mesmo sem especialista ativo (Orquestrador precisa da info p
 </regra>
 
 <regra n="6" titulo="Motivos → NAO_IDENTIFICADO">
-`CLIENTE_NAO_LOCALIZADO` · `CLIENTE_AMBIGUO` · `PLANILHAS_DIVERGENTES` · `SETOR_INDETERMINADO` · `REGIME_INDEFINIDO` · `VOCABULARIO_AUSENTE` (banco/operadora fora da lista fechada Dicionário §5.1) · `CONFIANCA_ABAIXO_DO_LIMIAR`. Fornecedores/clientes/transportadoras não têm lista fechada (normalizados por Dicionário §5.2) — não reprovar por "não estar na lista", só por nome ilegível.
+`CLIENTE_NAO_LOCALIZADO` · `CLIENTE_AMBIGUO` · `SETOR_INDETERMINADO` · `REGIME_INDEFINIDO` · `VOCABULARIO_AUSENTE` (banco/operadora fora da lista fechada Dicionário §5.1) · `CONFIANCA_ABAIXO_DO_LIMIAR`. Fornecedores/clientes/transportadoras não têm lista fechada (normalizados por Dicionário §5.2) — não reprovar por "não estar na lista", só por nome ilegível.
+
+`PLANILHAS_DIVERGENTES` fica no vocabulário do Dicionário mas não tem mais gatilho ativo
+aqui desde a unificação das fontes em uma única planilha (26/08/2026) — mantido caso um dia
+volte a existir mais de uma fonte de cliente.
 </regra>
 
 </agente>

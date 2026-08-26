@@ -104,9 +104,11 @@ renumeração), não bloqueio — ver §4.4 E402.
 </secao>
 
 <secao n="2.1" titulo="REGIME — enum fechado e fonte de dados">
-Fonte: G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\necessario para o claude\dados agentes\regime.xls
-(colunas: ERP, Cliente, Enquadramento — ERP é o mesmo código da coluna "Código" do
-razão social.PDF/nome fantasia.PDF; é assim que Roteador cruza cliente → regime).
+Fonte (desde 26/08/2026): G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\necessario para o claude\dados agentes\cadastro_empresas_unificado.xlsx
+(colunas: Código, Razão Social, Nome Fantasia, CNPJ, Insc.Estadual, Telefone, Enquadramento — fonte
+única de cliente+regime, substitui as antigas razão social.PDF + nome fantasia.PDF + regime.xls,
+arquivadas em HISTORICO\fontes-cliente-antigas-pre-unificacao\. `Código` é a chave de
+cruzamento cliente → regime, sempre o mesmo campo, nunca nome).
 
 Enquadramento (planilha)
 	Regime canônico
