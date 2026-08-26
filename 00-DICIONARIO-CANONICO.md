@@ -226,7 +226,7 @@ Roteamento: CLIENTE_NAO_LOCALIZADO · CLIENTE_AMBIGUO · PLANILHAS_DIVERGENTES �
 
 Classificação: VOCABULARIO_AUSENTE · TIPO_INCOMPATIVEL_COM_REGIME · NOMENCLATURA_NAO_DEFINIDA · DESTINO_NAO_DEFINIDO · EMITENTE_INDETERMINADO · COLISAO_BANCARIO_RECEBIMENTO · COLISAO_DAS_DAE · COLISAO_GUIAS_FEDERAL_ESTADUAL
 
-Dados ausentes: CONTRATO_SEM_NUMERO · LIVRO_SEM_NUMERO · COMPETENCIA_AUSENTE · VALOR_AUSENTE · BANCO_AUSENTE · TIPO_AUSENTE
+Dados ausentes: CONTRATO_SEM_NUMERO · LIVRO_SEM_NUMERO · COMPETENCIA_AUSENTE · VALOR_AUSENTE · BANCO_AUSENTE · TIPO_AUSENTE · CONTEUDO_ILEGIVEL
 
 Duplicidade: IDENTICO_JA_ARQUIVADO · CONFLITO_MESMO_NOME_CONTEUDO_DIFERENTE (uso restrito — ver regra de numeração automática em §2)
 
@@ -269,6 +269,7 @@ E303 | COMPETENCIA_AUSENTE | Mês/ano de referência não aparece no documento |
 E304 | VALOR_AUSENTE | Valor obrigatório não aparece no documento | Revisar o documento manualmente
 E305 | BANCO_AUSENTE | Banco não identificável no documento | Revisar o documento manualmente
 E306 | TIPO_AUSENTE | Tipo de operação (consórcio/empréstimo/financiamento) não identificável | Revisar o documento manualmente
+E307 | CONTEUDO_ILEGIVEL | PDF escaneado sem texto extraível, arquivo corrompido, ou conteúdo insuficiente pra classificar | Revisar o documento manualmente — pode precisar de OCR ou substituição do arquivo
 E401 | IDENTICO_JA_ARQUIVADO | Já existe cópia idêntica no destino | Nenhuma — duplicata real, pode ignorar
 E402 | CONFLITO_MESMO_NOME_CONTEUDO_DIFERENTE | Nome gerado já existia com conteúdo diferente | Nenhuma — sistema renomeou sozinho acrescentando "(N)" (ver §2, regra de numeração); revisar só se o padrão se repetir excessivamente no mesmo mês
 E501 | DESTINO_INEXISTENTE | Arquivo devia estar no destino mas não está | **Investigar antes de confiar na exclusão** — chamar responsável técnico

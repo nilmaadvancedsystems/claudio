@@ -15,11 +15,17 @@ Item completo do Roteador (`cliente_destino, pasta_cliente_existe, arquivo_traba
 </saida>
 
 <nunca_faz>
-Sobrescrever arquivo existente · inventar banco/data/valor · apagar algo · tocar `arquivo_original` · mover p/ NÃO IDENTIFICADOS (só marca status/motivo).
+Sobrescrever arquivo existente · inventar banco/data/valor · apagar algo · tocar `arquivo_original` · mover p/ NÃO IDENTIFICADOS (só marca status/motivo) · decidir categoria pelo nome do arquivo, pela extensão, ou pela pasta onde ele estava na origem — a decisão vem sempre do título/cabeçalho/conteúdo do próprio documento (Dicionário §6). Um arquivo chamado "extrato_bradesco_jan.pdf" pode não ser um extrato Bradesco de janeiro; confirme lendo o documento, nunca pelo nome.
 </nunca_faz>
 
 <procedimento>
-**Ordem**: pasta raiz ausente → criar em `cliente_destino` + subpastas → classificar por título/cabeçalho (Dicionário §6) → montar `destino_final`/`nome_final` → checar duplicidade → copiar (nunca mover) `arquivo_trabalho`→destino → hash_destino. Ciclo de correção: mover do destino errado pro correto (não recopiar da origem), confirmar que o caminho errado ficou vazio. SIMULACAO: só calcula e relata, não grava.
+**Ordem**: pasta raiz ausente → **reconfirme CNPJ** (ver "Pasta raiz nova" abaixo) → criar em `cliente_destino` + subpastas → classificar por título/cabeçalho (Dicionário §6) → montar `destino_final`/`nome_final` → checar duplicidade → copiar (nunca mover) `arquivo_trabalho`→destino → hash_destino. Ciclo de correção: mover do destino errado pro correto (não recopiar da origem), confirmar que o caminho errado ficou vazio. SIMULACAO: só calcula e relata, não grava.
+
+**Pasta raiz nova (`pasta_cliente_existe=false`)**: antes de criar, reconfirme você mesmo que o CNPJ do documento bate com o CNPJ do `cliente_id` que o Roteador identificou — não confie cegamente na decisão anterior, porque criar uma pasta de cliente errada é um erro caro de desfazer depois (arquivos de um cliente indo pra pasta de outro). Divergência → não crie a pasta, `NAO_IDENTIFICADO/CLIENTE_AMBIGUO`, reporte a divergência específica. Essa é uma segunda checagem redundante de propósito, igual ao Conferente reconfirma hash antes de liberar exclusão — custa segundos, evita um erro que só é notado muito depois.
+
+**Documento ilegível ou não classificável por conteúdo**: PDF escaneado sem texto extraível, arquivo corrompido, ou conteúdo genuinamente insuficiente pra decidir qualquer categoria da tabela abaixo → `NAO_IDENTIFICADO/CONTEUDO_ILEGIVEL`. Nunca tente adivinhar pela extensão ou nome do arquivo nesse caso (ver Nunca).
+
+**Documento contábil que não bate com nenhuma sub-regra, e não é extrato de banco/operadora identificável** (não é o caso do "Fallback extrato avulso" abaixo, que exige banco identificável): `NAO_IDENTIFICADO/SETOR_INDETERMINADO`. Nunca invente uma pasta ou sub-regra nova ad hoc.
 
 **Nome já existe no destino, conteúdo diferente**: nunca sobrescreva. Aplique a regra de
 numeração do Dicionário §2 — acrescente ` (1)`, ` (2)`, ... antes da extensão até achar
