@@ -173,17 +173,18 @@ casos `ADIADA`/`DATA_INVALIDA`, que não contam pra média mas mantêm o histór
 Este é o único ponto de toda a rotina onde exclusão realmente definitiva acontece.
 </fase>
 
-<fase n="0-rotacao" titulo="Rotação do manifesto e do log de purgas">
+<fase n="0-rotacao" titulo="Rotação do manifesto e dos logs auxiliares">
 Se o ano de `timestamp_inicio` for diferente do
 ano da entrada mais recente já registrada em `manifesto.jsonl` (ou seja, primeira execução
 de um ano novo), antes de gravar qualquer linha nova: renomeie o `manifesto.jsonl` atual
 para `MANIFESTO\manifesto-[ANO_ANTERIOR].jsonl` (arquivo histórico, nunca apagado) e comece
 um `manifesto.jsonl` vazio para o ano corrente. Faça o mesmo com `MANIFESTO\purgas.jsonl` →
-`purgas-[ANO_ANTERIOR].jsonl`. A checagem de reprocessamento (Fase 1) passa a consultar o
+`purgas-[ANO_ANTERIOR].jsonl` e `MANIFESTO\qualidade.jsonl` → `qualidade-[ANO_ANTERIOR].jsonl`.
+A checagem de reprocessamento (Fase 1) passa a consultar o
 `manifesto.jsonl` do ano corrente **e** os arquivos `manifesto-*.jsonl` históricos — hash
-antigo continua detectável, só o arquivo ativo fica menor. O disjuntor de volume (Fase 0 —
-Purga da quarentena) só usa as últimas 5 entradas do `purgas.jsonl` ativo, então a rotação
-nunca afeta esse cálculo.
+antigo continua detectável, só o arquivo ativo fica menor. Os disjuntores (Fase 0 — Purga
+da quarentena; Fase 4b — qualidade de roteamento) só usam as últimas 5 entradas do arquivo
+ativo correspondente, então a rotação nunca afeta esses cálculos.
 </fase>
 
 <fase n="1" titulo="Inventário">
@@ -238,6 +239,20 @@ Todo item
 `NAO_IDENTIFICADO`/`DUPLICADO` → mova o arquivo físico da origem para
 `Claudio Secretario\NÃO IDENTIFICADOS\<id_execucao>\`. Itens `FORA_DO_ESCOPO` e
 `PDF_COMPOSTO_NAO_SEPARADO` **não** são movidos — ficam exatamente onde estão.
+
+Pra cada item movido, grave uma linha em `NÃO IDENTIFICADOS\<id_execucao>\_nao_identificados.jsonl`
+(Dicionário §10): arquivo, status, motivo, cliente_tentativa (se o Roteador chegou a
+propor algum antes de falhar), id_execucao, timestamp. Pode gravar em lote, um comando
+cobrindo todos os itens desta fase, ao final da movimentação.
+
+**Disjuntor de qualidade de roteamento** (Dicionário §3/§11, só em PRODUCAO): depois de
+mover tudo, leia `MANIFESTO\qualidade.jsonl`, calcule a média de `nao_identificados_count`
+das últimas 5 execuções (sem histórico suficiente, use o mínimo absoluto de 10). Compare
+com o `nao_identificados_count` desta execução (total de itens `NAO_IDENTIFICADO` — não
+conte `DUPLICADO`, que é esperado e não indica problema de classificação). Muito acima da
+média → `alerta=VOLUME_NAO_IDENTIFICADO_INCOMUM`, destaque no relatório e no e-mail. Nunca
+pare a execução por causa disso — só sinaliza, autônomo como o disjuntor da quarentena.
+Grave uma linha nova em `qualidade.jsonl` com o resultado, sempre (com ou sem alerta).
 </fase>
 
 <fase n="5" titulo="Verificação e ciclos de correção (aplique 06-VERIFICADOR.md: parte determinística sempre, LLM só na reclassificação)">
@@ -275,7 +290,8 @@ mesmo com item não resolvido — simulação não preserva estado entre execuç
 `mapa_original_fragmentos`, `ciclos_correcao`, `id_execucao`, `timestamp_inicio`, `timestamp_fim`,
 `modo`, `veredito_execucao`, relatório do Verificador, saída do Conferente, saída do
 Executor, resultado da purga da quarentena (quantos movidos hoje, quantos purgados hoje,
-quantos adiados e por quê).
+quantos adiados e por quê), resultado do disjuntor de qualidade (nao_identificados_count,
+média recente, alerta ou não).
 </fase>
 
 </procedimento>
@@ -324,6 +340,11 @@ relatório, não é uma mensagem de texto crua.
     <ul style="margin:8px 0 0;padding-left:18px;color:#201e1d;font-size:14px;line-height:1.5;">
       <li>[E605/E606] [pasta-dia] — [motivo]</li>
     </ul>
+  </div>
+  <!-- só se houver alerta=VOLUME_NAO_IDENTIFICADO_INCOMUM -->
+  <div style="margin-top:16px;background:#fff2ef;border:1px solid #ffc4b8;border-radius:8px;padding:14px 16px;">
+    <strong style="color:#AE1800;">[E109] Volume incomum de não identificados</strong>
+    <div style="margin-top:6px;color:#201e1d;font-size:14px;">Esta execução: [N] · média das últimas 5: [N] — revisar a regra de roteamento antes da próxima execução.</div>
   </div>
   <!-- só se houver pendência -->
   <div style="margin-top:16px;background:#fff2ef;border:1px solid #ffc4b8;border-radius:8px;padding:14px 16px;">

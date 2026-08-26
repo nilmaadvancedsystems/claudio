@@ -212,7 +212,9 @@ pendências para o responsável (itens travados por `NOMENCLATURA_NAO_DEFINIDA`,
 `DESTINO_NAO_DEFINIDO`, `VOCABULARIO_AUSENTE`, agrupados) · quarentena (resultado da purga
 da Fase 0: pasta-dia purgada hoje, pasta-dia adiada com `PURGA_ADIADA_VOLUME_INCOMUM` e
 contador de adiamentos, pasta-dia ignorada com `PASTA_QUARENTENA_DATA_INVALIDA` — "nenhuma
-ação de purga hoje" se a pasta ainda não tem nenhuma pasta-dia elegível) ·
+ação de purga hoje" se a pasta ainda não tem nenhuma pasta-dia elegível) · disjuntor de
+qualidade de roteamento (nao_identificados_count desta execução × média das últimas 5,
+com destaque se `alerta=VOLUME_NAO_IDENTIFICADO_INCOMUM` — E109) ·
 **legenda de códigos** (lista
 só os códigos do Dicionário §4.4 que apareceram nesta execução — código, motivo,
 explicação de uma linha; "nenhum código nesta execução" se não houve nenhum motivo).

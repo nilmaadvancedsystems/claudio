@@ -44,6 +44,8 @@ Regra de escrita: arquivos de cliente só podem ser gravados dentro de G:\Meu Dr
 Regra de quarentena: o Executor de Exclusão (08) nunca apaga o arquivo original em definitivo — ele move para BACKUP ROTINA\<DD-MM-AAAA>\, preservando o caminho relativo do arquivo dentro da origem (evita colisão de nome entre clientes diferentes movidos no mesmo dia), onde <DD-MM-AAAA> é a data da própria execução. Arquivo em quarentena é recuperável manualmente por até 7 dias corridos. A purga definitiva (apagar a pasta-dia inteira) roda na Fase 0 de toda execução PRODUCAO, antes de processar qualquer arquivo novo: qualquer pasta-dia cuja data tenha mais de 7 dias corridos é apagada por completo. BACKUP ROTINA está fora da árvore de origem (dentro de CLAUDE FAVOR NÃO MEXER) e por isso nunca é reprocessada como item novo.
 
 Regra de identificação por exemplos: a pasta "Exemplos de Referência" contém modelos reais de arquivo por banco/operadora (hoje: BANCO DO BRASIL, BNB, BRADESCO, CAIXA, INFINITEPAY, ITAÚ, MERCADO PAGO, NUBANK, PAGBANK, SANTANDER, SICOOB). Consulte no máximo **uma vez por banco/operadora por execução** (na primeira vez que um documento daquele emissor aparecer, ou se surgir dúvida real de classificação) — não releia o exemplo a cada documento novo do mesmo emissor na mesma execução, o gabarito não muda no meio da execução.
+
+Regra de índice de NÃO IDENTIFICADOS: toda vez que um item vira `NAO_IDENTIFICADO`/`DUPLICADO` e é movido pelo Orquestrador (Fase 4b), grave também uma linha em `NÃO IDENTIFICADOS\<id_execucao>\_nao_identificados.jsonl` (ver §10) — sem isso, depois de alguns dias ninguém sabe por que um arquivo específico está ali sem abrir relatório antigo.
 </secao>
 
 <secao n="2" titulo="FORMATOS OBRIGATÓRIOS">
@@ -151,6 +153,8 @@ Parâmetro
 	pasta-dia com mais arquivos que 3× a média das últimas 5 purgas realizadas (mínimo absoluto de 30 arquivos se não houver histórico) → adia a purga daquela pasta em +5 dias, no máximo 2 adiamentos (17 dias de retenção total no pior caso, depois disso purga mesmo sem confirmação humana)
 	Limiar de envelhecimento de pendência (só AUDITORIA)
 	item em NÃO IDENTIFICADOS ou fragmento em STAGING parado há mais de 7 dias corridos desde a data embutida no nome da pasta de execução → achado PENDENCIA_ENVELHECIDA
+	Limiar de disjuntor de qualidade de roteamento
+	`nao_identificados_count` desta execução maior que 3× a média das últimas 5 execuções registradas em `MANIFESTO\qualidade.jsonl` (mínimo absoluto de 10 itens se não houver histórico) → sinaliza VOLUME_NAO_IDENTIFICADO_INCOMUM com destaque no relatório e no e-mail. Nunca trava a execução nem impede o fechamento.
 	
 </secao>
 
@@ -198,7 +202,7 @@ Status
 	origem e destino
 	
 
-Quem move um arquivo para NÃO IDENTIFICADOS é sempre o Orquestrador (Fase 4b), nunca o agente que detectou o problema. O agente 10 (Arquivista de Exceções) foi descontinuado; suas funções mecânicas foram absorvidas pelo Orquestrador.
+Quem move um arquivo para NÃO IDENTIFICADOS é sempre o Orquestrador (Fase 4b), nunca o agente que detectou o problema. O agente 10 (Arquivista de Exceções) foi descontinuado; suas funções mecânicas foram absorvidas pelo Orquestrador. Toda movimentação também grava uma linha em `_nao_identificados.jsonl` (§10), dentro da própria subpasta de execução.
 </subsecao>
 
 <subsecao n="4.2" titulo="VEREDITOS DE EXECUÇÃO — enum fechado">
@@ -222,7 +226,7 @@ Nenhum veredito autoriza exclusão exceto OK_PARA_CONCLUIR.
 <subsecao n="4.3" titulo="CÓDIGOS DE MOTIVO — lista aberta">
 Preenchem o campo motivo, obrigatório sempre que status ≠ ARQUIVADO. Esta lista é extensível: um agente pode criar um código novo, em MAIÚSCULAS_COM_UNDERSCORE, desde que seja específico. Motivo genérico ("não identificado") é insuficiente.
 
-Roteamento: CLIENTE_NAO_LOCALIZADO · CLIENTE_AMBIGUO · PLANILHAS_DIVERGENTES · REGIME_INDEFINIDO · SETOR_INDETERMINADO · CONFIANCA_ABAIXO_DO_LIMIAR · SETOR_SEM_ESPECIALISTA · REGIME_SEM_ESPECIALISTA
+Roteamento: CLIENTE_NAO_LOCALIZADO · CLIENTE_AMBIGUO · PLANILHAS_DIVERGENTES · REGIME_INDEFINIDO · SETOR_INDETERMINADO · CONFIANCA_ABAIXO_DO_LIMIAR · SETOR_SEM_ESPECIALISTA · REGIME_SEM_ESPECIALISTA · VOLUME_NAO_IDENTIFICADO_INCOMUM (nível execução, não item — ver §3)
 
 Classificação: VOCABULARIO_AUSENTE · TIPO_INCOMPATIVEL_COM_REGIME · NOMENCLATURA_NAO_DEFINIDA · DESTINO_NAO_DEFINIDO · EMITENTE_INDETERMINADO · COLISAO_BANCARIO_RECEBIMENTO · COLISAO_DAS_DAE · COLISAO_GUIAS_FEDERAL_ESTADUAL
 
@@ -255,6 +259,7 @@ E105 | SETOR_INDETERMINADO | Não deu pra saber se é Contábil, Fiscal ou Folha
 E106 | CONFIANCA_ABAIXO_DO_LIMIAR | O sistema teve dúvida real (abaixo de 85% de certeza) | Revisar manualmente
 E107 | SETOR_SEM_ESPECIALISTA | Setor identificado, mas ainda sem regra de arquivamento (Folha/Societário) | Nenhuma — aguardando regra ser criada
 E108 | REGIME_SEM_ESPECIALISTA | Regime identificado (MEI/Física/Isenta/Doméstica), mas ainda sem regra de arquivamento | Nenhuma — aguardando regra ser criada
+E109 | VOLUME_NAO_IDENTIFICADO_INCOMUM | Esta execução gerou muito mais NAO_IDENTIFICADO que o normal — possível bug na classificação, não erro de documento individual | **Investigar** — revisar itens não identificados desta execução e a regra de roteamento antes da próxima execução
 E201 | VOCABULARIO_AUSENTE | Banco, fornecedor ou termo não reconhecido | Adicionar ao vocabulário do Dicionário, se for caso recorrente
 E202 | TIPO_INCOMPATIVEL_COM_REGIME | Tipo de guia fiscal não existe no regime desse cliente | Confirmar regime do cliente ou se o documento é de outro cliente
 E203 | NOMENCLATURA_NAO_DEFINIDA | Tipo de documento reconhecido, mas sem regra de nome de arquivo ainda | Nenhuma — aguardando regra ser criada
@@ -481,6 +486,35 @@ na primeira execução de um ano novo, `purgas.jsonl` atual vira `purgas-[ANO_AN
 (histórico, nunca apagado) e um `purgas.jsonl` vazio começa. A média do disjuntor de
 volume só olha as últimas 5 entradas do arquivo ativo — não precisa consultar os
 históricos, então a rotação nunca afeta essa conta.
+</secao>
+
+<secao n="10" titulo="LOG DE ÍNDICE DE NÃO IDENTIFICADOS — ESTRUTURA">
+`NÃO IDENTIFICADOS\<id_execucao>\_nao_identificados.jsonl` (dentro da própria subpasta de
+execução, um arquivo por execução — não um único arquivo global), append-only, uma linha
+por item movido para `NAO_IDENTIFICADO`/`DUPLICADO` naquela execução:
+
+{"arquivo":"<nome do arquivo movido>","status":"NAO_IDENTIFICADO|DUPLICADO","motivo":"<motivo>","cliente_tentativa":"<cliente_id ou null>","id_execucao":"<id>","timestamp":"<ISO-8601>"}
+
+Serve para: permitir que qualquer pessoa abrindo a pasta `NÃO IDENTIFICADOS\<id_execucao>\`
+entenda, sem procurar relatório antigo, por que cada arquivo ali está sem classificar. Não
+precisa de rotação — cada execução já tem sua própria subpasta, o log nasce e morre com ela
+(inclusive se a subpasta um dia for arquivada/limpa manualmente pelo responsável).
+</secao>
+
+<secao n="11" titulo="LOG DE QUALIDADE DE ROTEAMENTO — ESTRUTURA">
+`G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\MANIFESTO\qualidade.jsonl`,
+append-only, uma linha por execução PRODUCAO, gravada ao final da Fase 4b:
+
+{"id_execucao":"<id>","timestamp":"<ISO-8601>","N_pais":<N>,"nao_identificados_count":<N>,"alerta":"NENHUM|VOLUME_NAO_IDENTIFICADO_INCOMUM"}
+
+Serve para: dar ao disjuntor de qualidade (§3) uma base real de comparação — leia as
+últimas 5 linhas e calcule a média de `nao_identificados_count`; sem histórico suficiente,
+use o mínimo absoluto de 10 itens (§3). O alerta nunca bloqueia a execução, só entra com
+destaque no relatório e no e-mail daquela execução.
+
+Rotação: mesma regra do manifesto e do purgas.jsonl — vira `qualidade-[ANO_ANTERIOR].jsonl`
+na primeira execução de um ano novo. A média do disjuntor só usa as últimas 5 entradas do
+arquivo ativo, então a rotação nunca afeta esse cálculo.
 </secao>
 
 </dicionario>
