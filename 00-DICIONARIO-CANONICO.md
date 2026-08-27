@@ -335,6 +335,8 @@ Canônico
 	Nubank, Nu Pagamentos
 	C6
 	C6, C6 Bank
+	CORA
+	Cora, Banco Cora, CORA SCD
 	MERCADO PAGO
 	Mercado Pago, MercadoPago, Mercado Pago IP
 	PAGBANK
@@ -351,6 +353,8 @@ Canônico
 	InfinitePay, Infinite Pay
 	SUMUP
 	SumUp
+	BIGCARD
+	BigCard, Big Card, Bigcard Serviços
 	
 
 Emissor fora desta tabela: NAO_IDENTIFICADO, motivo VOCABULARIO_AUSENTE: <nome lido no documento>. Nunca crie pasta com nome novo — incluir um banco é decisão humana, e a lista é curta o bastante para isso ser viável.
