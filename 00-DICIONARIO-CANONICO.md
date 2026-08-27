@@ -439,6 +439,12 @@ Algumas operadoras de maquininha exportam a conciliação como planilha sem tít
 Este critério só vale quando não há título nenhum no documento. Havendo qualquer texto de cabeçalho, use a tabela 6.1 (ou 6.1.1 se o título for "Comprovante" mas a estrutura for de extrato) — este item aqui é o último recurso, para planilha sem nenhuma pista textual.
 </subsecao>
 
+<subsecao n="6.1.4" titulo="Arquivo .ofx — sempre extrato bancário">
+`.ofx` (Open Financial Exchange) é um formato padrão de exportação de extrato bancário — não tem "título" pra ler como um PDF, é dado estruturado em tags. Todo arquivo `.ofx` é `EXTRATOS/BANCÁRIOS` por padrão de formato, sem precisar de critério de estrutura nem desambiguação — o próprio formato já é a categoria (nenhuma instituição exporta OFX de comprovante avulso, maquininha ou recebimento de clientes). Mesmo destino e mesma regra de nome final da linha Bancários (04-ESPECIALISTA-CONTABIL.md), preservando a extensão `.ofx` (nunca converter pra `.pdf`).
+
+Identifique o banco pelas tags internas do arquivo (ex. `<ORG>`, `<FID>`, `<BANKID>`), nunca pelo nome do arquivo — mesmo princípio já usado pro XML fiscal (05d §1). Competência vem das tags de período (`<DTSTART>`/`<DTEND>`), nunca da data de download/disco (mesma regra geral do Dicionário §2). Banco não identificável pelas tags → `NAO_IDENTIFICADO/BANCO_AUSENTE`, mesmo motivo já usado pra extrato sem banco legível.
+</subsecao>
+
 <subsecao n="6.2" titulo="Informe de Rendimentos">
 Ainda sem destino definido. Enquanto não houver decisão: FORA_DO_ESCOPO, motivo DESTINO_NAO_DEFINIDO: informe de rendimentos. Nunca alocar em APLICAÇÕES.
 </subsecao>

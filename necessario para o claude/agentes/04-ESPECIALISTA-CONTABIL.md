@@ -48,7 +48,7 @@ Todo caminho abaixo é relativo a `<cliente_destino>\CONTÁBIL\`.
 | Sub-regra | Caminho | Nome final | Dados obrigatórios |
 |---|---|---|---|
 | Aplicações | `EXTRATOS\[ANO]\[MÊS]\APLICAÇÕES\[BANCO]\` | `[MÊS E ANO].pdf` | banco+competência |
-| Bancários | `...\BANCÁRIOS\[BANCO]\` | `[MÊS E ANO].pdf` | banco+competência |
+| Bancários | `...\BANCÁRIOS\[BANCO]\` | `[MÊS E ANO].[ext]` (`.pdf` normalmente; `.ofx` preserva a extensão, nunca converte pra `.pdf` — ver Dicionário §6.1.4) | banco+competência |
 | Comprovantes | `...\COMPROVANTES\[BANCO]\` | `Comprovantes [MÊS E ANO].pdf` | banco+competência |
 | Maquininhas | `...\MAQUININHAS\[OPERADORA]\` | `[MÊS E ANO].pdf` (relatório) — se a operadora também exportar a mesma competência em `.xlsx` (planilha do mesmo relatório, mesmo banco/operadora/competência do `.pdf` par), arquivar junto na mesma pasta como `[MÊS E ANO].xlsx` | banco+competência |
 | Op. Crédito | `OPERAÇÕES DE CRÉDITO\[ANO]\[TIPO]\[BANCO]\[Nº CONTRATO]\` (TIPO=CONSÓRCIO\|EMPRÉSTIMO\|FINANCIAMENTO) | Contrato: `CONTRATO.pdf`; Extrato: `EXTRATO [MÊS/ANO ini] [MÊS/ANO fim].pdf` | tipo+banco+nº contrato (+período p/ extrato) |
@@ -63,6 +63,8 @@ Todo caminho abaixo é relativo a `<cliente_destino>\CONTÁBIL\`.
 **Armadilha Banco do Brasil**: rotula extrato completo como "Comprovante" no cabeçalho. Não decidir `COMPROVANTES` só pelo título — critério de estrutura (Dicionário §6.1.1): várias transações/saldo corrente → `BANCÁRIOS` mesmo dizendo "Comprovante"; transação isolada → `COMPROVANTES` de fato.
 
 **Planilha de maquininha sem título nenhum**: antes de mandar pra `NAO_IDENTIFICADO/SETOR_INDETERMINADO` ou `VOCABULARIO_AUSENTE` por falta de cabeçalho, verifique as colunas (Dicionário §6.1.3) — tarifa/taxa junto com débito/crédito ou valor bruto/líquido é conciliação de maquininha, mesmo sem nenhum texto de título. Classifique como `MAQUININHAS`, nunca `NAO_IDENTIFICADO` só por ausência de título.
+
+**Arquivo `.ofx`**: sempre `BANCÁRIOS`, sem desambiguação (Dicionário §6.1.4) — não tem título, é dado estruturado. Leia as tags internas (`<ORG>`/`<FID>`/`<BANKID>` pro banco, `<DTSTART>`/`<DTEND>` pra competência), nunca o nome do arquivo. Grave com a extensão `.ofx` preservada, nunca converta pra `.pdf`.
 
 **Fallback extrato avulso**: banco identificável, categoria não → `EXTRATOS\[ANO]\[MÊS]\` (sem subpasta), nome `EXTRATO_[BANCO]_[MÊS E ANO].pdf`. Banco também não identificável → `NAO_IDENTIFICADO` (não usar fallback).
 
