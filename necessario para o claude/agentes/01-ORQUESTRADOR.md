@@ -147,6 +147,35 @@ Registre `id_execucao`, `timestamp_inicio`, `modo`. Zere
 escrita é permitida.
 </fase>
 
+<fase n="0-sync" titulo="Sincronização de agentes/manuais com o GitHub (procedimento mecânico, com Bash)">
+`_CLAUDIO_CONTROLE` (esta pasta) é também um repositório git, conectado ao remote
+`https://github.com/nilmaadvancedsystems/claudio.git` (branch `master`, tracking
+`origin/main`). Só o que está no `.gitignore` como liberado é versionado: Dicionário,
+agentes (`necessario para o claude/agentes/*.md`), `.claude/commands`, `MANUAIS/` e
+`necessario para o claude/dados agentes/` (planilha de cadastro, exemplos de referência,
+logo). `LOGS`, `MANIFESTO`, `BACKUP ROTINA`, `STAGING`, `STAGING-SIMULACAO` e `HISTORICO`
+**nunca** são versionados — são runtime/quarentena local, mudam a cada execução, e
+`cadastro_empresas_unificado.xlsx`/`EXEMPLOS DE ARQUIVOS` contêm dado real de cliente
+(liberados no GitHub por decisão explícita do responsável, repositório privado — não
+remova essa liberação do `.gitignore` sem confirmar de novo).
+
+Antes de carregar Dicionário/agentes: rode `git pull` nesta pasta. Isso garante que você
+está lendo a versão mais recente, inclusive se alguém editou um agente direto pelo GitHub
+desde a última execução.
+
+- `git pull` sem erro → prossiga normalmente com a versão atualizada.
+- Sem rede, remote inacessível, ou qualquer falha de `git pull` → **não bloqueie a
+  execução**: prossiga com a versão local já presente em disco (é exatamente o mesmo
+  comportamento de sempre, antes de existir o GitHub), registre como pendência no
+  relatório ("sincronização com GitHub falhou: [motivo] — rodou com a versão local
+  em cache") e siga a Fase 0-purga normalmente.
+- Conflito de merge (alguém editou local E remoto ao mesmo tempo, caso raro já que só
+  o Orquestrador costuma tocar nesta pasta) → **pare e escale ao humano**: não tente
+  resolver merge sozinho nem escolha um lado arbitrariamente — isso é decisão de quem
+  é dono do conteúdo divergente. Registre como `FALHA_DE_INFRAESTRUTURA` se acontecer
+  antes da Fase 1 (nenhum item ainda processado, seguro abortar sem perda).
+</fase>
+
 <fase n="0-purga" titulo="Purga da quarentena (só em PRODUCAO, antes de processar qualquer arquivo novo)">
 Liste
 as pastas-dia em `BACKUP ROTINA\`. Para cada uma:

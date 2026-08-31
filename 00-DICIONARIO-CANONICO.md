@@ -35,6 +35,15 @@ Papel
 	G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\necessario para o claude\agentes
 	
 
+Regra de versionamento (desde 31/08/2026): `_CLAUDIO_CONTROLE` é também um repositório
+git, remote `https://github.com/nilmaadvancedsystems/claudio.git`. Versionados: Dicionário,
+`necessario para o claude/agentes/*.md`, `.claude/commands`, `MANUAIS/` e
+`necessario para o claude/dados agentes/` (repositório privado — inclui dado real de
+cliente por decisão explícita do responsável). Nunca versionados (`.gitignore`): `LOGS`,
+`MANIFESTO`, `BACKUP ROTINA`, `STAGING`, `STAGING-SIMULACAO`, `HISTORICO` — runtime/
+quarentena local, sem relação com o GitHub. Sincronização (`git pull`) acontece na Fase
+0-sync do Orquestrador, antes de carregar qualquer agente. Ver 01-ORQUESTRADOR.md.
+
 Regra de varredura da origem: a varredura é RECURSIVA — entra em qualquer subpasta dentro da origem, em qualquer profundidade, e trata cada arquivo encontrado como um item próprio (arquivo_original), igual a um arquivo solto na raiz. A estrutura de subpasta não importa para a classificação — o Roteador e os Especialistas decidem pelo conteúdo do documento, não pelo caminho onde ele estava. Excluídas da varredura, em qualquer profundidade: a própria pasta NÃO IDENTIFICADOS, CLAUDE FAVOR NÃO MEXER (e tudo dentro dela, inclusive _CLAUDIO_CONTROLE) e qualquer pasta iniciada por _.
 
 Regra de extração de .zip: um arquivo `.zip` encontrado na varredura não vira item direto — é extraído para `STAGING\<id_execucao>\` (Fase 1b do Orquestrador, procedimento mecânico). Cada arquivo extraído vira item próprio, apontando para o `.zip` como `arquivo_original` — mesmo modelo já usado para PDF composto: o `.zip` só sai da origem (via Executor) quando todos os itens extraídos dele estiverem resolvidos. Se um arquivo extraído for ele mesmo um `.zip`, extraia de novo, recursivamente, até não sobrar `.zip`.
