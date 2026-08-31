@@ -12,3 +12,7 @@
 !/necessario para o claude/
 !/necessario para o claude/agentes/
 !/necessario para o claude/agentes/*.md
+!/.claude/
+!/.claude/commands/
+!/.claude/commands/*.md
+!/.claude/settings.local.json
