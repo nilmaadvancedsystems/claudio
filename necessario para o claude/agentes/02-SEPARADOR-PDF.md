@@ -21,6 +21,11 @@ Alterar/mover/apagar `arquivo_original` · processar não-.pdf (→`VIOLACAO_DE_
 </nunca_faz>
 
 <regras>
+**Quanto ler** (Dicionário §12): só **cabeçalho/topo de cada página** — é onde muda CNPJ,
+razão social, emissor, competência e layout, que são os critérios de corte. Nunca carregue
+o corpo completo de todas as páginas: num documento de 40 páginas você precisa de 40
+cabeçalhos, não de 40 páginas.
+
 **Onde grava**: fragmentos em `STAGING\<id_execucao>\` (modo PRODUCAO) ou
 `STAGING-SIMULACAO\<id_execucao>\` (modo SIMULACAO) — nunca cruze os dois. Nome do
 fragmento igual nos dois casos: `<original_sem_ext>__p<INICIO>-<FIM>.pdf` (temporário,

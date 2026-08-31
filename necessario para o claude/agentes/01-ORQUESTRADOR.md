@@ -13,13 +13,33 @@ sistema de arquivos é executada por quem tem autoridade explícita para ela (ta
 autoridade abaixo), exceto movimentação de não identificados e limpezas de correção,
 que são sua responsabilidade.
 
-**Modelo de execução**: você é uma única sessão do Claude Code, não 9 chamadas de API
-separadas. Etapas puramente mecânicas (hash, comparação, existência de arquivo, apagar,
-formatar relatório) você executa direto com suas ferramentas (Bash/Read/Write), sem
-gastar raciocínio "julgando" nada — são as instruções 07, 08 e 09 abaixo, que já estão
-escritas como procedimento, não como agente que pensa. Raciocínio de verdade (ler
-conteúdo e decidir) só é necessário nas instruções 02, 03, 04, 05 e na Verificação 4 da
-06 — é ali que vale a pena gastar tokens pensando.
+**Modelo de execução — o que roda em você, o que roda em subagente**:
+
+- **Em você, na sessão principal**: tudo que é mecânico — hash, comparação, existência de
+  arquivo, criar pasta, copiar, mover, cortar PDF em intervalos já decididos, apagar,
+  gravar manifesto, formatar relatório. São as instruções 07, 08 e 09, já escritas como
+  procedimento, e as operações de escrita das fases 2 e 4. Execute direto com Bash/Read/
+  Write, sem gastar raciocínio julgando nada.
+- **Em subagente, um por documento (ou lote pequeno)**: tudo que exige **ler conteúdo de
+  documento** — Fase 2 (`separador`), Fases 3+4 (`classificador`), Fase 5 Parte B
+  (`reclassificador`).
+
+O motivo é contexto, e é a restrição que decide se a execução termina ou não. Conteúdo de
+documento é de longe o maior consumidor de contexto da rotina — um extrato mensal comum
+tem centenas de linhas de transação que não mudam nada na classificação. Lendo tudo na
+sessão principal, um fechamento de mês estoura a janela antes do fim. Em subagente, o texto
+do documento vive e morre lá dentro: você recebe de volta só a linha estruturada de
+resultado.
+
+Isso **não muda regra nenhuma** — os agentes 02/03/04/04b/05 já tinham contrato de entrada
+e saída estrito (`<modelo_dados>` abaixo), escritos como se fossem chamadas separadas e
+depois colapsados numa sessão só. Os subagentes apenas descolapsam de volta.
+
+**Decisão e escrita são separadas**: os subagentes são read-only — decidem `destino_final`/
+`nome_final`/intervalos de página e devolvem; quem cria pasta, copia e corta é você, em
+lote. Isso preserva o ganho de batelada (ver `<eficiencia>`), evita escrita concorrente de
+subagentes paralelos, e segue o princípio que o sistema já usa na Fase 4b: quem detecta
+nunca é quem move.
 
 Carregue o Dicionário Canônico antes de qualquer coisa:
 `G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\00-DICIONARIO-CANONICO.md`
@@ -82,20 +102,36 @@ staging), processe todos os itens elegíveis daquela fase no menor número poss�
 comandos Bash — um `find`/loop/comando composto cobrindo N arquivos, nunca N chamadas
 separadas de uma em uma. O tempo de execução real é dominado por quantas vezes uma
 ferramenta é invocada e se espera a resposta, não por quanto texto é processado. Isso não
-vale para as fases de julgamento (2, 3, 4, e a Verificação 4 da 06) — ali cada documento
-precisa ser lido e decidido individualmente, então uma chamada por documento é inerente ao
-trabalho, não desperdício.
+vale para as fases de julgamento (2, 3-4, e a Parte B da 06) — ali cada documento precisa
+ser lido e decidido individualmente, então um subagente por documento (ou por lote pequeno
+do mesmo setor) é inerente ao trabalho, não desperdício.
 </eficiencia>
 
+<subagentes titulo="Subagentes — quem lê documento">
+Definidos em `_CLAUDIO_CONTROLE\.claude\agents\`. Todos são **read-only**: decidem e
+devolvem JSON estruturado; nenhuma escrita em disco parte deles.
+
+| Subagente | Fase | Substitui | Devolve |
+|---|---|---|---|
+| `separador` | 2 | 02 | intervalos de página |
+| `classificador` | 3-4 | 03 + 04/04b/05(+05a-d) | item completo com `destino_final`/`nome_final` |
+| `reclassificador` | 5 (Parte B) | Verificação 4 da 06 | categoria rederivada do zero |
+
+**Nunca leia conteúdo de documento de cliente na sessão principal.** Se você se pegar
+abrindo um `.pdf`/`.xml`/`.csv` da origem com Read, está fazendo o trabalho de um
+subagente e enchendo o contexto que precisa durar até a Fase 8. A exceção é checagem
+mecânica de bytes (cabeçalho `%PDF`, `%%EOF`, contagem de páginas na Fase 6) — isso é Bash,
+não leitura de conteúdo.
+</subagentes>
+
 <mapa_agentes titulo="Mapa de agentes (arquivos locais)">
-**Economia de contexto — leia cada arquivo UMA VEZ por execução, não uma vez por item nem
-uma vez por fase.** Carregue o Dicionário Canônico e cada agente (00, 02-09, 05a-d) a
-primeira vez que precisar dele nesta execução, e reaproveite o que já está na conversa
-daí em diante — nunca releia um arquivo que você já carregou antes, mesmo que a fase mude
-ou que haja múltiplos itens passando pela mesma regra. Reler o mesmo arquivo várias vezes
-na mesma execução não "atualiza" nada (o conteúdo não muda no meio da execução) — só
-acumula contexto à toa. Se processar N itens na Fase 3/4, aplique a regra já carregada do
-03/04/05 a cada um dos N sem recarregar o arquivo a cada item.
+**Economia de contexto.** Você (sessão principal) carrega só o que usa de fato: o
+Dicionário (00) e os procedimentos mecânicos 06 (Parte A), 07, 08, 09 — e 10 em modo
+AUDITORIA. **Não carregue 02, 03, 04, 04b, 05 nem 05a-d**: quem lê essas regras são os
+subagentes, cada um carregando as suas. Carregar aqui é contexto gasto sem uso.
+
+Dentro de um subagente vale a mesma disciplina: leia cada arquivo de regra uma vez, e se
+receber um lote de N itens, aplique a regra já carregada aos N sem recarregar por item.
 
 | # | Agente | Arquivo |
 |---|---|---|
@@ -133,9 +169,8 @@ desse setor ainda está com nomenclatura `A DEFINIR` — só IRPF arquiva de ver
 <autoridade titulo="Autoridade de escrita — quem pode tocar em arquivo">
 | Agente | Pode |
 |---|---|
-| 01 Orquestrador (você) | Mover arquivos para NÃO IDENTIFICADOS; apagar arquivos errados em ciclos de correção; extrair `.zip` da origem para STAGING (Fase 1b); purgar em definitivo pasta-dia da quarentena com mais de 7 dias (Fase 0) |
-| 02 Separador | Gravar fragmentos em STAGING (nunca alterar a origem) |
-| 04/04b/05 Especialistas | Criar pastas em `2026` e copiar arquivos para `destino_final` |
+| 01 Orquestrador (você) | Mover arquivos para NÃO IDENTIFICADOS; apagar arquivos errados em ciclos de correção; extrair `.zip` da origem para STAGING (Fase 1b); purgar em definitivo pasta-dia da quarentena com mais de 7 dias (Fase 0); **gravar fragmentos em STAGING nos intervalos decididos pelo `separador` (Fase 2); criar pastas em `2026` e copiar arquivos para o `destino_final` decidido pelo `classificador` (Fase 4)** |
+| 02/03/04/04b/05 (subagentes `separador`/`classificador`) | **Nenhuma autoridade de escrita** — decidem e devolvem; a escrita correspondente é sua, em lote |
 | 08 Executor | Mover arquivo original para quarentena (`BACKUP ROTINA`), dentro da árvore da origem (raiz ou subpasta), após aprovação — nunca apaga em definitivo |
 | Demais | Nenhuma autoridade de escrita em disco |
 
@@ -232,6 +267,20 @@ aqui é dominado por quantas vezes a ferramenta é chamada, não por quanto se r
 Checagem de manifesto: hash já consta → `JA_ARQUIVADO_ANTERIORMENTE`, pula fases 2-4, vai
 direto pra fase 5 e é conferido na fase 6. Não confirmado depois → Conferente devolve
 `MANIFESTO_DESATUALIZADO`, reentra pela fase 2 como novo.
+
+**Teto de itens por execução** (`LIMITE_ITENS`, padrão 60 pais por execução): se o
+inventário trouxer mais que isso, processe os `LIMITE_ITENS` primeiros (ordem alfabética de
+caminho, pra ser determinístico e não pular sempre os mesmos) e **deixe o restante intocado
+na origem** — não marque status nenhum neles, eles simplesmente não entram nesta execução.
+Registre no relatório: "inventário trouxe N itens, processados os primeiros X, restantes Y
+ficam para a próxima execução".
+
+A rotina já é incremental por desenho — o que arquiva sai da origem para a quarentena, o
+manifesto pega o que já foi feito, e fragmento não resolvido fica em STAGING pra próxima —
+então rodar duas vezes seguidas termina o lote sem nenhum tratamento especial. O teto existe
+porque contexto, não crédito, é o que limita uma execução: mesmo com os subagentes isolando
+o conteúdo dos documentos, a tabela de itens da sessão principal cresce linearmente. Ajuste
+`LIMITE_ITENS` conforme a realidade da máquina; nunca o remova por completo.
 </fase>
 
 <fase n="1b" titulo="Extração de ZIP (ação sua, com Bash, procedimento mecânico)">
@@ -244,28 +293,50 @@ que também é `.zip` → extraia de novo, recursivamente. Em SIMULACAO, extrai 
 `STAGING-SIMULACAO\<id_execucao>\` (mesma regra de limpeza ao final da execução).
 </fase>
 
-<fase n="2" titulo="Separação (aplique 02-SEPARADOR-PDF.md)">
+<fase n="2" titulo="Separação (subagente `separador`, um por .pdf)">
 Só para `.pdf`. Outras extensões
 pulam: `arquivo_trabalho=arquivo_original`, `hash_origem=hash_original`, `paginas_origem=null`.
 Funciona igual em PRODUCAO e SIMULACAO (fragmenta de verdade nos dois, só muda a pasta de
-staging — ver Regras Transversais). Trate cada retorno pelo próprio status: `separado` →
-cada fragmento é item independente apontando pro mesmo `arquivo_original` (arquivo
-original intocado); `mantido_integro` → item único; `PDF_COMPOSTO_NAO_SEPARADO` → encerra
-aqui, não chama Roteador (em qualquer modo). Construa `mapa_original_fragmentos`.
+staging — ver Regras Transversais).
+
+Despache um subagente `separador` por PDF — ele carrega o 02 sozinho, lê só os cabeçalhos
+das páginas e devolve `{status, paginas, total_paginas_original, confianca, motivo}`. **Não
+leia o PDF você mesmo**: é justamente o que estoura o contexto da sessão principal.
+
+Com os intervalos na mão, **você** faz o corte físico, em lote (um comando cobrindo todos os
+PDFs a separar), gravando em `STAGING\<id_execucao>\` com o nome
+`<original_sem_ext>__p<INICIO>-<FIM>.pdf`, e calcula `hash_origem`/`tamanho_origem` de cada
+fragmento. Antes de aceitar, reconfirme você mesmo que a união dos intervalos cobre 100% do
+original sem lacuna nem sobreposição — o subagente já verifica, esta é a segunda checagem
+redundante de propósito, igual à do Conferente.
+
+Trate cada retorno pelo próprio status: `separado` → cada fragmento é item independente
+apontando pro mesmo `arquivo_original` (original intocado); `mantido_integro` → item único;
+`PDF_COMPOSTO_NAO_SEPARADO` → encerra aqui, não vai pra Fase 3 (em qualquer modo). Construa
+`mapa_original_fragmentos`.
 </fase>
 
-<fase n="3" titulo="Roteamento (aplique 03-LOCALIZADOR-ROTEADOR.md)">
-Para cada item vivo.
-`confianca < 0.85` → `NAO_IDENTIFICADO/CONFIANCA_ABAIXO_DO_LIMIAR`, direto pra Fase 4b.
-</fase>
+<fase n="3-4" titulo="Roteamento + Especialista (subagente `classificador`, um por item)">
+Fases 3 e 4 rodam **juntas, num subagente só por item** — o documento é lido uma vez, não
+duas. Despache `classificador` por item vivo; ele carrega 03 + o especialista do setor que
+ele mesmo determinar, e devolve o item completo
+(`cliente_id`, `cliente_destino`, `pasta_cliente_existe`, `regime`, `setor`, `confianca`,
+`destino_final`, `nome_final`, `nome_original_preservado`, `status`, `motivo`).
 
-<fase n="4" titulo="Especialistas">
-`CONTABIL` → 04-ESPECIALISTA-CONTABIL.md · `FISCAL` →
-05-ESPECIALISTA-FISCAL-DESPACHANTE.md · `FOLHA_SOCIETARIO` →
-04b-ESPECIALISTA-FOLHA-SOCIETARIO.md (hoje só IRPF tem nomenclatura definida; os demais
-tipos desse setor voltam `FORA_DO_ESCOPO/NOMENCLATURA_NAO_DEFINIDA` do próprio 04b, regra
-0 — não é mais `SETOR_SEM_ESPECIALISTA`, o setor já tem especialista, só falta regra de
-nome pra maioria dos tipos) · `null` → `NAO_IDENTIFICADO/SETOR_INDETERMINADO` → Fase 4b.
+Agrupe itens do mesmo setor num lote pequeno por subagente quando houver vários — amortiza
+a leitura das regras, que é o único custo repetido do modelo. Não agrupe setores
+diferentes: forçaria o subagente a carregar especialista que não vai usar.
+
+O subagente aplica internamente o limiar de confiança (`< 0.85` → `NAO_IDENTIFICADO`, sem
+chamar especialista) e as regras de setor sem destino: `FOLHA_SOCIETARIO` fora de IRPF →
+`FORA_DO_ESCOPO/NOMENCLATURA_NAO_DEFINIDA` (o setor tem especialista, falta regra de nome);
+`setor=null` → `NAO_IDENTIFICADO/SETOR_INDETERMINADO`.
+
+**A gravação é sua**: com todos os `destino_final`/`nome_final` decididos, crie as pastas e
+copie os arquivos em lote (ver `<eficiencia>`), nunca movendo o original, e calcule
+`hash_destino`. Em SIMULACAO, não copie — só registre o que copiaria. Antes de criar pasta
+raiz de cliente novo (`pasta_cliente_existe=false`), reconfirme você mesmo o CNPJ contra a
+planilha, como manda o 04 — criar pasta de cliente errado é caro de desfazer.
 </fase>
 
 <fase n="4b" titulo="Movimentação de exceções (ação sua, com Bash)">
@@ -289,8 +360,22 @@ pare a execução por causa disso — só sinaliza, autônomo como o disjuntor d
 Grave uma linha nova em `qualidade.jsonl` com o resultado, sempre (com ou sem alerta).
 </fase>
 
-<fase n="5" titulo="Verificação e ciclos de correção (aplique 06-VERIFICADOR.md: parte determinística sempre, LLM só na reclassificação)">
-Envie todos os itens (qualquer
+<fase n="5" titulo="Verificação e ciclos de correção (06-VERIFICADOR.md: Parte A em você, Parte B em subagente)">
+**Parte A** (as 7 verificações determinísticas) roda em você: é comparação de campo e
+string contra o Dicionário, sem custo de contexto de documento.
+
+**Parte B** (Verificação 4 — Reclassificação Independente) roda no subagente
+`reclassificador`, um por item ou em lote. Passe **apenas** `id_item` e o caminho do
+arquivo — **nunca** a categoria já atribuída. Essa omissão é o ponto: antes, a checagem
+rodava na mesma sessão que já tinha classificado, e "ignore a categoria anterior" era só
+uma instrução, com o raciocínio anterior ainda no contexto puxando pra confirmar por
+inércia. Agora a independência é estrutural, não uma promessa — o subagente genuinamente
+não tem acesso a ela.
+
+Compare `categoria_rederivada` com o `destino_final` atribuído: divergiu → erro crítico,
+entra na seção "Reclassificação por arquivo" do relatório.
+
+Envie à Parte A todos os itens (qualquer
 status), `N_pais`, `mapa_original_fragmentos`, manifesto.
 - `OK_PARA_CONCLUIR` → fase 6.
 - `CORRIGIR_E_REVERIFICAR` → incremente `ciclos_correcao`. Se >3: pare,

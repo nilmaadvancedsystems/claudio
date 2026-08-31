@@ -29,6 +29,9 @@ passa a operar sozinho, sem tocar em mais nada.
 </regra>
 
 <procedimento>
+**Quanto ler** (Dicionário §12): página 1 do PDF, cabeçalho + amostra no CSV/XLSX. Título e
+CPF/CNPJ ficam no cabeçalho. Escale só se continuar ambíguo.
+
 **Ordem**: pasta raiz ausente → **reconfirme CNPJ da empresa** (mesmo princípio do
 04-ESPECIALISTA-CONTABIL.md — mesmo em documento de sócio pessoa física, a pasta raiz do
 cliente é sempre da empresa, nunca do CPF do sócio) → criar em `cliente_destino` +

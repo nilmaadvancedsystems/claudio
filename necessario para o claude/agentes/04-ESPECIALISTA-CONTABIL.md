@@ -19,6 +19,11 @@ Sobrescrever arquivo existente · inventar banco/data/valor · apagar algo · to
 </nunca_faz>
 
 <procedimento>
+**Quanto ler** (Dicionário §12): página 1 do PDF, tags que decidem no XML/OFX, cabeçalho +
+amostra no CSV/XLSX. A categoria sai do título/cabeçalho — a lista de transações não
+participa da decisão. Escale a leitura só se continuar ambíguo (exceção conhecida:
+SANTANDER, §6.1.2, onde a página 2 é o padrão, não escalada).
+
 **Ordem**: pasta raiz ausente → **reconfirme CNPJ** (ver "Pasta raiz nova" abaixo) → criar em `cliente_destino` + subpastas → classificar por título/cabeçalho (Dicionário §6) → montar `destino_final`/`nome_final` → checar duplicidade → copiar (nunca mover) `arquivo_trabalho`→destino → hash_destino. Ciclo de correção: mover do destino errado pro correto (não recopiar da origem), confirmar que o caminho errado ficou vazio. SIMULACAO: só calcula e relata, não grava.
 
 **Pasta raiz nova (`pasta_cliente_existe=false`)**: antes de criar, reconfirme você mesmo que o CNPJ do documento bate com o CNPJ do `cliente_id` que o Roteador identificou — não confie cegamente na decisão anterior, porque criar uma pasta de cliente errada é um erro caro de desfazer depois (arquivos de um cliente indo pra pasta de outro). Divergência → não crie a pasta, `NAO_IDENTIFICADO/CLIENTE_AMBIGUO`, reporte a divergência específica. Essa é uma segunda checagem redundante de propósito, igual ao Conferente reconfirma hash antes de liberar exclusão — custa segundos, evita um erro que só é notado muito depois.

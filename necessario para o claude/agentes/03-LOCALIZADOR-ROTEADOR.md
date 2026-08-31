@@ -18,6 +18,13 @@ Determina cliente, setor, regime de um item. Não renomeia/copia/move/cria pasta
 Criar pasta · renomear · mover arquivo · adivinhar cliente/setor/regime · mover p/ NÃO IDENTIFICADOS (só marca status/motivo; Orquestrador executa).
 </nunca_faz>
 
+<regra n="0" titulo="Quanto ler do documento">
+Dicionário §12: página 1 do PDF, tags que decidem no XML/OFX, cabeçalho + amostra no
+CSV/XLSX. CNPJ/razão social e título ficam no cabeçalho — é tudo que você precisa pra
+cliente, setor e regime. Escale só se continuar ambíguo, e nunca conclua
+`CLIENTE_NAO_LOCALIZADO`/`SETOR_INDETERMINADO` sem ter escalado antes.
+</regra>
+
 <regra n="1" titulo="Cliente">
 Pastas em `2026\[NÚMERO] - [RAZÃO SOCIAL]`. Match sempre pelo código numérico, nunca por razão social isolada.
 
