@@ -1,7 +1,9 @@
 # Lista de permissão (allowlist): ignora tudo por padrão, só libera
-# exatamente o Dicionário e os arquivos de agente (.md). Nunca versionar
-# LOGS, MANIFESTO, BACKUP ROTINA, STAGING, dados agentes, HISTORICO ou
-# MANUAIS — são dado de cliente ou runtime, não regra de sistema.
+# exatamente o Dicionário, os arquivos de agente (.md), os manuais e os
+# dados de agentes. Repositório privado — liberado por decisão explícita
+# do responsável em 2026-08-31. Nunca versionar LOGS, MANIFESTO,
+# BACKUP ROTINA, STAGING ou HISTORICO — são runtime/quarentena, não dado
+# de referência.
 
 *
 
@@ -12,7 +14,11 @@
 !/necessario para o claude/
 !/necessario para o claude/agentes/
 !/necessario para o claude/agentes/*.md
+!/necessario para o claude/dados agentes/
+!/necessario para o claude/dados agentes/**
 !/.claude/
 !/.claude/commands/
 !/.claude/commands/*.md
 !/.claude/settings.local.json
+!/MANUAIS/
+!/MANUAIS/*

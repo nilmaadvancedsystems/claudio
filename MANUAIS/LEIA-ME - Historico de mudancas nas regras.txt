@@ -1,0 +1,17 @@
+Sobre o histórico de mudanças nas regras
+==========================================
+
+O sistema guarda um registro de tudo que já mudou nas regras (o
+Dicionário e os arquivos de agente) — mas você não precisa mexer em
+nada pra consultar isso.
+
+Quer saber o que mudou, quando, ou voltar algo pro jeito que estava
+antes? É só pedir numa conversa com o Claude Code, por exemplo:
+
+  "mostra o que mudou nas regras esse mês"
+  "por que essa regra do Dicionário está assim?"
+  "volta esse arquivo pro jeito que estava antes de tal mudança"
+
+Ele consulta e explica pra você. Nenhum comando, nenhum terminal.
+
+
