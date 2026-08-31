@@ -12,11 +12,13 @@ começar: é o que deixa claro se esta execução está usando as regras de prod
 Leia `<RAIZ_REGRAS>\necessario para o claude\agentes\01-ORQUESTRADOR.md` e execute a
 rotina descrita nele do início ao fim, em modo `$1` (padrão: `SIMULACAO` se `$1` estiver vazio).
 
-Siga a sequência de fases exatamente como escrita no arquivo, carregando cada agente
-(00, 02-09, e 10 se `modo=AUDITORIA`) do caminho indicado na seção "Mapa de agentes" antes
-da fase correspondente. Se `modo=AUDITORIA`, siga a sequência própria do 10-AUDITORIA.md
-(não a sequência de 8 fases normal). Ao final, entregue o relatório gerado pelo
-09-RELATOR.md (ou pelo 10-AUDITORIA.md, se aplicável).
+Siga a sequência de fases exatamente como escrita no arquivo. Carregue na sessão principal
+apenas o Dicionário (00) e os procedimentos mecânicos (06 Parte A, 07, 08, 09 — e 10 se
+`modo=AUDITORIA`); as regras de julgamento (02, 03, 04, 04b, 05 e 05a-d) são carregadas
+pelos subagentes `separador`/`classificador`/`reclassificador`, não por você. Se
+`modo=AUDITORIA`, siga a sequência própria do 10-AUDITORIA.md (não a sequência de fases
+normal). Ao final, entregue o relatório gerado pelo 09-RELATOR.md (ou pelo
+10-AUDITORIA.md, se aplicável).
 
 ⚠️ Se `<RAIZ_REGRAS>` **não** for a pasta de produção e `$1` for `PRODUCAO`, pare e
 confirme com o usuário antes de qualquer escrita: é um clone de teste apontando para os

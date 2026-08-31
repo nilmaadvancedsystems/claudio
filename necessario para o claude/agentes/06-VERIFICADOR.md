@@ -67,13 +67,25 @@ Qualquer `assert` falso vira uma linha em "Erros críticos" no relatório de sa�
 formato do doc 06 original). Zero LLM envolvido nesta parte.
 </procedimento>
 
-<procedimento titulo="Parte B — Reclassificação independente (única chamada de LLM, por item ou em lote)">
-Prompt mínimo, uma vez por item (ou batelado, N itens por chamada com saída em lista):
+<procedimento titulo="Parte B — Reclassificação independente (subagente `reclassificador`, por item ou em lote)">
+Roda no subagente `reclassificador` (`.claude\agents\reclassificador.md`), despachado pelo
+Orquestrador na Fase 5. **Passe apenas `id_item` e o caminho do arquivo — nunca a categoria
+atribuída.**
+
+Antes, essa verificação rodava na mesma sessão que já havia classificado o documento, e
+"ignore a categoria anterior" era só uma instrução: o raciocínio da classificação original
+continuava no contexto, puxando pra confirmar por inércia justamente no caso em que a
+verificação mais importa. No subagente a independência é estrutural — ele não tem acesso à
+categoria atribuída, então não há o que ignorar. O texto abaixo permanece como a
+especificação do que o subagente faz; a comparação `atribuída × rederivada` acontece fora
+dele, no Orquestrador.
+
+Especificação aplicada pelo subagente:
 
 ```
 Releia o cabeçalho/título deste documento (para XML: tags <mod>, <CFOP>, <emit>) e
-derive a categoria do zero, SEM olhar a categoria já atribuída (categoria_atribuida
-não deve influenciar sua leitura — objetivo é tentar refutar, não confirmar por inércia).
+derive a categoria do zero. Você não recebe a categoria atribuída: o objetivo é
+derivar de forma independente para permitir refutação, não confirmar por inércia.
 
 Aplique as tabelas de desambiguação do Dicionário §6 e docs de regime:
 - BANCÁRIOS × MAQUININHAS × RECEBIMENTO DE CLIENTES × APLICAÇÕES
@@ -108,9 +120,15 @@ Nunca `OK_PARA_CONCLUIR` com erro crítico pendente — a exclusão da origem de
 <eficiencia titulo="Ganho">
 Antes: 1 chamada de LLM cobrindo 8 verificações por item (muito conteúdo de regra
 carregado toda vez, a maior parte dele nunca usada para julgamento real).
-Depois: 0 chamadas de LLM para 7 das 8 verificações + 1 chamada enxuta (só a regra
-de reclassificação) por item, batelável. Nenhuma regra foi removida — todas as 8
-verificações do doc 06 original continuam ativas, só mudou onde cada uma roda.
+Depois: 0 chamadas de LLM para 7 das 8 verificações (Parte A, roda como código na sessão
+principal) + 1 subagente enxuto por item ou lote (Parte B, só a regra de reclassificação).
+Nenhuma regra foi removida — todas as 8 verificações do doc 06 original continuam ativas,
+só mudou onde cada uma roda.
+
+Ganho adicional da Parte B em subagente: além de não gastar contexto da sessão principal
+com o conteúdo do documento, a reclassificação passou a ser **independente de fato** — o
+subagente não recebe a categoria atribuída, então não existe mais o viés de confirmar por
+inércia o que a mesma sessão já havia decidido.
 </eficiencia>
 
 </agente>

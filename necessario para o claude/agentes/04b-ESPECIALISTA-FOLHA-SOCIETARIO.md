@@ -29,6 +29,9 @@ passa a operar sozinho, sem tocar em mais nada.
 </regra>
 
 <procedimento>
+**Quanto ler** (Dicionário §12): página 1 do PDF, cabeçalho + amostra no CSV/XLSX. Título e
+CPF/CNPJ ficam no cabeçalho. Escale só se continuar ambíguo.
+
 **Ordem**: pasta raiz ausente → **reconfirme CNPJ da empresa** (mesmo princípio do
 04-ESPECIALISTA-CONTABIL.md — mesmo em documento de sócio pessoa física, a pasta raiz do
 cliente é sempre da empresa, nunca do CPF do sócio) → criar em `cliente_destino` +
@@ -76,5 +79,46 @@ grava. Mesmo nome+hash diferente → grava com sufixo `(N)` (Dicionário §2), m
 manifesto → `JA_ARQUIVADO_ANTERIORMENTE`, sem recopiar. Movimentação para NÃO
 IDENTIFICADOS é do Orquestrador (fase 4b), você só marca.
 </regras>
+
+<propostas titulo="⚠️ PROPOSTAS PENDENTES DE CONFIRMAÇÃO — branch teste, ainda não ativas">
+Rascunho de nomenclatura pros tipos hoje `A DEFINIR`, seguindo os mesmos padrões já usados
+no resto do sistema (Dicionário §2). **Não mude o status de nenhuma linha da tabela acima
+pra ativar isto** até o responsável confirmar cada proposta — só depois disso, mover a
+regra aprovada pra dentro de `<regras>` e apagar a proposta correspondente daqui.
+
+**FGTS** (guia mensal, hoje via FGTS Digital/GFD): nome final `[MÊS E ANO].pdf`, dado
+obrigatório = competência. Reconhecimento: título "Guia FGTS Digital", "GFD", "FGTS" —
+mesmo padrão de guia mensal já usado em DAS/DAE (Dicionário §2, `[MÊS E ANO]`).
+
+**Folha de Pagamento**: proposta é **preservar nome original** (`nome_original_preservado=
+true`) dentro de `FOLHA DE PAGAMENTO\[ANO]\[MÊS]\`, dado obrigatório = competência —
+diferente de guia fiscal porque uma competência de folha normalmente chega como múltiplos
+arquivos (holerites individuais, resumo da folha, recibo de férias/13º), sem um nome único
+de competência que sirva pra todos sem colidir. Reconhecimento: "Folha de Pagamento",
+"Holerite", "Recibo de Pagamento de Salário", "Recibo de Férias", "Recibo de 13º Salário".
+Alternativa a discutir com o responsável: se a rotina só recebe UM arquivo consolidado por
+competência (não holerite por holerite), nome único `[MÊS E ANO].pdf` funcionaria melhor —
+depende do que realmente chega na origem, não decidido sozinho aqui.
+
+**Certidões**: proposta com subpasta por tipo — `CERTIDÕES\[TIPO]\`, TIPO ∈ {FEDERAL,
+ESTADUAL, MUNICIPAL, TRABALHISTA, FGTS} — porque certidão não tem competência mensal, tem
+data de emissão e validade. Nome final `[DATA].pdf` (formato `[DATA]` do Dicionário §2,
+DD-MM-AAAA da emissão, não da validade). Dado obrigatório = tipo+data de emissão.
+Reconhecimento pelo órgão emissor no cabeçalho (Receita Federal/PGFN → FEDERAL; Sefaz →
+ESTADUAL; prefeitura → MUNICIPAL; TST/TRT → TRABALHISTA; Caixa/FGTS → FGTS).
+
+**Certificado Digital**: proposta é preservar nome original em
+`CERTIFICADO DIGITAL\[ANO]\`, dado obrigatório = ano de emissão/renovação — evento único
+por ano (renovação anual ou trienal), sem padrão de nome que valha a pena impor.
+
+**Documentos Constitutivos** (contrato social, alterações contratuais, atas): proposta é
+preservar nome original em `DOCUMENTOS CONSTITUTIVOS\`, **sem subpasta de ano** — evento
+não-periódico (uma alteração contratual não tem "competência"), a lista cronológica pelo
+próprio nome/data do arquivo já basta.
+
+**Documentos de Sócios (outros, não-IRPF)** (RG/CPF/comprovante de residência do sócio):
+proposta é preservar nome original em `DOCUMENTOS DE SÓCIOS\`, sem subpasta de ano — mesmo
+raciocínio dos constitutivos, documento de identificação não tem competência.
+</propostas>
 
 </agente>

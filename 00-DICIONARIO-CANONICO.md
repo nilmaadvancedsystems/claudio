@@ -26,11 +26,13 @@ teste carregar as regras de produção e o teste deixa de testar qualquer coisa.
 | Manuais | `<RAIZ_REGRAS>\MANUAIS\` |
 
 **(b) Caminhos de DADO — absolutos, sempre no Drive, iguais em produção e em teste.** São
-os documentos reais dos clientes e o estado da rotina. Ficam no Drive de propósito: são
-sincronizados, têm backup e continuam acessíveis por outra pessoa se este PC falhar — o
-`MANIFESTO` é o que evita rearquivar e permite auditoria, e `BACKUP ROTINA` guarda os
-originais dos clientes durante os 7 dias antes da exclusão definitiva. Nunca mova essas
-pastas para disco local sem backup.
+os documentos reais dos clientes e o estado da rotina; não são versionados e não existem
+dentro do repositório. Ficam no Drive de propósito: são sincronizados, têm backup e
+continuam acessíveis por outra pessoa se este PC falhar — o `MANIFESTO` é o que evita
+rearquivar e permite auditoria, e `BACKUP ROTINA` guarda os originais dos clientes durante
+os 7 dias antes da exclusão definitiva. Nunca mova essas pastas para disco local sem
+backup. Um clone de teste lê e escreve exatamente os mesmos caminhos — por isso teste se
+faz em `SIMULACAO`, que não grava nada definitivo.
 
 Papel
 	Caminho
@@ -571,6 +573,39 @@ destaque no relatório e no e-mail daquela execução.
 Rotação: mesma regra do manifesto e do purgas.jsonl — vira `qualidade-[ANO_ANTERIOR].jsonl`
 na primeira execução de um ano novo. A média do disjuntor só usa as últimas 5 entradas do
 arquivo ativo, então a rotação nunca afeta esse cálculo.
+</secao>
+
+<secao n="12" titulo="LEITURA MÍNIMA DE DOCUMENTO — quanto do arquivo carregar">
+Vale para todo agente que lê conteúdo pra decidir (02, 03, 04, 04b, 05a-d, e a Parte B do
+06). Regra geral: **carregue o mínimo necessário pra decidir, e só escale se a decisão
+ainda estiver ambígua.** Não é economia de custo — é o que mantém a execução viável: o
+conteúdo de documento é de longe o maior consumidor de contexto da rotina, e um extrato
+mensal comum tem centenas de linhas de transação que não mudam em nada a classificação.
+
+A categoria vem do título/cabeçalho (§6). O corpo do documento — a lista de transações, as
+linhas da planilha, o detalhamento — quase nunca participa da decisão.
+
+| Formato | Leia primeiro | Só leia mais se |
+|---|---|---|
+| `.pdf` | página 1 | ainda ambíguo depois da página 1 (ver exceções abaixo) |
+| `.xml` (NF-e/CT-e) | só as tags que decidem: `<mod>`, `<CFOP>`, `<emit><CNPJ>`, `<dest><CNPJ>`, `<dhEmi>` | a tag necessária não estiver presente |
+| `.ofx` | cabeçalho e tags `<ORG>`/`<FID>`/`<BANKID>`/`<DTSTART>`/`<DTEND>` | banco ou período não saírem daí |
+| `.csv` / `.xlsx` | linha de cabeçalho + ~5 linhas de amostra | os nomes de coluna não bastarem (§6.1.3 decide por coluna, não por volume de linha) |
+
+**Exceções conhecidas — quando a página 1 comprovadamente não basta:**
+- **SANTANDER** (§6.1.2): título, competência e titular costumam estar na página 2 — a
+  página 1 é capa/resumo. Vá direto à página 2 nesse emissor, não é escalada, é o padrão dele.
+- **Título "Comprovante"** (§6.1.1): precisa ver a estrutura pra decidir COMPROVANTES ×
+  BANCÁRIOS. A página 1 normalmente já mostra se há várias transações e coluna de saldo
+  corrente — se não mostrar, aí sim avance.
+- **Separador (02)**: precisa varrer o documento inteiro pra achar fronteiras, mas só
+  **cabeçalho/topo de cada página** (é onde muda CNPJ, emissor, competência, layout) —
+  nunca o corpo completo de todas as páginas.
+
+**Nunca** conclua `CONTEUDO_ILEGIVEL`, `EMITENTE_INDETERMINADO`, `COMPETENCIA_AUSENTE` ou
+qualquer motivo de dado ausente sem ter escalado a leitura primeiro. Leitura mínima é
+economia de contexto, não desculpa pra desistir cedo: o critério de desistir continua sendo
+"não está no documento", nunca "não estava na primeira página".
 </secao>
 
 </dicionario>
