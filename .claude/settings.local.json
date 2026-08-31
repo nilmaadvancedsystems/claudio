@@ -4,6 +4,9 @@
       "WebFetch(domain:docs.google.com)",
       "Bash(curl -sL \"https://docs.google.com/document/d/e/2PACX-1vSsQnGWe1lRhSUBqe5lezW4VuSbOQtk0gf1i7IYxRwkrS-K4sdQMMuL_gxKPxF6kp_HN2oHQYPNPvX6/pub\" -o /tmp/orch.html -w \"%{http_code}\\\\n\")",
       "Read(//tmp/**)"
+    ],
+    "additionalDirectories": [
+      "G:\\Meu Drive"
     ]
   }
 }
