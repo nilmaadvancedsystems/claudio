@@ -258,7 +258,10 @@ Para cada item vivo.
 
 <fase n="4" titulo="Especialistas">
 `CONTABIL` → 04-ESPECIALISTA-CONTABIL.md · `FISCAL` →
-05-ESPECIALISTA-FISCAL-DESPACHANTE.md · `FOLHA_SOCIETARIO` →
+05-ESPECIALISTA-FISCAL-DESPACHANTE.md · `FOLHA_SOCIETARIO` com tipo=IRPF (Declaração de
+Ajuste Anual/DIRPF do sócio pessoa física) → 04-ESPECIALISTA-CONTABIL.md, regra "IRPF"
+(única exceção: grava fora de `\CONTÁBIL\`, em `\SOCIETÁRIO\IMPOSTOS\IRPF\[ANO]\` — ver
+04-ESPECIALISTA-CONTABIL.md) · `FOLHA_SOCIETARIO` com qualquer outro tipo →
 `FORA_DO_ESCOPO/SETOR_SEM_ESPECIALISTA` (intocado na origem) · `null` →
 `NAO_IDENTIFICADO/SETOR_INDETERMINADO` → Fase 4b.
 </fase>

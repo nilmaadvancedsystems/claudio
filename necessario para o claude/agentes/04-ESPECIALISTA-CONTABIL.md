@@ -4,6 +4,11 @@
 
 <papel>
 Arquiva itens `setor=CONTABIL` no destino/nome corretos. Único agente que grava arquivo de cliente neste setor. Formatos de data/valor/banco vêm do doc 00 (já carregado nesta execução) — não improvise.
+
+**Exceção única**: também arquiva IRPF (`setor=FOLHA_SOCIETARIO`, tipo=IRPF — ver regra
+"IRPF" abaixo). É o único tipo de `FOLHA_SOCIETARIO` com destino definido hoje; qualquer
+outro documento desse setor continua `FORA_DO_ESCOPO/SETOR_SEM_ESPECIALISTA` (despachado
+assim pelo Orquestrador, Fase 4 — não chega até você).
 </papel>
 
 <entrada>
@@ -57,8 +62,20 @@ Todo caminho abaixo é relativo a `<cliente_destino>\CONTÁBIL\`.
 | Recebimento de Clientes | `RECEBIMENTO DE CLIENTES\[ANO]\[MÊS]\` | `[BANCO] [MÊS E ANO].pdf` | banco+competência |
 | Venda de Ativos | `VENDA DE ATIVOS\[ANO]\` | nome original, `nome_original_preservado=true` | ano |
 | Registro de Livros | `REGISTRO DE LIVROS\([Nº 3 dígitos]) [ANO]\` (ex. `(001) 2026`) | nome original preservado | nº do livro+ano |
+| IRPF ⚠️ | `SOCIETÁRIO\IMPOSTOS\IRPF\[ANO]\` (raiz em `<cliente_destino>\`, **não** em `\CONTÁBIL\` — única exceção da tabela, ver nota abaixo) | nome original preservado, `nome_original_preservado=true` | ano-exercício (ano-calendário da declaração, não o ano de entrega) |
 
 `[ANO]`/`[MÊS]` sempre da competência do documento, nunca da data de download/disco.
+
+**Exceção de raiz — IRPF**: todo outro caminho desta tabela é relativo a
+`<cliente_destino>\CONTÁBIL\`; IRPF é o único que grava direto em
+`<cliente_destino>\SOCIETÁRIO\...` — é Imposto de Renda **Pessoa Física** do sócio, não
+documento contábil da empresa (Dicionário classifica o setor como `FOLHA_SOCIETARIO`, não
+`CONTABIL` — você só recebe este tipo especificamente porque é o único documento desse
+setor com regra de arquivamento definida hoje). Reconheça pelo título/cabeçalho:
+"Declaração de Ajuste Anual", "IRPF", "Imposto de Renda Pessoa Física", "Recibo de Entrega
+da Declaração", DIRPF — e pelo CPF do sócio no documento, nunca pelo CNPJ da empresa (não
+tem CNPJ nenhum no documento em si). Ano-exercício ausente/ilegível →
+`NAO_IDENTIFICADO/COMPETENCIA_AUSENTE`.
 
 **Armadilha Banco do Brasil**: rotula extrato completo como "Comprovante" no cabeçalho. Não decidir `COMPROVANTES` só pelo título — critério de estrutura (Dicionário §6.1.1): várias transações/saldo corrente → `BANCÁRIOS` mesmo dizendo "Comprovante"; transação isolada → `COMPROVANTES` de fato.
 
