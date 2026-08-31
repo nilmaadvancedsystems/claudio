@@ -7,6 +7,29 @@ Documento de referência compartilhado. Todo agente carrega este documento antes
 </papel>
 
 <secao n="1" titulo="CAMINHOS FIXOS">
+⚠️ **Duas famílias de caminho, nunca as confunda:**
+
+**(a) Caminhos de REGRA — relativos a `<RAIZ_REGRAS>`.** `<RAIZ_REGRAS>` é a raiz do
+repositório de onde a sessão foi aberta, resolvida uma vez na Fase 0 do Orquestrador
+(`git rev-parse --show-toplevel`). Em produção é
+`G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE`; num clone de teste é a pasta do
+clone. **Nunca escreva o caminho absoluto de produção para carregar uma regra** — isso faz
+um clone de teste carregar as regras de produção e o teste deixa de testar qualquer coisa.
+
+| Papel | Caminho |
+|---|---|
+| Dicionário Canônico (este arquivo) | `<RAIZ_REGRAS>\00-DICIONARIO-CANONICO.md` |
+| Agentes (prompts) | `<RAIZ_REGRAS>\necessario para o claude\agentes\` |
+| Subagentes (Claude Code) | `<RAIZ_REGRAS>\.claude\agents\` |
+| Dados de referência (planilha de cliente, logo) | `<RAIZ_REGRAS>\necessario para o claude\dados agentes\` |
+| Exemplos de Referência | `<RAIZ_REGRAS>\necessario para o claude\dados agentes\EXEMPLOS DE ARQUIVOS\` |
+| Manuais | `<RAIZ_REGRAS>\MANUAIS\` |
+
+**(b) Caminhos de DADO — absolutos, sempre no Drive, iguais em produção e em teste.** São
+os documentos reais dos clientes e o estado da rotina; não são versionados e não existem
+dentro do repositório. Um clone de teste lê e escreve exatamente os mesmos — por isso teste
+se faz em `SIMULACAO`, que não grava nada definitivo.
+
 Papel
 	Caminho
 	Origem
@@ -27,22 +50,25 @@ Papel
 	G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\MANIFESTO\manifesto.jsonl
 	Logs de execução
 	G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\LOGS
-	Dados de referência (planilhas de cliente)
-	G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\necessario para o claude\dados agentes
-	Exemplos de Referência
-	G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\necessario para o claude\dados agentes\EXEMPLOS DE ARQUIVOS
-	Agentes (prompts locais)
-	G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\necessario para o claude\agentes
 	
 
 Regra de versionamento (desde 31/08/2026): `_CLAUDIO_CONTROLE` é também um repositório
 git, remote `https://github.com/nilmaadvancedsystems/claudio.git`. Versionados: Dicionário,
-`necessario para o claude/agentes/*.md`, `.claude/commands`, `MANUAIS/` e
+`necessario para o claude/agentes/*.md`, `.claude/commands`, `.claude/agents`, `MANUAIS/` e
 `necessario para o claude/dados agentes/` (repositório privado — inclui dado real de
 cliente por decisão explícita do responsável). Nunca versionados (`.gitignore`): `LOGS`,
 `MANIFESTO`, `BACKUP ROTINA`, `STAGING`, `STAGING-SIMULACAO`, `HISTORICO` — runtime/
 quarentena local, sem relação com o GitHub. Sincronização (`git pull`) acontece na Fase
 0-sync do Orquestrador, antes de carregar qualquer agente. Ver 01-ORQUESTRADOR.md.
+
+Regra de ambiente de teste: **a pasta do Drive fica permanentemente na branch de produção
+(`master`) — nunca troque a branch dela para testar.** Regra em teste roda a partir de um
+clone separado, fora do Drive (hoje: `C:\Users\DPTO FISCAL 004\GUSTAVO\claudio-teste`, na
+branch `teste`), aberto como projeto próprio do Claude Code. É por isso que caminho de
+regra é relativo a `<RAIZ_REGRAS>`: o clone carrega as regras dele, e os caminhos de dado
+continuam apontando para o Drive real. Teste sempre em `SIMULACAO` — o clone enxerga os
+documentos de verdade, então `PRODUCAO` a partir dele arquivaria pra valer com regra ainda
+não aprovada.
 
 Regra de varredura da origem: a varredura é RECURSIVA — entra em qualquer subpasta dentro da origem, em qualquer profundidade, e trata cada arquivo encontrado como um item próprio (arquivo_original), igual a um arquivo solto na raiz. A estrutura de subpasta não importa para a classificação — o Roteador e os Especialistas decidem pelo conteúdo do documento, não pelo caminho onde ele estava. Excluídas da varredura, em qualquer profundidade: a própria pasta NÃO IDENTIFICADOS, CLAUDE FAVOR NÃO MEXER (e tudo dentro dela, inclusive _CLAUDIO_CONTROLE) e qualquer pasta iniciada por _.
 

@@ -20,7 +20,7 @@ entrada por engano, ignore e sinalize no campo `motivo`.
 
 ## Carregue
 
-Raiz: `G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\`
+Raiz: `<RAIZ_REGRAS>\`
 
 - `00-DICIONARIO-CANONICO.md` — especialmente §6 (desambiguação) e §12 (leitura mínima)
 - O especialista do setor, se souber o setor pela entrada; sem isso, decida o setor você mesmo.

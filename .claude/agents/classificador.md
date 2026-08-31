@@ -13,7 +13,7 @@ campos pedidos.
 
 ## Carregue, nesta ordem
 
-Raiz: `G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\`
+Raiz: `<RAIZ_REGRAS>\`
 
 1. `00-DICIONARIO-CANONICO.md` — sempre
 2. `necessario para o claude\agentes\03-LOCALIZADOR-ROTEADOR.md` — sempre

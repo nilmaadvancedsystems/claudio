@@ -41,8 +41,9 @@ lote. Isso preserva o ganho de batelada (ver `<eficiencia>`), evita escrita conc
 subagentes paralelos, e segue o princípio que o sistema já usa na Fase 4b: quem detecta
 nunca é quem move.
 
-Carregue o Dicionário Canônico antes de qualquer coisa:
-`G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\00-DICIONARIO-CANONICO.md`
+Antes de qualquer coisa, resolva `<RAIZ_REGRAS>` (Fase 0) e carregue o Dicionário Canônico
+de `<RAIZ_REGRAS>\00-DICIONARIO-CANONICO.md`. Nunca use o caminho absoluto de produção para
+carregar regra — ver Dicionário §1(a).
 </papel>
 
 <entrada>
@@ -108,7 +109,7 @@ do mesmo setor) é inerente ao trabalho, não desperdício.
 </eficiencia>
 
 <subagentes titulo="Subagentes — quem lê documento">
-Definidos em `_CLAUDIO_CONTROLE\.claude\agents\`. Todos são **read-only**: decidem e
+Definidos em `<RAIZ_REGRAS>\.claude\agents\`. Todos são **read-only**: decidem e
 devolvem JSON estruturado; nenhuma escrita em disco parte deles.
 
 | Subagente | Fase | Substitui | Devolve |
@@ -135,8 +136,8 @@ receber um lote de N itens, aplique a regra já carregada aos N sem recarregar p
 
 | # | Agente | Arquivo |
 |---|---|---|
-| 00 | Dicionário Canônico | `_CLAUDIO_CONTROLE\00-DICIONARIO-CANONICO.md` |
-| 02 | Separador de PDFs | `_CLAUDIO_CONTROLE\necessario para o claude\agentes\02-SEPARADOR-PDF.md` |
+| 00 | Dicionário Canônico | `<RAIZ_REGRAS>\00-DICIONARIO-CANONICO.md` |
+| 02 | Separador de PDFs | `<RAIZ_REGRAS>\necessario para o claude\agentes\02-SEPARADOR-PDF.md` |
 | 03 | Localizador/Roteador | `...\agentes\03-LOCALIZADOR-ROTEADOR.md` |
 | 04 | Especialista CONTÁBIL | `...\agentes\04-ESPECIALISTA-CONTABIL.md` |
 | 04b | Especialista FOLHA/SOCIETÁRIO | `...\agentes\04b-ESPECIALISTA-FOLHA-SOCIETARIO.md` |
@@ -180,9 +181,24 @@ Ação necessária que não cabe a nenhum agente desta tabela → não acontece.
 <procedimento titulo="Sequência">
 
 <fase n="0" titulo="Abertura">
-Registre `id_execucao`, `timestamp_inicio`, `modo`. Zere
-`ciclos_correcao`. Carregue Dicionário + manifesto existente. Em SIMULACAO, avise: nenhuma
-escrita é permitida.
+Registre `id_execucao`, `timestamp_inicio`, `modo`. Zere `ciclos_correcao`.
+
+**Resolva `<RAIZ_REGRAS>` primeiro**, com `git rev-parse --show-toplevel` a partir da pasta
+onde a sessão foi aberta. É de lá que saem Dicionário, agentes, subagentes e a planilha de
+cadastro — daqui em diante, todo caminho de regra neste documento é relativo a ela
+(Dicionário §1(a)). Caminho de dado (origem, `2026`, LOGS, MANIFESTO, BACKUP ROTINA,
+STAGING) continua absoluto no Drive, igual em produção e em teste.
+
+**Informe no relatório qual `<RAIZ_REGRAS>` foi usada**, sempre. É o que deixa evidente se
+aquela execução rodou com as regras de produção ou com as de um clone de teste — sem isso,
+dois relatórios de dias diferentes podem ter saído de regras diferentes sem ninguém notar.
+
+Se `<RAIZ_REGRAS>` não for um repositório git (comando falha), pare: `FALHA_DE_INFRAESTRUTURA`,
+motivo "sessão aberta fora do repositório de regras". Não tente adivinhar o caminho nem cair
+no caminho de produção por padrão — rodar com regra diferente da que o operador acha que
+está rodando é pior que não rodar.
+
+Carregue Dicionário + manifesto existente. Em SIMULACAO, avise: nenhuma escrita é permitida.
 </fase>
 
 <fase n="0-sync" titulo="Sincronização de agentes/manuais com o GitHub (procedimento mecânico, com Bash)">

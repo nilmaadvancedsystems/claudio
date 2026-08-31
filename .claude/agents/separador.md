@@ -12,7 +12,7 @@ recebe só os intervalos de página.
 
 ## Carregue
 
-Raiz: `G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\`
+Raiz: `<RAIZ_REGRAS>\`
 
 - `00-DICIONARIO-CANONICO.md`
 - `necessario para o claude\agentes\02-SEPARADOR-PDF.md`
