@@ -19,6 +19,8 @@
 !/.claude/
 !/.claude/commands/
 !/.claude/commands/*.md
+!/.claude/agents/
+!/.claude/agents/*.md
 !/.claude/settings.local.json
 !/MANUAIS/
 !/MANUAIS/*

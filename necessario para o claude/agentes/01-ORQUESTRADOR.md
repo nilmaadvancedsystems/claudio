@@ -22,7 +22,7 @@ conteúdo e decidir) só é necessário nas instruções 02, 03, 04, 05 e na Ver
 06 — é ali que vale a pena gastar tokens pensando.
 
 Carregue o Dicionário Canônico antes de qualquer coisa:
-`G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\00-DICIONARIO-CANONICO.md`
+`<RAIZ_REGRAS>\00-DICIONARIO-CANONICO.md`
 </papel>
 
 <entrada>
@@ -99,8 +99,8 @@ acumula contexto à toa. Se processar N itens na Fase 3/4, aplique a regra já c
 
 | # | Agente | Arquivo |
 |---|---|---|
-| 00 | Dicionário Canônico | `_CLAUDIO_CONTROLE\00-DICIONARIO-CANONICO.md` |
-| 02 | Separador de PDFs | `_CLAUDIO_CONTROLE\necessario para o claude\agentes\02-SEPARADOR-PDF.md` |
+| 00 | Dicionário Canônico | `<RAIZ_REGRAS>\00-DICIONARIO-CANONICO.md` |
+| 02 | Separador de PDFs | `<RAIZ_REGRAS>\necessario para o claude\agentes\02-SEPARADOR-PDF.md` |
 | 03 | Localizador/Roteador | `...\agentes\03-LOCALIZADOR-ROTEADOR.md` |
 | 04 | Especialista CONTÁBIL | `...\agentes\04-ESPECIALISTA-CONTABIL.md` |
 | 04b | Especialista FOLHA/SOCIETÁRIO | `...\agentes\04b-ESPECIALISTA-FOLHA-SOCIETARIO.md` |
@@ -145,24 +145,42 @@ Ação necessária que não cabe a nenhum agente desta tabela → não acontece.
 <procedimento titulo="Sequência">
 
 <fase n="0" titulo="Abertura">
-Registre `id_execucao`, `timestamp_inicio`, `modo`. Zere
-`ciclos_correcao`. Carregue Dicionário + manifesto existente. Em SIMULACAO, avise: nenhuma
-escrita é permitida.
+Registre `id_execucao`, `timestamp_inicio`, `modo`. Zere `ciclos_correcao`.
+
+**Resolva `<RAIZ_REGRAS>` primeiro**, com `git rev-parse --show-toplevel` a partir da pasta
+onde a sessão foi aberta. É de lá que saem Dicionário, agentes, subagentes e a planilha de
+cadastro — daqui em diante, todo caminho de regra neste documento é relativo a ela
+(Dicionário §1(a)). Caminho de dado (origem, `2026`, LOGS, MANIFESTO, BACKUP ROTINA,
+STAGING) continua absoluto no Drive, igual em produção e em teste.
+
+**Informe no relatório qual `<RAIZ_REGRAS>` foi usada**, sempre. É o que deixa evidente se
+aquela execução rodou com as regras de produção (`...\GUSTAVO\claudio`, branch `main`) ou
+com as de um clone de teste — sem isso, dois relatórios de dias diferentes podem ter saído
+de regras diferentes sem ninguém notar.
+
+Se `<RAIZ_REGRAS>` não for um repositório git (comando falha), pare:
+`FALHA_DE_INFRAESTRUTURA`, motivo "sessão aberta fora do repositório de regras". Não tente
+adivinhar o caminho — rodar com regra diferente da que o operador acha que está rodando é
+pior que não rodar.
+
+Carregue Dicionário + manifesto existente. Em SIMULACAO, avise: nenhuma escrita é permitida.
 </fase>
 
 <fase n="0-sync" titulo="Sincronização de agentes/manuais com o GitHub (procedimento mecânico, com Bash)">
-`_CLAUDIO_CONTROLE` (esta pasta) é também um repositório git, conectado ao remote
-`https://github.com/nilmaadvancedsystems/claudio.git` (branch `master`, tracking
-`origin/main`). Só o que está no `.gitignore` como liberado é versionado: Dicionário,
-agentes (`necessario para o claude/agentes/*.md`), `.claude/commands`, `MANUAIS/` e
-`necessario para o claude/dados agentes/` (planilha de cadastro, exemplos de referência,
+`<RAIZ_REGRAS>` é um repositório git conectado ao remote
+`https://github.com/nilmaadvancedsystems/claudio.git` — produção em
+`C:\Users\DPTO FISCAL 004\GUSTAVO\claudio` (branch `main`), fora do Google Drive de
+propósito (sincronização de Drive corrompe repositório git). Só o que está no `.gitignore`
+como liberado é versionado: Dicionário, agentes
+(`necessario para o claude/agentes/*.md`), `.claude/commands`, `.claude/agents`, `MANUAIS/`
+e `necessario para o claude/dados agentes/` (planilha de cadastro, exemplos de referência,
 logo). `LOGS`, `MANIFESTO`, `BACKUP ROTINA`, `STAGING`, `STAGING-SIMULACAO` e `HISTORICO`
-**nunca** são versionados — são runtime/quarentena local, mudam a cada execução, e
+**nunca** são versionados — ficam no Drive como dado de execução, e
 `cadastro_empresas_unificado.xlsx`/`EXEMPLOS DE ARQUIVOS` contêm dado real de cliente
 (liberados no GitHub por decisão explícita do responsável, repositório privado — não
 remova essa liberação do `.gitignore` sem confirmar de novo).
 
-Antes de carregar Dicionário/agentes: rode `git pull` nesta pasta. Isso garante que você
+Antes de carregar Dicionário/agentes: rode `git pull` em `<RAIZ_REGRAS>`. Isso garante que você
 está lendo a versão mais recente, inclusive se alguém editou um agente direto pelo GitHub
 desde a última execução.
 
@@ -172,8 +190,8 @@ desde a última execução.
   comportamento de sempre, antes de existir o GitHub), registre como pendência no
   relatório ("sincronização com GitHub falhou: [motivo] — rodou com a versão local
   em cache") e siga a Fase 0-purga normalmente.
-- Conflito de merge (alguém editou local E remoto ao mesmo tempo, caso raro já que só
-  o Orquestrador costuma tocar nesta pasta) → **pare e escale ao humano**: não tente
+- Conflito de merge (alguém editou local E remoto ao mesmo tempo) → **pare e escale ao
+  humano**: não tente
   resolver merge sozinho nem escolha um lado arbitrariamente — isso é decisão de quem
   é dono do conteúdo divergente. Registre como `FALHA_DE_INFRAESTRUTURA` se acontecer
   antes da Fase 1 (nenhum item ainda processado, seguro abortar sem perda).

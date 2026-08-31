@@ -23,7 +23,7 @@ Pastas em `2026\[NÚMERO] - [RAZÃO SOCIAL]`. Match sempre pelo código numéric
 
 **Fonte única** (desde 26/08/2026 — substitui as antigas `razão social.PDF` +
 `nome fantasia.PDF` + `regime.xls`, arquivadas em `HISTORICO\fontes-cliente-antigas-pre-unificacao\`):
-`_CLAUDIO_CONTROLE\necessario para o claude\dados agentes\cadastro_empresas_unificado.xlsx`.
+`<RAIZ_REGRAS>\necessario para o claude\dados agentes\cadastro_empresas_unificado.xlsx`.
 **Carregue uma vez só, na primeira vez que precisar identificar um cliente ou regime nesta
 execução, e reaproveite pra todos os itens seguintes** — a planilha não muda no meio da
 execução, reler a cada item é desperdício.

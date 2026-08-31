@@ -7,6 +7,31 @@ Documento de referência compartilhado. Todo agente carrega este documento antes
 </papel>
 
 <secao n="1" titulo="CAMINHOS FIXOS">
+⚠️ **Duas famílias de caminho, nunca as confunda:**
+
+**(a) Caminhos de REGRA — relativos a `<RAIZ_REGRAS>`.** `<RAIZ_REGRAS>` é a raiz do
+repositório de onde a sessão foi aberta, resolvida uma vez na Fase 0 do Orquestrador
+(`git rev-parse --show-toplevel`). Em produção é
+`C:\Users\DPTO FISCAL 004\GUSTAVO\claudio` (branch `main`); num clone de teste é a pasta do
+clone. **Nunca escreva caminho absoluto para carregar uma regra** — isso faz um clone de
+teste carregar as regras de produção e o teste deixa de testar qualquer coisa.
+
+| Papel | Caminho |
+|---|---|
+| Dicionário Canônico (este arquivo) | `<RAIZ_REGRAS>\00-DICIONARIO-CANONICO.md` |
+| Agentes (prompts) | `<RAIZ_REGRAS>\necessario para o claude\agentes\` |
+| Subagentes (Claude Code) | `<RAIZ_REGRAS>\.claude\agents\` |
+| Dados de referência (planilha de cliente, logo) | `<RAIZ_REGRAS>\necessario para o claude\dados agentes\` |
+| Exemplos de Referência | `<RAIZ_REGRAS>\necessario para o claude\dados agentes\EXEMPLOS DE ARQUIVOS\` |
+| Manuais | `<RAIZ_REGRAS>\MANUAIS\` |
+
+**(b) Caminhos de DADO — absolutos, sempre no Drive, iguais em produção e em teste.** São
+os documentos reais dos clientes e o estado da rotina. Ficam no Drive de propósito: são
+sincronizados, têm backup e continuam acessíveis por outra pessoa se este PC falhar — o
+`MANIFESTO` é o que evita rearquivar e permite auditoria, e `BACKUP ROTINA` guarda os
+originais dos clientes durante os 7 dias antes da exclusão definitiva. Nunca mova essas
+pastas para disco local sem backup.
+
 Papel
 	Caminho
 	Origem
@@ -27,22 +52,32 @@ Papel
 	G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\MANIFESTO\manifesto.jsonl
 	Logs de execução
 	G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\LOGS
-	Dados de referência (planilhas de cliente)
-	G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\necessario para o claude\dados agentes
-	Exemplos de Referência
-	G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\necessario para o claude\dados agentes\EXEMPLOS DE ARQUIVOS
-	Agentes (prompts locais)
-	G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\necessario para o claude\agentes
 	
 
-Regra de versionamento (desde 31/08/2026): `_CLAUDIO_CONTROLE` é também um repositório
-git, remote `https://github.com/nilmaadvancedsystems/claudio.git`. Versionados: Dicionário,
-`necessario para o claude/agentes/*.md`, `.claude/commands`, `MANUAIS/` e
+Regra de versionamento (desde 31/08/2026): as regras vivem num repositório git, remote
+`https://github.com/nilmaadvancedsystems/claudio.git`. Versionados: Dicionário,
+`necessario para o claude/agentes/*.md`, `.claude/commands`, `.claude/agents`, `MANUAIS/` e
 `necessario para o claude/dados agentes/` (repositório privado — inclui dado real de
 cliente por decisão explícita do responsável). Nunca versionados (`.gitignore`): `LOGS`,
-`MANIFESTO`, `BACKUP ROTINA`, `STAGING`, `STAGING-SIMULACAO`, `HISTORICO` — runtime/
-quarentena local, sem relação com o GitHub. Sincronização (`git pull`) acontece na Fase
+`MANIFESTO`, `BACKUP ROTINA`, `STAGING`, `STAGING-SIMULACAO`, `HISTORICO` — são dado de
+execução no Drive, sem relação com o GitHub. Sincronização (`git pull`) acontece na Fase
 0-sync do Orquestrador, antes de carregar qualquer agente. Ver 01-ORQUESTRADOR.md.
+
+Regra de localização do repositório (desde 31/08/2026): **o repositório de regras não fica
+dentro do Google Drive.** Produção roda de `C:\Users\DPTO FISCAL 004\GUSTAVO\claudio`
+(branch `main`) e teste de `C:\Users\DPTO FISCAL 004\GUSTAVO\claudio-teste` (branch
+`teste`), ambos em disco local. Motivo: a sincronização do Drive mexe em arquivo enquanto o
+git está trabalhando, o que corrompe repositório — e o próprio Orquestrador já convive com
+esse efeito na Fase 8 (pasta vazia que o Drive recria sozinho). `_CLAUDIO_CONTROLE` no
+Drive continua existindo, mas só como área de dados: `LOGS`, `MANIFESTO`,
+`BACKUP ROTINA`, `STAGING`, `STAGING-SIMULACAO`, `HISTORICO`. Não há mais cópia das regras
+lá — se encontrar uma, é resíduo, não fonte: a fonte é sempre `<RAIZ_REGRAS>`.
+
+Regra de ambiente de teste: **produção fica permanentemente na branch `main` — nunca troque
+a branch dela para testar.** Regra em teste roda do clone `claudio-teste`, aberto como
+projeto próprio do Claude Code. Teste sempre em `SIMULACAO`: o clone enxerga os documentos
+reais (caminho de dado é o mesmo), então `PRODUCAO` a partir dele arquivaria pra valer com
+regra ainda não aprovada.
 
 Regra de varredura da origem: a varredura é RECURSIVA — entra em qualquer subpasta dentro da origem, em qualquer profundidade, e trata cada arquivo encontrado como um item próprio (arquivo_original), igual a um arquivo solto na raiz. A estrutura de subpasta não importa para a classificação — o Roteador e os Especialistas decidem pelo conteúdo do documento, não pelo caminho onde ele estava. Excluídas da varredura, em qualquer profundidade: a própria pasta NÃO IDENTIFICADOS, CLAUDE FAVOR NÃO MEXER (e tudo dentro dela, inclusive _CLAUDIO_CONTROLE) e qualquer pasta iniciada por _.
 
