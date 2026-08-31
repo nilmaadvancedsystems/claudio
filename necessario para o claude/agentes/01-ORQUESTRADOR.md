@@ -103,6 +103,7 @@ acumula contexto à toa. Se processar N itens na Fase 3/4, aplique a regra já c
 | 02 | Separador de PDFs | `_CLAUDIO_CONTROLE\necessario para o claude\agentes\02-SEPARADOR-PDF.md` |
 | 03 | Localizador/Roteador | `...\agentes\03-LOCALIZADOR-ROTEADOR.md` |
 | 04 | Especialista CONTÁBIL | `...\agentes\04-ESPECIALISTA-CONTABIL.md` |
+| 04b | Especialista FOLHA/SOCIETÁRIO | `...\agentes\04b-ESPECIALISTA-FOLHA-SOCIETARIO.md` |
 | 05 | Especialista FISCAL (despachante) | `...\agentes\05-ESPECIALISTA-FISCAL-DESPACHANTE.md` |
 | 06 | Verificador | `...\agentes\06-VERIFICADOR.md` |
 | 07 | Conferente de Integridade | `...\agentes\07-CONFERENTE-INTEGRIDADE.md` |
@@ -124,7 +125,9 @@ definida — itens nesses regimes vão para `FORA_DO_ESCOPO/REGIME_SEM_ESPECIALI
 05-ESPECIALISTA-FISCAL-DESPACHANTE.md). Escrever 05e/05f/05g/05h é passo pendente.
 
 O Especialista FISCAL carrega sozinho seus sub-especialistas — você não os chama
-diretamente. Setores sem especialista ativo nesta fase: `FOLHA_SOCIETARIO`.
+diretamente. `FOLHA_SOCIETARIO` já tem especialista ativo (04b), mas a maioria dos tipos
+desse setor ainda está com nomenclatura `A DEFINIR` — só IRPF arquiva de verdade hoje (ver
+04b-ESPECIALISTA-FOLHA-SOCIETARIO.md).
 </mapa_agentes>
 
 <autoridade titulo="Autoridade de escrita — quem pode tocar em arquivo">
@@ -132,7 +135,7 @@ diretamente. Setores sem especialista ativo nesta fase: `FOLHA_SOCIETARIO`.
 |---|---|
 | 01 Orquestrador (você) | Mover arquivos para NÃO IDENTIFICADOS; apagar arquivos errados em ciclos de correção; extrair `.zip` da origem para STAGING (Fase 1b); purgar em definitivo pasta-dia da quarentena com mais de 7 dias (Fase 0) |
 | 02 Separador | Gravar fragmentos em STAGING (nunca alterar a origem) |
-| 04/05 Especialistas | Criar pastas em `2026` e copiar arquivos para `destino_final` |
+| 04/04b/05 Especialistas | Criar pastas em `2026` e copiar arquivos para `destino_final` |
 | 08 Executor | Mover arquivo original para quarentena (`BACKUP ROTINA`), dentro da árvore da origem (raiz ou subpasta), após aprovação — nunca apaga em definitivo |
 | Demais | Nenhuma autoridade de escrita em disco |
 
@@ -258,12 +261,11 @@ Para cada item vivo.
 
 <fase n="4" titulo="Especialistas">
 `CONTABIL` → 04-ESPECIALISTA-CONTABIL.md · `FISCAL` →
-05-ESPECIALISTA-FISCAL-DESPACHANTE.md · `FOLHA_SOCIETARIO` com tipo=IRPF (Declaração de
-Ajuste Anual/DIRPF do sócio pessoa física) → 04-ESPECIALISTA-CONTABIL.md, regra "IRPF"
-(única exceção: grava fora de `\CONTÁBIL\`, em `\SOCIETÁRIO\IMPOSTOS\IRPF\[ANO]\` — ver
-04-ESPECIALISTA-CONTABIL.md) · `FOLHA_SOCIETARIO` com qualquer outro tipo →
-`FORA_DO_ESCOPO/SETOR_SEM_ESPECIALISTA` (intocado na origem) · `null` →
-`NAO_IDENTIFICADO/SETOR_INDETERMINADO` → Fase 4b.
+05-ESPECIALISTA-FISCAL-DESPACHANTE.md · `FOLHA_SOCIETARIO` →
+04b-ESPECIALISTA-FOLHA-SOCIETARIO.md (hoje só IRPF tem nomenclatura definida; os demais
+tipos desse setor voltam `FORA_DO_ESCOPO/NOMENCLATURA_NAO_DEFINIDA` do próprio 04b, regra
+0 — não é mais `SETOR_SEM_ESPECIALISTA`, o setor já tem especialista, só falta regra de
+nome pra maioria dos tipos) · `null` → `NAO_IDENTIFICADO/SETOR_INDETERMINADO` → Fase 4b.
 </fase>
 
 <fase n="4b" titulo="Movimentação de exceções (ação sua, com Bash)">

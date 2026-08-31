@@ -268,7 +268,7 @@ E103 | PLANILHAS_DIVERGENTES | As duas fontes de cliente discordam em código/CN
 E104 | REGIME_INDEFINIDO | Documento fiscal de cliente sem regime tributário cadastrado | Cadastrar regime na planilha
 E105 | SETOR_INDETERMINADO | Não deu pra saber se é Contábil, Fiscal ou Folha/Societário | Revisar manualmente o tipo de documento
 E106 | CONFIANCA_ABAIXO_DO_LIMIAR | O sistema teve dúvida real (abaixo de 85% de certeza) | Revisar manualmente
-E107 | SETOR_SEM_ESPECIALISTA | Setor identificado, mas ainda sem regra de arquivamento (Folha/Societário) | Nenhuma — aguardando regra ser criada
+E107 | SETOR_SEM_ESPECIALISTA | Setor identificado, mas ainda sem nenhum especialista designado | Nenhuma — aguardando especialista ser criado (sem gatilho ativo hoje: os 3 setores conhecidos — CONTABIL, FISCAL, FOLHA_SOCIETARIO — já têm especialista; ver NOMENCLATURA_NAO_DEFINIDA/E203 para tipo de documento específico ainda sem regra de nome dentro de um setor que já tem especialista)
 E108 | REGIME_SEM_ESPECIALISTA | Regime identificado (MEI/Física/Isenta/Doméstica), mas ainda sem regra de arquivamento | Nenhuma — aguardando regra ser criada
 E109 | VOLUME_NAO_IDENTIFICADO_INCOMUM | Esta execução gerou muito mais NAO_IDENTIFICADO que o normal — possível bug na classificação, não erro de documento individual | **Investigar** — revisar itens não identificados desta execução e a regra de roteamento antes da próxima execução
 E201 | VOCABULARIO_AUSENTE | Banco, fornecedor ou termo não reconhecido | Adicionar ao vocabulário do Dicionário, se for caso recorrente
