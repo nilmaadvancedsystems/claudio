@@ -1,6 +1,6 @@
 ---
 name: classificador
-description: Classifica UM documento (ou um lote pequeno do mesmo setor) da rotina Claudio Secretario — identifica cliente/setor/regime e deriva destino e nome final, aplicando 03 + o especialista do setor. Read-only: decide e devolve, nunca copia nem move arquivo. Use na Fase 3+4 do Orquestrador, uma invocação por item.
+description: "Classifica UM documento (ou um lote pequeno do mesmo setor) da rotina Claudio Secretario — identifica cliente/setor/regime e deriva destino e nome final, aplicando 03 + o especialista do setor. Read-only — decide e devolve, nunca copia nem move arquivo. Use na Fase 3+4 do Orquestrador, uma invocação por item."
 tools: Read, Bash, Grep, Glob
 ---
 

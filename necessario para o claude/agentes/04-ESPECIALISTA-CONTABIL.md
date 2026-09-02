@@ -57,6 +57,7 @@ Todo caminho abaixo é relativo a `<cliente_destino>\CONTÁBIL\`.
 | Comprovantes | `...\COMPROVANTES\[BANCO]\` | `Comprovantes [MÊS E ANO].pdf` | banco+competência |
 | Maquininhas | `...\MAQUININHAS\[OPERADORA]\` | `[MÊS E ANO].pdf` (relatório) — se a operadora também exportar a mesma competência em `.xlsx` (planilha do mesmo relatório, mesmo banco/operadora/competência do `.pdf` par), arquivar junto na mesma pasta como `[MÊS E ANO].xlsx` | banco+competência |
 | Op. Crédito | `OPERAÇÕES DE CRÉDITO\[ANO]\[TIPO]\[BANCO]\[Nº CONTRATO]\` (TIPO=CONSÓRCIO\|EMPRÉSTIMO\|FINANCIAMENTO) | Contrato: `CONTRATO.pdf`; Extrato: `EXTRATO [MÊS/ANO ini] [MÊS/ANO fim].pdf` | tipo+banco+nº contrato (+período p/ extrato) |
+| Op. Câmbio | `OPERAÇÕES DE CÂMBIO\[ANO]\[BANCO]\[Nº CONTRATO]\` | Contrato: `CONTRATO.pdf`; Comprovante: `COMPROVANTE [DATA].pdf` | banco+nº contrato (+data p/ comprovante) |
 | Pag. Fornecedores — Fatura | `PAGAMENTOS DE FORNECEDORES\[ANO]\[MÊS]\[FORNECEDOR]\` | `Fatura_[FORNECEDOR]_R$[VALOR]_[MÊS E ANO].pdf` | fornecedor+valor+competência |
 | Pag. Fornec. — Relatório Analítico | idem | **nome original preservado**, `nome_original_preservado=true` | nenhum |
 | Recebimento de Clientes | `RECEBIMENTO DE CLIENTES\[ANO]\[MÊS]\` | `[BANCO] [MÊS E ANO].pdf` | banco+competência |
@@ -75,11 +76,13 @@ Todo caminho abaixo é relativo a `<cliente_destino>\CONTÁBIL\`.
 
 **Colisão de maior risco — Bancário × Recebimento de Clientes** (nomes finais quase idênticos): título "Relatório de Recebimentos"/"Títulos Liquidados"/"Relatório de Cobrança"/"Cobrança — Títulos Baixados" → Recebimento; "Extrato de Conta"/"Extrato de Conta Corrente"/"Extrato Financeiro" → Bancários. Dúvida → `NAO_IDENTIFICADO/COLISAO_BANCARIO_RECEBIMENTO`. Nunca decidir por extensão/emissor/nome do arquivo original.
 
+**Operações de Câmbio** (contrato/comprovante de compra ou venda de moeda estrangeira — comum em cliente que importa, exporta, ou recebe/envia pagamento internacional): reconheça pelo título "Contrato de Câmbio"/"Boleto de Câmbio" (com número de contrato, taxa e valor em moeda estrangeira) → `CONTRATO.pdf`; título "Comprovante de Câmbio"/"Nota de Câmbio"/"Confirmação de Câmbio" (documento de liquidação da operação, com data) → `COMPROVANTE [DATA].pdf`, `[DATA]` = data da liquidação/operação (Dicionário §2, DD-MM-AAAA), nunca a data de download. Mesmo `[Nº CONTRATO]` de câmbio pode gerar contrato + um ou mais comprovantes (liquidação em parcelas) — todos na mesma pasta `[Nº CONTRATO]\`. Nº do contrato ilegível → não force um destino: `NAO_IDENTIFICADO/CONTRATO_SEM_NUMERO`.
+
 **Fornecedor** (§5.2 Dicionário): maiúsculas, remover sufixo societário (LTDA/ME/EPP/EIRELI/S.A....), remover pontuação, colapsar espaços. Antes de criar pasta nova, normalizar pastas existentes em `[ANO]\[MÊS]\` e reutilizar se coincidir. Nome ilegível → `VOCABULARIO_AUSENTE`.
 
 **Duplicidade** (antes de gravar): mesmo nome+hash → `DUPLICADO/IDENTICO_JA_ARQUIVADO`, não grava. Mesmo nome+hash diferente → grava com sufixo `(N)` (Dicionário §2), motivo `CONFLITO_MESMO_NOME_CONTEUDO_DIFERENTE` fica só informativo no item, não bloqueia. Hash já no manifesto → `JA_ARQUIVADO_ANTERIORMENTE`, sem recopiar. Movimentação para NÃO IDENTIFICADOS é do Orquestrador (fase 4b), você só marca.
 
-**Dados ausentes por sub-regra** → `NAO_IDENTIFICADO` com motivo nomeando o campo: Extratos `BANCO_AUSENTE`/`COMPETENCIA_AUSENTE` · Op.Crédito `CONTRATO_SEM_NUMERO`/`TIPO_AUSENTE`/`BANCO_AUSENTE` · Fornecedores `VOCABULARIO_AUSENTE` · Livros `LIVRO_SEM_NUMERO`. Nunca inventar valor/data de sistema.
+**Dados ausentes por sub-regra** → `NAO_IDENTIFICADO` com motivo nomeando o campo: Extratos `BANCO_AUSENTE`/`COMPETENCIA_AUSENTE` · Op.Crédito `CONTRATO_SEM_NUMERO`/`TIPO_AUSENTE`/`BANCO_AUSENTE` · Op.Câmbio `CONTRATO_SEM_NUMERO`/`BANCO_AUSENTE` · Fornecedores `VOCABULARIO_AUSENTE` · Livros `LIVRO_SEM_NUMERO`. Nunca inventar valor/data de sistema.
 </regras>
 
 </agente>

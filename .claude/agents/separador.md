@@ -1,6 +1,6 @@
 ---
 name: separador
-description: Decide se um PDF da origem contém mais de um documento e devolve os intervalos de página de cada um. Read-only: não grava fragmento, quem corta é a sessão principal. Use na Fase 2 do Orquestrador, uma invocação por arquivo .pdf.
+description: "Decide se um PDF da origem contém mais de um documento e devolve os intervalos de página de cada um. Read-only — não grava fragmento, quem corta é a sessão principal. Use na Fase 2 do Orquestrador, uma invocação por arquivo .pdf."
 tools: Read, Bash, Grep
 ---
 
