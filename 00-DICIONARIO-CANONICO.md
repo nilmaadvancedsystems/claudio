@@ -150,7 +150,7 @@ renumeração), não bloqueio — ver §4.4 E402.
 </secao>
 
 <secao n="2.1" titulo="REGIME — enum fechado e fonte de dados">
-Fonte (desde 26/08/2026): G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\necessario para o claude\dados agentes\cadastro_empresas_unificado.xlsx
+Fonte (desde 26/08/2026, caminho atualizado 31/08/2026 — ver §1(a)): `<RAIZ_REGRAS>\necessario para o claude\dados agentes\cadastro_empresas_unificado.xlsx`
 (colunas: Código, Razão Social, Nome Fantasia, CNPJ, Insc.Estadual, Telefone, Enquadramento — fonte
 única de cliente+regime, substitui as antigas razão social.PDF + nome fantasia.PDF + regime.xls,
 arquivadas em HISTORICO\fontes-cliente-antigas-pre-unificacao\. `Código` é a chave de
@@ -276,7 +276,7 @@ Preenchem o campo motivo, obrigatório sempre que status ≠ ARQUIVADO. Esta lis
 
 Roteamento: CLIENTE_NAO_LOCALIZADO · CLIENTE_AMBIGUO · PLANILHAS_DIVERGENTES · REGIME_INDEFINIDO · SETOR_INDETERMINADO · CONFIANCA_ABAIXO_DO_LIMIAR · SETOR_SEM_ESPECIALISTA · REGIME_SEM_ESPECIALISTA · VOLUME_NAO_IDENTIFICADO_INCOMUM (nível execução, não item — ver §3)
 
-Classificação: VOCABULARIO_AUSENTE · TIPO_INCOMPATIVEL_COM_REGIME · NOMENCLATURA_NAO_DEFINIDA · DESTINO_NAO_DEFINIDO · EMITENTE_INDETERMINADO · COLISAO_BANCARIO_RECEBIMENTO · COLISAO_DAS_DAE · COLISAO_GUIAS_FEDERAL_ESTADUAL
+Classificação: VOCABULARIO_AUSENTE · TIPO_INCOMPATIVEL_COM_REGIME · NOMENCLATURA_NAO_DEFINIDA · DESTINO_NAO_DEFINIDO · EMITENTE_INDETERMINADO · COLISAO_BANCARIO_RECEBIMENTO · COLISAO_DAS_DAE · COLISAO_GUIAS_FEDERAL_ESTADUAL · VINCULO_SOCIO_EMPRESA_INDISPONIVEL (04b/IRPF — pendência de dado, não de regra, ver §2.1)
 
 Dados ausentes: CONTRATO_SEM_NUMERO · LIVRO_SEM_NUMERO · COMPETENCIA_AUSENTE · VALOR_AUSENTE · BANCO_AUSENTE · TIPO_AUSENTE · CONTEUDO_ILEGIVEL
 
@@ -316,6 +316,7 @@ E205 | EMITENTE_INDETERMINADO | Não deu pra saber quem emitiu o documento | Rev
 E206 | COLISAO_BANCARIO_RECEBIMENTO | Dúvida entre extrato bancário e recebimento de cliente | Revisar manualmente pelo título do documento
 E207 | COLISAO_DAS_DAE | Dúvida entre guia DAS e guia DAE | Revisar manualmente pelo órgão emissor
 E208 | COLISAO_GUIAS_FEDERAL_ESTADUAL | Dúvida entre DARF, DAE e DAPI | Revisar manualmente pelo órgão emissor
+E209 | VINCULO_SOCIO_EMPRESA_INDISPONIVEL | IRPF do sócio identificado, mas a planilha de cadastro não tem CPF de sócio pra achar a empresa certa | Cadastrar coluna de CPF dos sócios na planilha — pendência de dado, não de regra
 E301 | CONTRATO_SEM_NUMERO | Número do contrato não aparece no documento | Revisar o documento manualmente
 E302 | LIVRO_SEM_NUMERO | Número do livro contábil não aparece no documento | Revisar o documento manualmente
 E303 | COMPETENCIA_AUSENTE | Mês/ano de referência não aparece no documento | Revisar o documento manualmente
@@ -519,9 +520,19 @@ Staging de simulação: os fragmentos gravados em STAGING-SIMULACAO durante uma 
 <secao n="8" titulo="MANIFESTO — ESTRUTURA">
 manifesto.jsonl, append-only, uma linha JSON por arquivo arquivado:
 
-{"hash_origem":"<sha256>","hash_original":"<sha256>","nome_original":"<nome>","destino_final":"<caminho>","nome_final":"<nome>","id_execucao":"<id>","timestamp":"<ISO-8601>"}
+{"hash_origem":"<sha256>","hash_original":"<sha256>","nome_original":"<nome>","destino_final":"<caminho>","nome_final":"<nome>","id_execucao":"<id>","timestamp":"<ISO-8601>","pai_completo":true|false}
 
 Serve para: detectar reprocessamento após queda, evitar recópia, e permitir auditoria histórica de duplicidade contra execuções anteriores.
+
+`pai_completo` (desde 31/08/2026): `true` só quando `hash_origem == hash_original` — ou seja, o
+`arquivo_original` nunca foi separado (PDF composto) nem extraído de `.zip`, então esta única
+linha já corresponde ao arquivo inteiro. `false` quando este item é um fragmento ou um arquivo
+extraído de `.zip` — nesse caso, o `arquivo_original` só está de fato arquivado quando **todos**
+os fragmentos/extraídos dele tiverem, cada um, sua própria linha no manifesto. Existe porque
+bater um hash contra o manifesto não prova sozinho que o pai inteiro foi resolvido: um pai
+separado em 3 fragmentos, com só 2 arquivados, não pode ser tratado como
+`JA_ARQUIVADO_ANTERIORMENTE` na Fase 1 nem purgado na Fase 0 — ver Fase 1 e Fase 0-purga em
+01-ORQUESTRADOR.md.
 </secao>
 
 <secao n="9" titulo="LOG DE PURGAS DA QUARENTENA — ESTRUTURA">
@@ -530,14 +541,20 @@ uma linha por pasta-dia de `BACKUP ROTINA` avaliada na Fase 0 de cada execução
 PRODUCAO (não só as purgadas — toda avaliação, inclusive adiada ou inválida, pra manter
 histórico completo):
 
-{"data_pasta":"<DD-MM-AAAA>","timestamp_avaliacao":"<ISO-8601>","arquivos_count":<N>,"resultado":"PURGADA|ADIADA|DATA_INVALIDA","adiamentos_acumulados":<N>,"id_execucao":"<id>"}
+{"data_pasta":"<DD-MM-AAAA>","timestamp_avaliacao":"<ISO-8601>","arquivos_count":<N>,"resultado":"PURGADA|ADIADA|DATA_INVALIDA|BLOQUEADA","adiamentos_acumulados":<N>,"id_execucao":"<id>"}
 
 Serve para: dar ao disjuntor de volume (§3) uma base real de comparação. Antes de decidir
 se a pasta-dia de hoje é "volume incomum", leia as últimas 5 linhas com
 `resultado=PURGADA` e calcule a média de `arquivos_count` entre elas — sem histórico
 suficiente (menos de 5 entradas), use o mínimo absoluto de 30 arquivos como limiar (§3).
 Depois de decidir, grave uma linha nova para a pasta-dia avaliada, mesmo se o resultado for
-`ADIADA` ou `DATA_INVALIDA` (essas não entram na média, mas registram o histórico).
+`ADIADA`, `DATA_INVALIDA` ou `BLOQUEADA` (essas não entram na média, mas registram o histórico).
+
+`BLOQUEADA` (desde 31/08/2026): a pasta-dia teria idade suficiente para purgar, mas pelo menos
+um `destino_final\nome_final` listado em `<pasta-dia>\_quarentena.jsonl` não pôde ser confirmado
+em disco (não existe, ou existe com 0 bytes) — ver Fase 0-purga em 01-ORQUESTRADOR.md. Purgar
+uma pasta-dia sem essa confirmação apagaria em definitivo o único original de um documento cuja
+cópia pode nunca ter chegado a existir de verdade no destino. Motivo do item: `DESTINO_NAO_CONFIRMAVEL`.
 
 Rotação: mesma regra do manifesto (§1 Rotação do manifesto, aplicada no Orquestrador) —
 na primeira execução de um ano novo, `purgas.jsonl` atual vira `purgas-[ANO_ANTERIOR].jsonl`
@@ -551,12 +568,18 @@ históricos, então a rotação nunca afeta essa conta.
 execução, um arquivo por execução — não um único arquivo global), append-only, uma linha
 por item movido para `NAO_IDENTIFICADO`/`DUPLICADO` naquela execução:
 
-{"arquivo":"<nome do arquivo movido>","status":"NAO_IDENTIFICADO|DUPLICADO","motivo":"<motivo>","cliente_tentativa":"<cliente_id ou null>","id_execucao":"<id>","timestamp":"<ISO-8601>"}
+{"arquivo":"<nome do arquivo movido>","caminho_relativo":"<caminho dentro da origem, sem o nome do arquivo>","status":"NAO_IDENTIFICADO|DUPLICADO","motivo":"<motivo>","cliente_tentativa":"<cliente_id ou null>","id_execucao":"<id>","timestamp":"<ISO-8601>"}
 
 Serve para: permitir que qualquer pessoa abrindo a pasta `NÃO IDENTIFICADOS\<id_execucao>\`
 entenda, sem procurar relatório antigo, por que cada arquivo ali está sem classificar. Não
 precisa de rotação — cada execução já tem sua própria subpasta, o log nasce e morre com ela
 (inclusive se a subpasta um dia for arquivada/limpa manualmente pelo responsável).
+
+`caminho_relativo` (desde 31/08/2026): o subcaminho do arquivo dentro da origem, sem o nome
+final — mesmo campo/motivo já usado na quarentena (§1, Regra de quarentena: "evita colisão de
+nome entre clientes diferentes movidos no mesmo dia"). NÃO IDENTIFICADOS também recebe arquivo
+de mais de uma origem/cliente na mesma execução; sem preservar esse caminho, dois arquivos de
+nome igual vindos de subpastas diferentes colidem — ver Fase 4b em 01-ORQUESTRADOR.md.
 </secao>
 
 <secao n="11" titulo="LOG DE QUALIDADE DE ROTEAMENTO — ESTRUTURA">

@@ -30,7 +30,7 @@ Aplique as regras do 02: separe só com confiança ≥0.90; volume de páginas s
 justifica corte; na dúvida não corta (corte errado é pior que adiar).
 
 Antes de devolver, confirme que a união dos intervalos cobre 100% do original, sem lacuna e
-sem sobreposição. Não fechou → devolva `PDF_COMPOSTO_NAO_SEPARADO`, sem intervalos.
+sem sobreposição. Não fechou → devolva `resultado_separacao="nao_separado"`, sem intervalos.
 
 **Não grave fragmento em STAGING** — você devolve os intervalos, o corte físico é feito em
 lote pela sessão principal (é operação mecânica, não precisa de julgamento).
@@ -38,10 +38,17 @@ lote pela sessão principal (é operação mecânica, não precisa de julgamento
 ## Saída — só isto
 
 ```json
-{"id_item":"","status":"separado|mantido_integro|PDF_COMPOSTO_NAO_SEPARADO",
+{"id_item":"","resultado_separacao":"separado|mantido_integro|nao_separado",
  "paginas":[[1,3],[4,6]],"total_paginas_original":6,"confianca":0.0,"motivo":null}
 ```
 
-`paginas` é `null` em `mantido_integro` e em `PDF_COMPOSTO_NAO_SEPARADO`. `motivo`
-obrigatório quando não separou por ambiguidade — descreva qual foi a ambiguidade, não
+O campo se chama `resultado_separacao`, não `status` — os três valores acima são controle de
+fluxo desta fase, não fazem parte do enum fechado de `status` do Dicionário §4.1 (que não
+tem "separado" nem "mantido_integro"). Devolver isso no campo `status` do item é exatamente
+o tipo de mistura de vocabulário que o Dicionário proíbe (§4). A sessão principal traduz
+`resultado_separacao` pro `status` real do item (`PENDENTE` pros dois primeiros casos,
+`PDF_COMPOSTO_NAO_SEPARADO` pro terceiro).
+
+`paginas` é `null` em `mantido_integro` e em `nao_separado`. `motivo` obrigatório quando
+`resultado_separacao="nao_separado"` por ambiguidade — descreva qual foi a ambiguidade, não
 "não identificado" genérico.

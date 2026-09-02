@@ -11,7 +11,7 @@ Determina cliente, setor, regime de um item. Não renomeia/copia/move/cria pasta
 </entrada>
 
 <saida>
-`{id_item, arquivo_original, hash_original, arquivo_trabalho, paginas_origem, hash_origem, cliente_id, cliente_destino, pasta_cliente_existe, regime, setor, confianca, status, motivo}` — todos campos sempre presentes, ausência=`null` nunca omissão. `pasta_cliente_existe` sempre presente (true normal / false só no fallback §2 — omitir faz o especialista pular a criação em silêncio). `hash_original` devolvido igual.
+`{id_item, arquivo_original, hash_original, arquivo_trabalho, paginas_origem, hash_origem, cliente_id, cliente_destino, pasta_cliente_existe, cnpj_documento, regime, setor, confianca, status, motivo}` — todos campos sempre presentes, ausência=`null` nunca omissão. `pasta_cliente_existe` sempre presente (true normal / false só no fallback §2 — omitir faz o especialista pular a criação em silêncio). `cnpj_documento` = CNPJ/CPF normalizado (só dígitos) que você usou pra achar o cliente na regra 1, `null` se o documento não trouxer nenhum legível — usado depois pra reconfirmar criação de pasta nova. `hash_original` devolvido igual.
 </saida>
 
 <nunca_faz>
@@ -42,9 +42,26 @@ execução, reler a cada item é desperdício.
 dígitos, ou vice-versa; comparar sem normalizar gera falso `CLIENTE_NAO_LOCALIZADO`.
 Clientes Pessoa Física têm CPF (11 dígitos) na coluna CNPJ, não confundir com CNPJ inválido.
 
-- Ordem: CNPJ no doc > Inscrição Estadual > nome exato e único (ambíguo → `CLIENTE_AMBIGUO`).
+**Documento com mais de um CNPJ** (comum: extrato bancário do cliente citando CNPJ do banco;
+nota fiscal citando emitente e destinatário): o cliente é sempre o CNPJ no papel de
+**destinatário/sacado/tomador/titular da conta** — nunca o emitente/fornecedor/banco —,
+exceto documento fiscal emitido pelo próprio cliente (05d §1, onde o emitente É o cliente).
+Dois CNPJs presentes, cada um casando com uma linha diferente da planilha, e o papel de cada
+um não estiver explícito no documento → não escolha um: `NAO_IDENTIFICADO/CLIENTE_AMBIGUO`.
+
+**CNPJ que não bate com nenhuma linha nos 14 dígitos completos**: não caia direto pra
+Inscrição Estadual/nome. Compare a **raiz** (8 primeiros dígitos) contra a raiz de cada CNPJ
+da planilha — raiz igual, sufixo de filial diferente (matriz × filial do mesmo grupo, ou
+filiais diferentes) → `NAO_IDENTIFICADO/CLIENTE_AMBIGUO` (é matriz/filial de um cliente
+existente, mas a filial certa exige confirmação humana, não é a mesma pasta automaticamente).
+Nenhuma raiz bate → `CLIENTE_NAO_LOCALIZADO`. Nome só decide a identificação quando o
+documento não traz CNPJ nenhum (nem completo nem parcial) — nunca como critério de desempate
+pra um CNPJ que não bateu.
+
+- Ordem: CNPJ no doc (14 dígitos completos) > Inscrição Estadual > nome exato e único (só
+  quando o documento não trouxer CNPJ algum; ambíguo → `CLIENTE_AMBIGUO`).
 - Pasta existe → `pasta_cliente_existe=true`. Não existe → regra 2.
-- `CNPJ` vazio na planilha pra um código que bate por nome (hoje: código 41 MJ ELETRODOMESTICOS LTDA e 590 TORIBA TECNOLOGIA E GESTAO EMPRESARIAL LTDA — pendência de cadastro conhecida) → não crie pasta nova pra esse cliente mesmo se o nome bater exatamente (regra 2 exige CNPJ). Trate como `CLIENTE_NAO_LOCALIZADO` até o CNPJ ser cadastrado, e reporte a pendência específica, não um `NAO_IDENTIFICADO` genérico.
+- `CNPJ` vazio na planilha pra um código que bate por nome (hoje: código 41 MJ ELETRODOMESTICOS LTDA e 590 TORIBA TECNOLOGIA E GESTAO EMPRESARIAL LTDA — pendência de cadastro conhecida): se a pasta desse cliente **já existe** em `2026`, siga por ela normalmente (match de nome exato e único, confiança limitada a 0.90). Só quando for preciso **criar pasta nova** é que a regra 2 exige CNPJ — nesse caso, sem CNPJ na planilha, trate como `CLIENTE_NAO_LOCALIZADO` até o CNPJ ser cadastrado, e reporte a pendência específica, não um `NAO_IDENTIFICADO` genérico.
 </regra>
 
 <regra n="2" titulo="Fallback (pasta ainda não existe)">

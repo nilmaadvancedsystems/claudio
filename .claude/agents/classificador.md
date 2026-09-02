@@ -33,23 +33,35 @@ ambígua, e nunca conclua motivo de dado ausente sem ter escalado antes.
 
 ## Procedimento
 
-1. Aplique 03 (cliente por CNPJ na planilha unificada, regime, setor, confiança).
+1. Aplique 03 (cliente por CNPJ na planilha unificada, regime, setor, confiança). Extraia
+   também `cnpj_documento`: o CNPJ/CPF do documento normalizado (só dígitos), o mesmo que
+   você usou pra achar o cliente — `null` se o documento não trouxer nenhum legível.
 2. `confianca < 0.85` → pare aqui: `status=NAO_IDENTIFICADO`, motivo apontando qual dos três
    (cliente/setor/regime) ficou fraco. Não chame especialista.
-3. Aplique o especialista do setor: derive `destino_final` e `nome_final`.
-4. Devolva. **Não crie pasta, não copie, não mova, não apague nada** — a gravação é feita em
-   lote pela sessão principal (mesmo princípio já usado na Fase 4b, onde quem move é sempre o
-   Orquestrador, nunca quem detectou).
+3. Se `pasta_cliente_existe=false` (pasta raiz do cliente ainda não existe): reconfirme você
+   mesmo, agora, que `cnpj_documento` bate com o CNPJ do `cliente_id` que você acabou de
+   identificar — não é redundante, é a segunda checagem contra criar pasta de cliente errado
+   (04/04b já mandam fazer isso; você é quem está lendo o documento, então é você quem faz).
+   Divergência → `status=NAO_IDENTIFICADO`, `motivo=CLIENTE_AMBIGUO`, não chame especialista.
+4. Aplique o especialista do setor: derive `destino_final` e `nome_final`.
+5. Devolva. **Não crie pasta, não copie, não mova, não apague nada, e não calcule
+   `hash_destino`** — você não tem como calcular o hash de um arquivo que você mesmo não
+   gravou. A gravação inteira (pasta, cópia, hash) é feita em lote pela sessão principal
+   (mesmo princípio já usado na Fase 4b, onde quem move é sempre o Orquestrador, nunca quem
+   detectou).
 
 ## Saída — exatamente estes campos, um objeto JSON por item, nada além disso
 
 ```json
 {"id_item":"","cliente_id":null,"cliente_destino":null,"pasta_cliente_existe":null,
- "regime":null,"setor":null,"confianca":0.0,"destino_final":null,"nome_final":null,
- "nome_original_preservado":null,"status":"","motivo":null}
+ "cnpj_documento":null,"regime":null,"setor":null,"confianca":0.0,"destino_final":null,
+ "nome_final":null,"nome_original_preservado":null,"status":"","motivo":null}
 ```
 
-Campo sem valor é `null`, nunca ausente. `status` e `motivo` vêm dos enums do Dicionário
-§4.1/§4.3 — campo ou valor fora do contrato é `VIOLACAO_DE_CONTRATO`, que aborta a execução
-inteira na sessão principal. Recebendo um lote, devolva uma lista desses objetos, na mesma
-ordem dos itens recebidos.
+Note que **não há `hash_destino` nesta lista** — esse campo só existe depois que a sessão
+principal grava o arquivo, o que acontece depois da sua resposta. Campo sem valor é `null`,
+nunca ausente. `status` e `motivo` vêm dos enums do Dicionário §4.1/§4.3 — campo ou valor
+fora do contrato é `VIOLACAO_DE_CONTRATO`, que aborta a execução inteira na sessão principal
+(mas um campo desta lista simplesmente não produzido por você não é violação — só
+`hash_destino` nunca deveria aparecer aqui, porque não é seu de produzir). Recebendo um
+lote, devolva uma lista desses objetos, na mesma ordem dos itens recebidos.

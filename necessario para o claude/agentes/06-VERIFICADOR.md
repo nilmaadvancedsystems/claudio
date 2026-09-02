@@ -17,15 +17,26 @@ Pseudocódigo (adaptar à linguagem do runtime local):
 assert N_pais == (pais_todos_filhos_arquivado + pais_algum_filho_naoident_ou_dup
                    + pais_fora_do_escopo + pais_pdf_composto_nao_separado
                    + pais_ja_arquivado_anteriormente + pais_falha_integridade)
-assert todo_item_tem_arquivo_original_existente_na_origem
+assert todo_item_com_status_em[PENDENTE,ARQUIVADO,FORA_DO_ESCOPO,PDF_COMPOSTO_NAO_SEPARADO,FALHA_INTEGRIDADE,JA_ARQUIVADO_ANTERIORMENTE]_tem_arquivo_original_existente_na_origem
+# NAO_IDENTIFICADO/DUPLICADO são cobertos só pela Verificação 6 abaixo — na Fase 4b, antes
+# desta verificação rodar, esses itens já foram movidos pelo Orquestrador para NÃO
+# IDENTIFICADOS; exigir aqui "existe na origem" para eles é sempre falso, por desenho
 assert todo_pai_separado_tem_paginas_filhas_cobrindo_100pct_sem_lacuna_sem_overlap
 assert nenhum_pai_em_dois_baldes
+# item JA_ARQUIVADO_ANTERIORMENTE só é válido se veio de linha de manifesto com
+# pai_completo=true (Dicionário §8) — hash batendo contra fragmento/extraído de zip
+# não comprova que o arquivo_original inteiro foi arquivado
+assert nenhum_item_JA_ARQUIVADO_ANTERIORMENTE_veio_de_linha_de_manifesto_com_pai_completo_false
 
 # 2. Nomenclatura (regex contra Dicionário §2), exceto nome_original_preservado=true
 assert not contem_placeholder_literal(nome_final)        # [CLIENTE], [BANCO], ...
 assert data_no_formato(nome_final, "MM-AAAA|DD-MM-AAAA")
 assert valor_no_formato(nome_final, "R$0000,00")
-assert not termina_com_sufixo_desempate(nome_final)       # (2), _v2, _novo
+# sufixo " (N)" (espaço+parênteses+dígito, Dicionário §2) é permitido só com
+# motivo==CONFLITO_MESMO_NOME_CONTEUDO_DIFERENTE; qualquer outro sufixo de
+# desempate (_v2, _novo, _final, "(2)" sem o espaço) continua proibido
+assert not termina_com_sufixo_desempate_nao_canonico(nome_final)
+if nome_final termina em " (N)": assert item.motivo == "CONFLITO_MESMO_NOME_CONTEUDO_DIFERENTE"
 if nome_original_preservado: assert nome_final == nome_original_do_documento
 
 # 3. Destino
@@ -45,7 +56,11 @@ flag_se_hash_origem_ja_no_manifesto_e_recopiado
 # 6. Exceções
 for item in itens_naoident_ou_duplicado:
     assert item.motivo in lista_secao_4_3_dicionario and motivo_especifico
-    assert item_existe_em("NÃO IDENTIFICADOS/<id_execucao>/") and nao_existe_mais_na_origem
+    if item.paginas_origem == null:  # item comum, não é fragmento nem extraído de zip
+        assert item_existe_em("NÃO IDENTIFICADOS/<id_execucao>/<caminho_relativo>/") and nao_existe_mais_na_origem
+    else:  # fragmento de PDF ou extraído de .zip — o pai fica retido na origem
+        assert arquivo_trabalho_existe_em("NÃO IDENTIFICADOS/<id_execucao>/<nome_do_pai>/<caminho_relativo>/")
+        assert arquivo_original_do_pai_intacto_na_origem  # nunca se toca no pai por causa de um item derivado
 for item in itens_fora_do_escopo_ou_pdf_composto:
     assert item.status_nao_foi_alterado  # não foram movidos
 
@@ -98,12 +113,27 @@ não COMPROVANTES, mesmo que o cabeçalho diga literalmente "Comprovante" (Dicio
 BANCÁRIOS × RECEBIMENTO DE CLIENTES têm nomes finais quase idênticos — é o ponto cego
 estrutural do sistema, redobre a atenção.
 
-Retorne: {id_item, categoria_rederivada, divergente_da_atribuida: bool}
+Releia também quem é o cliente do documento (CNPJ/CPF de destinatário/sacado/titular — nunca
+do emitente, exceto documento fiscal emitido pelo próprio cliente): é a segunda coisa mais
+grave que pode divergir, e hoje é a única verificação capaz de flagar "cliente errado".
+
+Retorne: {id_item, categoria_rederivada, setor_rederivado, cliente_rederivado, confianca, motivo}
 ```
 
-Junte a saída da Parte B como mais uma linha de "Erros críticos" quando `divergente=true`,
-e monte a seção "Reclassificação por arquivo" do relatório final (atribuída × rederivada ×
-divergência) a partir daqui.
+`cliente_rederivado` é o CNPJ/CPF normalizado lido no documento, `null` se o documento não
+trouxer nenhum. `categoria_rederivada` é o caminho de destino a partir do segmento de setor
+(`CONTÁBIL\...` | `FISCAL\<REGIME>\...` | `SOCIETÁRIO\...`), nunca incluindo `<cliente_destino>`
+nem `nome_final` — o subagente não recebe `cliente_id` nem `regime`, não tem como derivar
+esses dois segmentos, e não deve tentar.
+
+**A comparação `atribuída × rederivada` é sempre do Orquestrador, nunca do subagente** — ele
+não recebe a categoria atribuída (ver acima), então não tem com o que comparar. O Orquestrador
+normaliza os dois lados (caixa/acentos, e em FISCAL ignora também o segmento de regime — o
+subagente não pode derivá-lo) e compara só a partir do segmento de setor. Divergência aí, ou em
+`cliente_rederivado` não-null contra `cliente_id`, é erro crítico e entra em "Erros críticos" e
+na seção "Reclassificação por arquivo" (atribuída × rederivada × divergência) do relatório
+final. `cliente_rederivado=null` não é confirmação — registre "cliente não verificável nesta
+verificação", não trate como concordância.
 </procedimento>
 
 <decisao titulo="Decisão final (código, junta A+B)">

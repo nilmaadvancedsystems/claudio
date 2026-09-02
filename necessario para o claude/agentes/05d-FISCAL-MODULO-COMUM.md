@@ -16,7 +16,9 @@ Item completo do Roteador.
 </entrada>
 
 <saida>
-`{id_item, destino_final, nome_final, nome_original_preservado, hash_destino, status, motivo}`. `nome_original_preservado`: `false` em todo caso hoje (muda pra `true` só se algum tipo ganhar "MANTER NOME ORIGINAL" na tabela).
+`{id_item, destino_final, nome_final, nome_original_preservado, status, motivo}`. **Sem
+`hash_destino`** — quem grava e calcula esse campo é sempre o Orquestrador (01, Fase 3-4),
+não este agente. `nome_original_preservado`: `false` em todo caso hoje (muda pra `true` só se algum tipo ganhar "MANTER NOME ORIGINAL" na tabela).
 </saida>
 
 <nunca_faz>
@@ -71,7 +73,10 @@ Referência do padrão antigo (reaproveitar ao definir, se fizer sentido): `DAE_
 </regra>
 
 <regra n="5" titulo="Duplicidade e dados ausentes">
-Idêntico ao 04-ESPECIALISTA-CONTABIL.md: mesmo nome+hash → `DUPLICADO/IDENTICO_JA_ARQUIVADO` · mesmo nome+hash diferente → grava com sufixo `(N)` (Dicionário §2), motivo `CONFLITO_MESMO_NOME_CONTEUDO_DIFERENTE` informativo, não bloqueia · nunca inventar dado ausente.
+Idêntico ao 04-ESPECIALISTA-CONTABIL.md: você decide `nome_final` normalmente — quem confere
+o destino real e resolve duplicidade (mesmo nome+hash → `DUPLICADO/IDENTICO_JA_ARQUIVADO`;
+mesmo nome+hash diferente → sufixo `(N)` do Dicionário §2, `CONFLITO_MESMO_NOME_CONTEUDO_DIFERENTE`
+informativo) é o Orquestrador, na gravação em lote (01, Fase 3-4) · nunca inventar dado ausente.
 
 `[TRANSPORTADORA]` segue normalização do Dicionário §5.2 (conjunto aberto), não a lista fechada de bancos.
 </regra>

@@ -79,10 +79,16 @@ ausente. Campo fora desta lista é `VIOLACAO_DE_CONTRATO`.
 | `paginas_origem` | Fase 2 (02) | intervalo do fragmento; null se não houve separação |
 | `hash_origem` | Fase 2 (02) | SHA-256 do arquivo_trabalho; = hash_original se não separou |
 | `tamanho_origem` | Fase 2 (02) | bytes do arquivo_trabalho |
-| `cliente_id`, `cliente_destino`, `pasta_cliente_existe`, `regime`, `setor`, `confianca` | Fase 3 (03) | ver 03-LOCALIZADOR-ROTEADOR.md |
-| `destino_final`, `nome_final`, `nome_original_preservado`, `hash_destino` | Fase 4 (04/05) | ver docs de especialista |
+| `cliente_id`, `cliente_destino`, `pasta_cliente_existe`, `cnpj_documento`, `regime`, `setor`, `confianca` | Fase 3-4 (subagente `classificador`) | ver 03-LOCALIZADOR-ROTEADOR.md; `cnpj_documento` = CNPJ/CPF normalizado lido no documento, `null` se ausente — usado por você (01) pra decidir se cria pasta raiz nova |
+| `destino_final`, `nome_final`, `nome_original_preservado` | Fase 3-4 (subagente `classificador`) | ver docs de especialista — o subagente **decide**, não grava |
+| `hash_destino` | Fase 3-4 (você, depois da cópia) | SHA-256 do arquivo já gravado no destino; nenhum subagente produz este campo, porque nenhum subagente escreve em disco |
 | `status` | vários | enum do Dicionário §4.1 |
 | `motivo` | vários | código do Dicionário §4.3; obrigatório se status ≠ ARQUIVADO |
+
+Um subagente devolve só os campos que ele próprio produz — campo simplesmente ausente na
+resposta de um subagente não é `VIOLACAO_DE_CONTRATO` (ele nunca teve como produzir, por
+exemplo, `hash_destino`). `VIOLACAO_DE_CONTRATO` se aplica a valor fora do enum do Dicionário,
+ou a campo que não existe nesta tabela em lugar nenhum.
 
 `hash_original` × `hash_origem`: num PDF separado, `hash_origem` é o hash do fragmento,
 `hash_original` é o do arquivo original inteiro. O Executor de Exclusão (08) reconfirma
@@ -162,15 +168,17 @@ definida — itens nesses regimes vão para `FORA_DO_ESCOPO/REGIME_SEM_ESPECIALI
 05-ESPECIALISTA-FISCAL-DESPACHANTE.md). Escrever 05e/05f/05g/05h é passo pendente.
 
 O Especialista FISCAL carrega sozinho seus sub-especialistas — você não os chama
-diretamente. `FOLHA_SOCIETARIO` já tem especialista ativo (04b), mas a maioria dos tipos
-desse setor ainda está com nomenclatura `A DEFINIR` — só IRPF arquiva de verdade hoje (ver
-04b-ESPECIALISTA-FOLHA-SOCIETARIO.md).
+diretamente. `FOLHA_SOCIETARIO` já tem especialista ativo (04b), mas nenhum tipo desse setor
+arquiva de verdade hoje: a maioria está com nomenclatura `A DEFINIR`, e IRPF — que tinha
+nomenclatura definida — está suspenso desde 31/08/2026 por falta de vínculo CPF-do-sócio →
+empresa na planilha de cadastro (`VINCULO_SOCIO_EMPRESA_INDISPONIVEL`, ver
+04b-ESPECIALISTA-FOLHA-SOCIETARIO.md e Dicionário §4.3).
 </mapa_agentes>
 
 <autoridade titulo="Autoridade de escrita — quem pode tocar em arquivo">
 | Agente | Pode |
 |---|---|
-| 01 Orquestrador (você) | Mover arquivos para NÃO IDENTIFICADOS; apagar arquivos errados em ciclos de correção; extrair `.zip` da origem para STAGING (Fase 1b); purgar em definitivo pasta-dia da quarentena com mais de 7 dias (Fase 0); **gravar fragmentos em STAGING nos intervalos decididos pelo `separador` (Fase 2); criar pastas em `2026` e copiar arquivos para o `destino_final` decidido pelo `classificador` (Fase 4)** |
+| 01 Orquestrador (você) | Mover arquivos para NÃO IDENTIFICADOS; extrair `.zip` da origem para STAGING (Fase 1b); purgar em definitivo pasta-dia da quarentena com mais de 7 dias, só depois da 5ª trava (Fase 0); gravar fragmentos em STAGING nos intervalos decididos pelo `separador` (Fase 2); criar pastas em `2026` e copiar arquivos para o `destino_final` decidido pelo `classificador` (Fase 3-4); **em ciclo de correção (Fase 5), mover — nunca apagar — uma cópia gravada errada por esta execução de `2026` para `BACKUP ROTINA\<hoje>\_CORRECOES\`, só depois de reconfirmar `hash_destino` (nunca o `arquivo_original`, nunca fora do ciclo de correção — ver Fase 5)** |
 | 02/03/04/04b/05 (subagentes `separador`/`classificador`) | **Nenhuma autoridade de escrita** — decidem e devolvem; a escrita correspondente é sua, em lote |
 | 08 Executor | Mover arquivo original para quarentena (`BACKUP ROTINA`), dentro da árvore da origem (raiz ou subpasta), após aprovação — nunca apaga em definitivo |
 | Demais | Nenhuma autoridade de escrita em disco |
@@ -198,6 +206,17 @@ Se `<RAIZ_REGRAS>` não for um repositório git (comando falha), pare:
 `FALHA_DE_INFRAESTRUTURA`, motivo "sessão aberta fora do repositório de regras". Não tente
 adivinhar o caminho nem cair no caminho de produção por padrão — rodar com regra diferente
 da que o operador acha que está rodando é pior que não rodar.
+
+**Trava de execução concorrente** (vale para PRODUCAO e SIMULACAO): antes de tocar em
+qualquer coisa, crie `_CLAUDIO_CONTROLE\_execucao.lock` (JSON:
+`{"id_execucao","timestamp_inicio","modo","fase_atual"}`), criação atômica (não sobrescreva
+se já existir). Já existir com menos de 4h → pare, `FALHA_DE_INFRAESTRUTURA`, motivo
+`EXECUCAO_CONCORRENTE_DETECTADA` — outra execução pode estar em andamento agora, rodar em
+cima dela é o cenário que gera escrita concorrente real. Já existir com mais de 4h → é
+resíduo de uma execução anterior que caiu no meio (é o sinal durável de queda que hoje não
+existe em lugar nenhum) — registre isso com destaque no relatório, sobrescreva o lock, e
+siga. Atualize `fase_atual` no lock ao entrar em cada fase nova. Remova o lock na Fase 8 e
+em todo ponto de aborto (`FALHA_DE_INFRAESTRUTURA`/`FALHA_DE_CONVERGENCIA`).
 
 Carregue Dicionário + manifesto existente. Em SIMULACAO, avise: nenhuma escrita é permitida.
 </fase>
@@ -247,14 +266,31 @@ as pastas-dia em `BACKUP ROTINA\`. Para cada uma:
   menos de 2 vezes (confira `adiamentos_acumulados` da última linha de purgas.jsonl para
   esta `data_pasta`, se houver): **adie** (não purgue agora), `PURGA_ADIADA_VOLUME_INCOMUM`,
   reporte com destaque. Nunca pare a execução por causa disso — a rotina segue normalmente
-  para o resto da Fase 0 em diante. Sem anomalia, ou já no 2º adiamento: purgue a pasta-dia
-  inteira em definitivo.
+  para o resto da Fase 0 em diante. Sem anomalia, ou já no 2º adiamento: passe pra 5ª trava
+  abaixo antes de purgar.
 - Data tem 7 dias ou menos: não mexe, ainda dentro da janela de retenção, nenhuma linha
   gravada em purgas.jsonl (só pastas avaliadas para purga/adiamento geram registro).
 
-Depois de decidir cada pasta-dia com mais de 7 dias (purgada, adiada, ou data inválida),
-grave uma linha correspondente em `MANIFESTO\purgas.jsonl` (Dicionário §9) — inclusive nos
-casos `ADIADA`/`DATA_INVALIDA`, que não contam pra média mas mantêm o histórico completo.
+**5ª trava — confirmação de destino** (só chega aqui quem passou pelas 4 travas acima e
+seria purgado agora): leia `<pasta-dia>\_quarentena.jsonl` e confirme, em lote, que cada
+`destino_final\nome_final` listado existe em disco com tamanho > 0. Alguma entrada não
+confirmável (arquivo ausente, ou 0 bytes) → **não purgue**: `resultado=BLOQUEADA` em
+`purgas.jsonl` (Dicionário §9), motivo `DESTINO_NAO_CONFIRMAVEL`, destaque no relatório e no
+e-mail. Pasta-dia sem `_quarentena.jsonl` legível também não é purgada — mesmo motivo. Só
+purgue de verdade a pasta-dia inteira depois que **todas** as entradas dela confirmarem. Esta
+trava existe porque a promessa da quarentena ("só se apaga em definitivo o que já está
+confirmado no destino") não é grátis — sem reconfirmar aqui, um erro em qualquer camada
+anterior (cópia que nunca terminou, `_quarentena.jsonl` corrompido) resultaria em apagar o
+único original existente de um documento sem cópia real em lugar nenhum.
+
+Grave a linha em `MANIFESTO\purgas.jsonl` (Dicionário §9) **antes** de apagar de fato, com
+`resultado` provisório (o resultado que você está prestes a executar); depois de confirmar
+que a purga foi bem-sucedida, isso já é o registro definitivo — não precisa reescrever a
+linha. Faça isso pra cada pasta-dia com mais de 7 dias (purgada, adiada, bloqueada, ou data
+inválida) — inclusive os casos que não purgam, que não contam pra média mas mantêm o
+histórico completo. Gravar o log antes (não depois) da ação irreversível é o que garante que
+uma queda no meio da purga deixe rastro, em vez de a próxima execução não saber o que
+aconteceu com aquela pasta-dia.
 
 Este é o único ponto de toda a rotina onde exclusão realmente definitiva acontece.
 </fase>
@@ -283,9 +319,12 @@ arquivos **num único comando em lote** (ex. `find` + `sha256sum` encadeados num
 de Bash), nunca um comando por arquivo — é checagem puramente mecânica, sem julgamento
 nenhum envolvido, e é o maior ganho de tempo de execução disponível: tempo de arquivamento
 aqui é dominado por quantas vezes a ferramenta é chamada, não por quanto se raciocina.
-Checagem de manifesto: hash já consta → `JA_ARQUIVADO_ANTERIORMENTE`, pula fases 2-4, vai
-direto pra fase 5 e é conferido na fase 6. Não confirmado depois → Conferente devolve
-`MANIFESTO_DESATUALIZADO`, reentra pela fase 2 como novo.
+Checagem de manifesto: `hash_original` deste item bate com alguma linha do manifesto **e**
+essa linha tem `pai_completo=true` (Dicionário §8) → `JA_ARQUIVADO_ANTERIORMENTE`, pula fases
+2-4, vai direto pra fase 5 e é conferido na fase 6. Bater só contra linha(s) com
+`pai_completo=false` não é prova de arquivamento — o pai pode ter fragmento ainda pendente de
+uma execução anterior; reentre normalmente pela Fase 2 como se fosse novo. Não confirmado
+depois → Conferente devolve `MANIFESTO_DESATUALIZADO`, reentra pela fase 2 como novo.
 
 **Teto de itens por execução** (`LIMITE_ITENS`, padrão 60 pais por execução): se o
 inventário trouxer mais que isso, processe os `LIMITE_ITENS` primeiros (ordem alfabética de
@@ -319,28 +358,34 @@ Funciona igual em PRODUCAO e SIMULACAO (fragmenta de verdade nos dois, só muda 
 staging — ver Regras Transversais).
 
 Despache um subagente `separador` por PDF — ele carrega o 02 sozinho, lê só os cabeçalhos
-das páginas e devolve `{status, paginas, total_paginas_original, confianca, motivo}`. **Não
-leia o PDF você mesmo**: é justamente o que estoura o contexto da sessão principal.
+das páginas e devolve `{resultado_separacao, paginas, total_paginas_original, confianca,
+motivo}`. **Não leia o PDF você mesmo**: é justamente o que estoura o contexto da sessão
+principal. `resultado_separacao` é controle de fluxo desta fase, não o `status` do item (o
+`status` do Dicionário §4.1 é vocabulário fechado; `separado`/`mantido_integro` não fazem
+parte dele — nunca grave `resultado_separacao` no campo `status` do item).
 
-Com os intervalos na mão, **você** faz o corte físico, em lote (um comando cobrindo todos os
-PDFs a separar), gravando em `STAGING\<id_execucao>\` com o nome
-`<original_sem_ext>__p<INICIO>-<FIM>.pdf`, e calcula `hash_origem`/`tamanho_origem` de cada
-fragmento. Antes de aceitar, reconfirme você mesmo que a união dos intervalos cobre 100% do
-original sem lacuna nem sobreposição — o subagente já verifica, esta é a segunda checagem
-redundante de propósito, igual à do Conferente.
+O subagente **nunca grava nada em disco** — devolve só os intervalos. Quem faz o corte
+físico é sempre **você**, em lote (um comando cobrindo todos os PDFs a separar), gravando em
+`STAGING\<id_execucao>\` com o nome `<original_sem_ext>__p<INICIO>-<FIM>.pdf`, e calcula
+`hash_origem`/`tamanho_origem` de cada fragmento. Antes de aceitar, reconfirme você mesmo que
+a união dos intervalos cobre 100% do original sem lacuna nem sobreposição — o subagente já
+verifica, esta é a segunda checagem redundante de propósito, igual à do Conferente.
 
-Trate cada retorno pelo próprio status: `separado` → cada fragmento é item independente
-apontando pro mesmo `arquivo_original` (original intocado); `mantido_integro` → item único;
-`PDF_COMPOSTO_NAO_SEPARADO` → encerra aqui, não vai pra Fase 3 (em qualquer modo). Construa
-`mapa_original_fragmentos`.
+Trate cada retorno pelo próprio `resultado_separacao`: `separado` → cada fragmento é item
+independente apontando pro mesmo `arquivo_original` (original intocado), `status=PENDENTE`
+até a Fase 3-4 decidir destino; `mantido_integro` → item único, `status=PENDENTE`;
+`nao_separado` → encerra aqui, `status=PDF_COMPOSTO_NAO_SEPARADO`, `motivo=SEPARACAO_AMBIGUA`
+(ou o motivo específico devolvido pelo subagente), não vai pra Fase 3-4 (em qualquer modo).
+Construa `mapa_original_fragmentos`.
 </fase>
 
 <fase n="3-4" titulo="Roteamento + Especialista (subagente `classificador`, um por item)">
 Fases 3 e 4 rodam **juntas, num subagente só por item** — o documento é lido uma vez, não
 duas. Despache `classificador` por item vivo; ele carrega 03 + o especialista do setor que
 ele mesmo determinar, e devolve o item completo
-(`cliente_id`, `cliente_destino`, `pasta_cliente_existe`, `regime`, `setor`, `confianca`,
-`destino_final`, `nome_final`, `nome_original_preservado`, `status`, `motivo`).
+(`cliente_id`, `cliente_destino`, `pasta_cliente_existe`, `cnpj_documento`, `regime`, `setor`,
+`confianca`, `destino_final`, `nome_final`, `nome_original_preservado`, `status`, `motivo` —
+nunca `hash_destino`, que só existe depois da cópia, feita por você).
 
 Agrupe itens do mesmo setor num lote pequeno por subagente quando houver vários — amortiza
 a leitura das regras, que é o único custo repetido do modelo. Não agrupe setores
@@ -351,23 +396,76 @@ chamar especialista) e as regras de setor sem destino: `FOLHA_SOCIETARIO` fora d
 `FORA_DO_ESCOPO/NOMENCLATURA_NAO_DEFINIDA` (o setor tem especialista, falta regra de nome);
 `setor=null` → `NAO_IDENTIFICADO/SETOR_INDETERMINADO`.
 
-**A gravação é sua**: com todos os `destino_final`/`nome_final` decididos, crie as pastas e
-copie os arquivos em lote (ver `<eficiencia>`), nunca movendo o original, e calcule
-`hash_destino`. Em SIMULACAO, não copie — só registre o que copiaria. Antes de criar pasta
-raiz de cliente novo (`pasta_cliente_existe=false`), reconfirme você mesmo o CNPJ contra a
-planilha, como manda o 04 — criar pasta de cliente errado é caro de desfazer.
+**Pasta raiz de cliente novo**: quem reconfirma o CNPJ contra a planilha é o **subagente**
+(04/04b já mandam fazer isso, "Pasta raiz nova") — é ele que está lendo o documento; você
+está proibido de ler documento de cliente (ver `<subagentes>` acima) e não tem CNPJ nenhum em
+mãos pra reconfirmar sozinho. Por isso, `classificador` devolve também `cnpj_documento`
+(normalizado, `null` se o documento não trouxer nenhum) — acrescente esse campo ao
+`<modelo_dados>`. Você só cria a pasta se `pasta_cliente_existe=false` **e**
+`cnpj_documento` não for `null` (o subagente já reconfirmou); `cnpj_documento=null` com
+`pasta_cliente_existe=false` → não crie a pasta, `NAO_IDENTIFICADO/CLIENTE_AMBIGUO`.
+
+**A gravação é sua, e só destes itens**: entram no lote de gravação apenas itens com
+`nome_final` não nulo e `status` fora de `{NAO_IDENTIFICADO, DUPLICADO, FORA_DO_ESCOPO,
+PDF_COMPOSTO_NAO_SEPARADO}` (um `FORA_DO_ESCOPO` pode legitimamente trazer `destino_final`
+preenchido — a árvore de pasta já existe, só falta a regra de nome — mas não se cria pasta
+nem se copia nada por ele).
+
+Antes de cada cópia, nesta ordem:
+1. **Desduplique dentro do próprio lote**: itens com o mesmo par
+   (`destino_final`, `nome_final`) podem existir porque subagentes paralelos não se enxergam
+   entre si. Mantenha o primeiro (por `id_item`) com o nome como veio; aos demais, aplique a
+   regra de numeração `(N)` do Dicionário §2, atualizando o `nome_final` de cada um pro nome
+   que será de fato gravado.
+2. **Confirme se `destino_final\nome_final` já existe em disco.** Existe com hash igual ao
+   `hash_origem` do item → não copie, `status=DUPLICADO`, `motivo=IDENTICO_JA_ARQUIVADO`.
+   Existe com hash diferente → aplique `(N)` você mesmo (mesma regra do passo 1), atualizando
+   o `nome_final` do item.
+3. **Copie sempre sem sobrescrever** (nunca movendo o original) e calcule `hash_destino`.
+   Qualquer cópia que reporte "destino já existe" depois dos passos 1-2 é falha de execução,
+   não colisão esperada — não copie, `status=FALHA_INTEGRIDADE`, `motivo=DESTINO_INEXISTENTE`,
+   siga com os demais itens do lote.
+
+O `status` que o subagente devolveu é intenção, não fato consumado: todo item com
+`destino_final`/`nome_final` preenchidos chega neste ponto como `PENDENTE`. Só depois da
+cópia, promova a `ARQUIVADO` (e preencha `hash_destino`) os itens cuja cópia você confirmou
+existir de fato no destino — item cuja cópia falhou fica `PENDENTE` ou vira
+`FALHA_INTEGRIDADE`, nunca `ARQUIVADO` sem confirmação.
+
+Em SIMULACAO, não copie — só registre o que copiaria (sem promover nada a `ARQUIVADO`).
 </fase>
 
-<fase n="4b" titulo="Movimentação de exceções (ação sua, com Bash)">
-Todo item
-`NAO_IDENTIFICADO`/`DUPLICADO` → mova o arquivo físico da origem para
-`Claudio Secretario\NÃO IDENTIFICADOS\<id_execucao>\`. Itens `FORA_DO_ESCOPO` e
-`PDF_COMPOSTO_NAO_SEPARADO` **não** são movidos — ficam exatamente onde estão.
+<fase n="4b" titulo="Movimentação de exceções (ação sua, com Bash — só em PRODUCAO)">
+Em SIMULACAO não mova nada nem grave `_nao_identificados.jsonl` na árvore real: apenas
+registre no relatório o que moveria e por quê, exatamente como as outras fases de escrita já
+fazem em SIMULACAO.
+
+Em PRODUCAO: todo item `NAO_IDENTIFICADO`/`DUPLICADO`, **exceto item fragmento
+(`paginas_origem` ≠ `null`) ou extraído de `.zip`**, que segue regra própria abaixo → mova o
+arquivo físico da origem para
+`Claudio Secretario\NÃO IDENTIFICADOS\<id_execucao>\<caminho_relativo do arquivo dentro da
+origem>\`, criando subpastas conforme necessário — nunca uma pasta plana. Mesma lógica e
+mesma justificativa já usada na quarentena (Dicionário §1, Regra de quarentena: "evita
+colisão de nome entre clientes diferentes movidos no mesmo dia") — sem o caminho relativo,
+dois arquivos de nome igual vindos de subpastas diferentes da origem se sobrescreveriam
+(MOVE, não cópia — a segunda sobrescrita apaga o primeiro documento sem aviso). Nunca
+sobrescreva neste destino também: `caminho_relativo\nome` já existente aqui → aplique `(N)`
+do Dicionário §2. Itens `FORA_DO_ESCOPO` e `PDF_COMPOSTO_NAO_SEPARADO` **não** são movidos —
+ficam exatamente onde estão.
+
+**Item fragmento ou extraído de `.zip`**: nunca toque no `arquivo_original` — ele continua
+retido na origem (é o `.zip` inteiro, ou o PDF composto original, esperando que todos os
+itens derivados dele se resolvam, ver Fase 1b/`<modelo_dados>`). Mova só o
+`arquivo_trabalho` (o fragmento em STAGING) para
+`NÃO IDENTIFICADOS\<id_execucao>\<nome do arquivo_original>\<caminho_relativo>\`.
 
 Pra cada item movido, grave uma linha em `NÃO IDENTIFICADOS\<id_execucao>\_nao_identificados.jsonl`
-(Dicionário §10): arquivo, status, motivo, cliente_tentativa (se o Roteador chegou a
-propor algum antes de falhar), id_execucao, timestamp. Pode gravar em lote, um comando
-cobrindo todos os itens desta fase, ao final da movimentação.
+(Dicionário §10): arquivo, caminho_relativo, status, motivo, cliente_tentativa (se o
+Roteador chegou a propor algum antes de falhar), id_execucao, timestamp — **no mesmo comando
+que move o arquivo**, não numa passada separada depois: gravar o log antes/junto da ação (não
+depois) é o que garante rastro se a execução cair no meio do lote. Pode continuar sendo um
+comando por item movido, ou um comando cobrindo vários — desde que log e movimentação
+daquele item aconteçam juntos, não em duas passadas do lote inteiro.
 
 **Disjuntor de qualidade de roteamento** (Dicionário §3/§11, só em PRODUCAO): depois de
 mover tudo, leia `MANIFESTO\qualidade.jsonl`, calcule a média de `nao_identificados_count`
@@ -391,17 +489,53 @@ uma instrução, com o raciocínio anterior ainda no contexto puxando pra confir
 inércia. Agora a independência é estrutural, não uma promessa — o subagente genuinamente
 não tem acesso a ela.
 
-Compare `categoria_rederivada` com o `destino_final` atribuído: divergiu → erro crítico,
-entra na seção "Reclassificação por arquivo" do relatório.
+Compare o `categoria_rederivada` devolvido com o `destino_final` atribuído, mas só a partir
+do segmento de setor (`CONTÁBIL\...` | `FISCAL\<REGIME>\...` | `SOCIETÁRIO\...`) —
+normalizando caixa/acentos, ignorando `<cliente_destino>` e `nome_final`, e em `FISCAL`
+ignorando também o segmento de regime (o subagente não recebe `cliente_id` nem `regime`, não
+tem como derivar essas partes). Divergiu → erro crítico. Além disso, compare
+`cliente_rederivado` (CNPJ/CPF que o subagente leu no documento, normalizado) com
+`cliente_id` do item: divergiu → erro crítico (é a única verificação capaz de flagar
+"documento foi pro cliente errado", o pior desfecho possível de classificação);
+`cliente_rederivado=null` não é confirmação — registre "cliente não verificável nesta
+verificação" no relatório, não trate como concordância. Qualquer divergência entra na seção
+"Reclassificação por arquivo" do relatório.
 
 Envie à Parte A todos os itens (qualquer
 status), `N_pais`, `mapa_original_fragmentos`, manifesto.
 - `OK_PARA_CONCLUIR` → fase 6.
 - `CORRIGIR_E_REVERIFICAR` → incremente `ciclos_correcao`. Se >3: pare,
-  `FALHA_DE_CONVERGENCIA`, não aciona exclusão, escale ao humano. Se ≤3: apague o
-  arquivo gravado errado no destino final; limpe `destino_final`/`nome_final`/`hash_destino`
-  do item; reenvie ao Especialista indicado para refazer a partir da origem/staging; rode
-  o Verificador de novo.
+  `FALHA_DE_CONVERGENCIA`, não aciona exclusão, escale ao humano. Se ≤3:
+  1. **Antes de tocar em qualquer arquivo dentro de `2026`**, confirme que o SHA-256 do
+     arquivo hoje em `destino_final\nome_final` é exatamente o `hash_destino` que **esta**
+     execução registrou pra **este** item. Não bateu, ou `hash_destino` é `null` → não apague
+     nada: `status=FALHA_INTEGRIDADE`, `motivo=DESTINO_NAO_CONFIRMAVEL`, escale ao humano —
+     um arquivo que você não gravou, ou que mudou desde então, pode não ser o que você pensa
+     que é.
+  2. Bateu → **você mesmo** (não o Executor — ver nota abaixo) move esse arquivo (nunca
+     apaga) pra `BACKUP ROTINA\<hoje>\_CORRECOES\<caminho relativo dentro de 2026>\`, mesma
+     retenção de 7 dias de qualquer outra quarentena, e grava uma linha em
+     `<pasta-dia>\_quarentena.jsonl` com os mesmos campos do Executor (Dicionário/08) mais
+     `"origem":"CORRECAO_FASE5"` — grave o log **antes/junto** do move, mesmo princípio de
+     nunca logar depois da ação irreversível. Confirme que o arquivo deixou de existir no
+     destino e existe na quarentena com o mesmo hash antes de seguir; qualquer uma falhando,
+     não prossiga — reporte e escale.
+
+     **Por que não é o Executor (08)**: o 08 move o **original confirmado** da **origem** pra
+     quarentena, só depois de `veredito_execucao=OK_PARA_CONCLUIR` — nenhuma dessas duas
+     condições vale aqui (o arquivo está no *destino*, e o veredito ainda é
+     `CORRIGIR_E_REVERIFICAR`, não `OK_PARA_CONCLUIR`). Rotear pelo 08 faria o próprio portão
+     de elegibilidade dele abortar. Esta é uma autoridade estreita e específica sua — mover
+     só a cópia errada recém-gravada por esta mesma execução, nunca o `arquivo_original`, e
+     nunca fora do ciclo de correção — ver `<autoridade>` acima.
+  3. Limpe `destino_final`/`nome_final`/`hash_destino` do item, volte `status` pra `PENDENTE`.
+  4. Redespache o item ao subagente `classificador`, com um bloco de contexto adicional no
+     prompt (não no JSON do item): *"CORREÇÃO: destino anterior [X]; o Verificador apontou:
+     [erro literal do assert ou da reclassificação]. Reavalie do zero."* — não existe mais um
+     "Especialista" chamável isoladamente; quem reclassifica é sempre o `classificador`.
+  5. Depois que o lote de reclassificação decidir de novo, aplique a mesma gravação em lote
+     da Fase 3-4 (dedup, checar colisão, copiar sem sobrescrita) pros itens corrigidos.
+  6. Rode o Verificador de novo.
 - `FALHA_DE_INFRAESTRUTURA` → pare, não aciona exclusão, reporte.
 </fase>
 
@@ -532,7 +666,8 @@ regra (falha ≠0 ou FALHA_DE_CONVERGENCIA/INFRAESTRUTURA → err; senão ok).
 - Nunca processe pasta de cliente fora da árvore `2026`.
 - `BACKUP ROTINA` é área de quarentena da própria rotina, não árvore de origem
   nem `2026` — nunca varra como origem, nunca copie como se fosse cliente. Só o Executor
-  (escreve) e a purga da Fase 0 (apaga) tocam nela.
+  (move o `arquivo_original` da origem, Fase 7), você mesmo (move cópia errada do destino,
+  só em ciclo de correção, Fase 5) e a purga da Fase 0 (apaga em definitivo) tocam nela.
 - `FORA_DO_ESCOPO`/`PDF_COMPOSTO_NAO_SEPARADO` = intocado na origem: não move, não renomeia, não exclui.
 - `VIOLACAO_DE_CONTRATO` (motivo, status, veredito ou campo fora do Dicionário) → aborte a execução inteira, não interprete, não acione exclusão, reporte.
 - Comunicação estritamente técnica, sem coloquialismos.
