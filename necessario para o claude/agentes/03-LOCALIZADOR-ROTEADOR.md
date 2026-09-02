@@ -76,7 +76,7 @@ toleram `regime=null`.
 
 <regra n="4" titulo="Setor">
 Classifique sempre, mesmo sem especialista ativo (Orquestrador precisa da info p/ relatar). Título decide, nunca o emissor (ver Dicionário §6 p/ desambiguação).
-- **CONTABIL**: extratos bancários/aplicação/maquininha, comprovantes, contratos/extratos de consórcio-empréstimo-financiamento, pagamentos a fornecedores, relatórios de recebimento de clientes, venda de ativos, registro de livros.
+- **CONTABIL**: extratos bancários/aplicação/maquininha, comprovantes, contratos/extratos de consórcio-empréstimo-financiamento, contratos/comprovantes de operação de câmbio, pagamentos a fornecedores, relatórios de recebimento de clientes, venda de ativos, registro de livros.
 - **FISCAL**: DAS, DAE, DARF, DAPI, MIT, DeSTDA, Sintegra, SPED Fiscal/Contribuições, XML NF-e/CT-e, docs fiscais emitidos/recebidos, parcelamentos, restituição, controle de créditos.
 - **FOLHA_SOCIETARIO**: folha de pagamento, certidões, certificado digital, docs constitutivos, docs de sócios (inclui IRPF/Declaração de Ajuste Anual/DIRPF do sócio pessoa física — identificado pelo CPF do sócio, nunca pelo CNPJ da empresa). Não confundir com documento fiscal da empresa (setor FISCAL): IRPF é sempre do sócio, nunca da pessoa jurídica.
 </regra>
