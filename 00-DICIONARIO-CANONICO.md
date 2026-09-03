@@ -11,10 +11,12 @@ Documento de referência compartilhado. Todo agente carrega este documento antes
 
 **(a) Caminhos de REGRA — relativos a `<RAIZ_REGRAS>`.** `<RAIZ_REGRAS>` é a raiz do
 repositório de onde a sessão foi aberta, resolvida uma vez na Fase 0 do Orquestrador
-(`git rev-parse --show-toplevel`). Em produção é
-`C:\Users\DPTO FISCAL 004\GUSTAVO\claudio` (branch `main`); num clone de teste é a pasta do
-clone. **Nunca escreva caminho absoluto para carregar uma regra** — isso faz um clone de
-teste carregar as regras de produção e o teste deixa de testar qualquer coisa.
+(`git rev-parse --show-toplevel`). **Produção é definida pela branch (`main`), nunca pelo
+caminho absoluto** — o caminho muda de máquina pra máquina (ex.: `C:\Users\Vitor\Desktop\claudio`
+desde 02/09/2026, mas já foi outro caminho antes disso, e pode mudar de novo); a branch é o
+único identificador estável. **Nunca escreva caminho absoluto para carregar uma regra** —
+isso faz um clone de teste carregar as regras de produção e o teste deixa de testar
+qualquer coisa, e faz a documentação ficar errada assim que a máquina trocar.
 
 | Papel | Caminho |
 |---|---|
@@ -74,9 +76,12 @@ STAGING-SIMULACAO) — é dado de execução local, sem relação com o GitHub. 
 01-ORQUESTRADOR.md.
 
 Regra de localização do repositório (desde 31/08/2026): **o repositório de regras não fica
-dentro do Google Drive.** Produção roda de `C:\Users\DPTO FISCAL 004\GUSTAVO\claudio`
-(branch `main`) e teste de `C:\Users\DPTO FISCAL 004\GUSTAVO\claudio-teste` (branch
-`teste`), ambos em disco local. Motivo: a sincronização do Drive mexe em arquivo enquanto o
+dentro do Google Drive**, e desde 02/09/2026 **o caminho absoluto também não é fixo entre
+máquinas** — só a branch identifica produção (`main`) de teste (`teste`). Hoje: produção em
+`C:\Users\Vitor\Desktop\claudio` (branch `main`, migrado de
+`C:\Users\DPTO FISCAL 004\GUSTAVO\claudio` nesta data), teste presumivelmente em
+`C:\Users\Vitor\Desktop\claudio-teste` (branch `teste` — confirmar com o responsável se for
+outro caminho). Ambos em disco local. Motivo: a sincronização do Drive mexe em arquivo enquanto o
 git está trabalhando, o que corrompe repositório — e o próprio Orquestrador já convive com
 esse efeito na Fase 8 (pasta vazia que o Drive recria sozinho). `_CLAUDIO_CONTROLE`, dentro
 de `CLAUDE FAVOR NÃO MEXER` no Drive, é resíduo histórico desde 02/09/2026 — só

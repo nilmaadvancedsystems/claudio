@@ -204,15 +204,29 @@ um o seu `_CONTROLE\`, não compartilham).** Só a origem (`Claudio Secretario`)
 `NÃO IDENTIFICADOS` continuam absolutos no Drive (Dicionário §1(c)), iguais em produção e em
 teste.
 
-**Informe no relatório qual `<RAIZ_REGRAS>` foi usada**, sempre. É o que deixa evidente se
-aquela execução rodou com as regras de produção (`...\GUSTAVO\claudio`, branch `main`) ou
-com as de um clone de teste — sem isso, dois relatórios de dias diferentes podem ter saído
-de regras diferentes sem ninguém notar.
+**Capture a branch também**, com `git rev-parse --abbrev-ref HEAD` a partir de
+`<RAIZ_REGRAS>`. **Produção é identificada pela branch (`main`), nunca pelo caminho
+absoluto** — o caminho muda de máquina pra máquina (já mudou uma vez, vai mudar de novo se
+este PC for substituído de novo); comparar contra um caminho fixo quebra na próxima troca de
+PC sem ninguém perceber. Capture também o commit curto (`git rev-parse --short HEAD`) e se a
+árvore está limpa (`git status --porcelain`) — não bloqueia nada, é só informativo.
+
+**Informe no relatório `<RAIZ_REGRAS>`, a branch e o commit**, sempre — é o que deixa
+evidente se aquela execução rodou com as regras de produção (`main`) ou de um clone de
+teste, e exatamente qual versão. Sem isso, dois relatórios de dias diferentes podem ter
+saído de regras diferentes sem ninguém notar, e ninguém sabe reconstituir depois qual commit
+gerou qual arquivamento.
 
 Se `<RAIZ_REGRAS>` não for um repositório git (comando falha), pare:
 `FALHA_DE_INFRAESTRUTURA`, motivo "sessão aberta fora do repositório de regras". Não tente
-adivinhar o caminho nem cair no caminho de produção por padrão — rodar com regra diferente
+adivinhar o caminho nem cair num caminho fixo por padrão — rodar com regra diferente
 da que o operador acha que está rodando é pior que não rodar.
+
+`modo=PRODUCAO` e a branch capturada **não** é `main` → pare e confirme com o operador
+antes de qualquer escrita: é um clone de teste (ou uma branch de trabalho qualquer) apontando
+para os documentos reais dos clientes — caminho de dado é o mesmo em qualquer branch — e
+arquivaria pra valer com regra possivelmente não aprovada. `SIMULACAO`/`AUDITORIA` fora da
+`main` são o uso esperado, não precisam de confirmação.
 
 **Trava de execução concorrente** (vale para PRODUCAO e SIMULACAO): antes de tocar em
 qualquer coisa, crie `_CONTROLE\_execucao.lock` (dentro de `<RAIZ_REGRAS>`, disco local —
@@ -231,8 +245,8 @@ Carregue Dicionário + manifesto existente. Em SIMULACAO, avise: nenhuma escrita
 
 <fase n="0-sync" titulo="Sincronização de agentes/manuais com o GitHub (procedimento mecânico, com Bash)">
 `<RAIZ_REGRAS>` é um repositório git conectado ao remote
-`https://github.com/nilmaadvancedsystems/claudio.git` — produção em
-`C:\Users\DPTO FISCAL 004\GUSTAVO\claudio` (branch `main`), fora do Google Drive de
+`https://github.com/nilmaadvancedsystems/claudio.git` — produção é identificada pela branch
+`main` (caminho absoluto varia por máquina, ver Fase 0), fora do Google Drive de
 propósito (sincronização de Drive corrompe repositório git). Só o que está no `.gitignore`
 como liberado é versionado: Dicionário, agentes
 (`necessario para o claude/agentes/*.md`), `.claude/commands`, `.claude/agents`, `MANUAIS/`
