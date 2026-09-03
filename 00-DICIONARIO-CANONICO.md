@@ -7,7 +7,7 @@ Documento de referência compartilhado. Todo agente carrega este documento antes
 </papel>
 
 <secao n="1" titulo="CAMINHOS FIXOS">
-⚠️ **Duas famílias de caminho, nunca as confunda:**
+⚠️ **Três famílias de caminho, nunca as confunda:**
 
 **(a) Caminhos de REGRA — relativos a `<RAIZ_REGRAS>`.** `<RAIZ_REGRAS>` é a raiz do
 repositório de onde a sessão foi aberta, resolvida uma vez na Fase 0 do Orquestrador
@@ -25,69 +25,79 @@ teste carregar as regras de produção e o teste deixa de testar qualquer coisa.
 | Exemplos de Referência | `<RAIZ_REGRAS>\necessario para o claude\dados agentes\EXEMPLOS DE ARQUIVOS\` |
 | Manuais | `<RAIZ_REGRAS>\MANUAIS\` |
 
-**(b) Caminhos de DADO — absolutos, sempre no Drive, iguais em produção e em teste.** São
-os documentos reais dos clientes e o estado da rotina; não são versionados e não existem
-dentro do repositório. Ficam no Drive de propósito: são sincronizados, têm backup e
-continuam acessíveis por outra pessoa se este PC falhar — o `MANIFESTO` é o que evita
-rearquivar e permite auditoria, e `BACKUP ROTINA` guarda os originais dos clientes durante
-os 7 dias antes da exclusão definitiva. Nunca mova essas pastas para disco local sem
-backup. Um clone de teste lê e escreve exatamente os mesmos caminhos — por isso teste se
-faz em `SIMULACAO`, que não grava nada definitivo.
+**(b) Caminhos de CONTROLE/EXECUÇÃO — também relativos a `<RAIZ_REGRAS>`, dentro de
+`_CONTROLE\` (desde 02/09/2026).** Estado da própria rotina — nada de dado de cliente aqui.
+Local, não versionado (fora do `.gitignore` allowlist, igual a qualquer pasta não listada —
+nunca vai pro GitHub), específico de cada máquina: o `_CONTROLE\` de produção e o de um
+clone de teste são independentes, cada execução só enxerga o seu. Motivo de estar em disco
+local, não no Drive: LOGS/MANIFESTO/STAGING envolvem leitura e escrita frequente de arquivo
+pequeno — a sincronização do Drive é lenta e instável pra esse padrão de uso (mesmo motivo
+que já tirou o repositório de regras do Drive, ver "Regra de localização do repositório"
+abaixo). Se este PC for substituído, `_CONTROLE\` precisa ser copiado manualmente pro
+`<RAIZ_REGRAS>` do PC novo antes da primeira execução — sem isso, o manifesto começa vazio
+(perde o histórico de reprocessamento) e qualquer quarentena ainda dentro dos 7 dias fica
+órfã no PC antigo.
+
+| Papel | Caminho |
+|---|---|
+| Trava de execução concorrente | `<RAIZ_REGRAS>\_CONTROLE\_execucao.lock` |
+| Staging (fragmentos de PDF, modo PRODUCAO) | `<RAIZ_REGRAS>\_CONTROLE\STAGING\` |
+| Staging de simulação (fragmentos de PDF, modo SIMULACAO) | `<RAIZ_REGRAS>\_CONTROLE\STAGING-SIMULACAO\` |
+| Quarentena de exclusão (retenção de 7 dias antes de apagar em definitivo) | `<RAIZ_REGRAS>\_CONTROLE\BACKUP ROTINA\<DD-MM-AAAA>` |
+| Manifesto | `<RAIZ_REGRAS>\_CONTROLE\MANIFESTO\manifesto.jsonl` (+ `purgas.jsonl`, `qualidade.jsonl`) |
+| Logs de execução | `<RAIZ_REGRAS>\_CONTROLE\LOGS\` |
+| Logs de auditoria | `<RAIZ_REGRAS>\_CONTROLE\LOGS\AUDITORIA\` |
+
+**(c) Caminhos de DADO DE CLIENTE — absolutos, sempre no Google Drive, iguais em produção
+e em teste.** Só o que é documento real de cliente ou precisa ficar acessível/revisável de
+qualquer lugar. Nunca mova estas três pastas pra disco local.
 
 Papel
 	Caminho
 	Origem
 	G:\Meu Drive\Claudio Secretario
-	Raiz de clientes
+	Raiz de clientes (destino final arquivado)
 	G:\Meu Drive\2026
 	Não identificados
 	G:\Meu Drive\Claudio Secretario\NÃO IDENTIFICADOS
-	Staging (fragmentos de PDF, modo PRODUCAO)
-	G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\STAGING
-	Staging de simulação (fragmentos de PDF, modo SIMULACAO)
-	G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\STAGING-SIMULACAO
-	Quarentena de exclusão (retenção de 7 dias antes de apagar em definitivo)
-	G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\BACKUP ROTINA\<DD-MM-AAAA>
-	Logs de auditoria
-	G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\LOGS\AUDITORIA
-	Manifesto
-	G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\MANIFESTO\manifesto.jsonl
-	Logs de execução
-	G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\LOGS
 	
 
 Regra de versionamento (desde 31/08/2026): as regras vivem num repositório git, remote
 `https://github.com/nilmaadvancedsystems/claudio.git`. Versionados: Dicionário,
 `necessario para o claude/agentes/*.md`, `.claude/commands`, `.claude/agents`, `MANUAIS/` e
 `necessario para o claude/dados agentes/` (repositório privado — inclui dado real de
-cliente por decisão explícita do responsável). Nunca versionados (`.gitignore`): `LOGS`,
-`MANIFESTO`, `BACKUP ROTINA`, `STAGING`, `STAGING-SIMULACAO`, `HISTORICO` — são dado de
-execução no Drive, sem relação com o GitHub. Sincronização (`git pull`) acontece na Fase
-0-sync do Orquestrador, antes de carregar qualquer agente. Ver 01-ORQUESTRADOR.md.
+cliente por decisão explícita do responsável). Nunca versionado (`.gitignore`, allowlist —
+qualquer coisa não listada explicitamente já fica de fora, `_CONTROLE\` incluso sem precisar
+de regra própria): `_CONTROLE\` inteiro (LOGS, MANIFESTO, BACKUP ROTINA, STAGING,
+STAGING-SIMULACAO) — é dado de execução local, sem relação com o GitHub. Sincronização
+(`git pull`) acontece na Fase 0-sync do Orquestrador, antes de carregar qualquer agente. Ver
+01-ORQUESTRADOR.md.
 
 Regra de localização do repositório (desde 31/08/2026): **o repositório de regras não fica
 dentro do Google Drive.** Produção roda de `C:\Users\DPTO FISCAL 004\GUSTAVO\claudio`
 (branch `main`) e teste de `C:\Users\DPTO FISCAL 004\GUSTAVO\claudio-teste` (branch
 `teste`), ambos em disco local. Motivo: a sincronização do Drive mexe em arquivo enquanto o
 git está trabalhando, o que corrompe repositório — e o próprio Orquestrador já convive com
-esse efeito na Fase 8 (pasta vazia que o Drive recria sozinho). `_CLAUDIO_CONTROLE` no
-Drive continua existindo, mas só como área de dados: `LOGS`, `MANIFESTO`,
-`BACKUP ROTINA`, `STAGING`, `STAGING-SIMULACAO`, `HISTORICO`. Não há mais cópia das regras
-lá — se encontrar uma, é resíduo, não fonte: a fonte é sempre `<RAIZ_REGRAS>`.
+esse efeito na Fase 8 (pasta vazia que o Drive recria sozinho). `_CLAUDIO_CONTROLE`, dentro
+de `CLAUDE FAVOR NÃO MEXER` no Drive, é resíduo histórico desde 02/09/2026 — só
+`HISTORICO\` (capturas de tela, testes antigos) ainda mora lá; regra e controle de execução
+não têm mais cópia no Drive em lugar nenhum. Se encontrar `_CLAUDIO_CONTROLE\LOGS`,
+`\MANIFESTO`, `\BACKUP ROTINA` ou `\STAGING` no Drive, é sobra da migração — a fonte real é
+sempre `_CONTROLE\` dentro de `<RAIZ_REGRAS>`.
 
 Regra de ambiente de teste: **produção fica permanentemente na branch `main` — nunca troque
 a branch dela para testar.** Regra em teste roda do clone `claudio-teste`, aberto como
-projeto próprio do Claude Code. Teste sempre em `SIMULACAO`: o clone enxerga os documentos
-reais (caminho de dado é o mesmo), então `PRODUCAO` a partir dele arquivaria pra valer com
-regra ainda não aprovada.
+projeto próprio do Claude Code, com seu próprio `_CONTROLE\` independente. Teste sempre em
+`SIMULACAO`: o clone enxerga os mesmos documentos de cliente no Drive, então `PRODUCAO` a
+partir dele arquivaria pra valer com regra ainda não aprovada.
 
-Regra de varredura da origem: a varredura é RECURSIVA — entra em qualquer subpasta dentro da origem, em qualquer profundidade, e trata cada arquivo encontrado como um item próprio (arquivo_original), igual a um arquivo solto na raiz. A estrutura de subpasta não importa para a classificação — o Roteador e os Especialistas decidem pelo conteúdo do documento, não pelo caminho onde ele estava. Excluídas da varredura, em qualquer profundidade: a própria pasta NÃO IDENTIFICADOS, CLAUDE FAVOR NÃO MEXER (e tudo dentro dela, inclusive _CLAUDIO_CONTROLE) e qualquer pasta iniciada por _.
+Regra de varredura da origem: a varredura é RECURSIVA — entra em qualquer subpasta dentro da origem, em qualquer profundidade, e trata cada arquivo encontrado como um item próprio (arquivo_original), igual a um arquivo solto na raiz. A estrutura de subpasta não importa para a classificação — o Roteador e os Especialistas decidem pelo conteúdo do documento, não pelo caminho onde ele estava. Excluídas da varredura, em qualquer profundidade: a própria pasta NÃO IDENTIFICADOS, CLAUDE FAVOR NÃO MEXER (e tudo dentro dela) e qualquer pasta iniciada por _.
 
-Regra de extração de .zip: um arquivo `.zip` encontrado na varredura não vira item direto — é extraído para `STAGING\<id_execucao>\` (Fase 1b do Orquestrador, procedimento mecânico). Cada arquivo extraído vira item próprio, apontando para o `.zip` como `arquivo_original` — mesmo modelo já usado para PDF composto: o `.zip` só sai da origem (via Executor) quando todos os itens extraídos dele estiverem resolvidos. Se um arquivo extraído for ele mesmo um `.zip`, extraia de novo, recursivamente, até não sobrar `.zip`.
+Regra de extração de .zip: um arquivo `.zip` encontrado na varredura não vira item direto — é extraído para `_CONTROLE\STAGING\<id_execucao>\` (Fase 1b do Orquestrador, procedimento mecânico). Cada arquivo extraído vira item próprio, apontando para o `.zip` como `arquivo_original` — mesmo modelo já usado para PDF composto: o `.zip` só sai da origem (via Executor) quando todos os itens extraídos dele estiverem resolvidos. Se um arquivo extraído for ele mesmo um `.zip`, extraia de novo, recursivamente, até não sobrar `.zip`.
 
-Regra de escrita: arquivos de cliente só podem ser gravados dentro de G:\Meu Drive\2026. CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE é área de controle da própria rotina e não é destino de arquivo de cliente.
+Regra de escrita: arquivos de cliente só podem ser gravados dentro de G:\Meu Drive\2026. `_CONTROLE\` (local, dentro de `<RAIZ_REGRAS>`) é área de controle da própria rotina e não é destino de arquivo de cliente.
 
-Regra de quarentena: o Executor de Exclusão (08) nunca apaga o arquivo original em definitivo — ele move para BACKUP ROTINA\<DD-MM-AAAA>\, preservando o caminho relativo do arquivo dentro da origem (evita colisão de nome entre clientes diferentes movidos no mesmo dia), onde <DD-MM-AAAA> é a data da própria execução. Arquivo em quarentena é recuperável manualmente por até 7 dias corridos. A purga definitiva (apagar a pasta-dia inteira) roda na Fase 0 de toda execução PRODUCAO, antes de processar qualquer arquivo novo: qualquer pasta-dia cuja data tenha mais de 7 dias corridos é apagada por completo. BACKUP ROTINA está fora da árvore de origem (dentro de CLAUDE FAVOR NÃO MEXER) e por isso nunca é reprocessada como item novo.
+Regra de quarentena: o Executor de Exclusão (08) nunca apaga o arquivo original em definitivo — ele move para `_CONTROLE\BACKUP ROTINA\<DD-MM-AAAA>\`, preservando o caminho relativo do arquivo dentro da origem (evita colisão de nome entre clientes diferentes movidos no mesmo dia), onde <DD-MM-AAAA> é a data da própria execução. Arquivo em quarentena é recuperável manualmente por até 7 dias corridos. A purga definitiva (apagar a pasta-dia inteira) roda na Fase 0 de toda execução PRODUCAO, antes de processar qualquer arquivo novo: qualquer pasta-dia cuja data tenha mais de 7 dias corridos é apagada por completo. `_CONTROLE\BACKUP ROTINA` está fora da árvore de origem e por isso nunca é reprocessada como item novo.
 
 Regra de identificação por exemplos: a pasta "Exemplos de Referência" contém modelos reais de arquivo por banco/operadora (hoje: BANCO DO BRASIL, BNB, BRADESCO, CAIXA, INFINITEPAY, ITAÚ, MERCADO PAGO, NUBANK, PAGBANK, SANTANDER, SICOOB). Consulte no máximo **uma vez por banco/operadora por execução** (na primeira vez que um documento daquele emissor aparecer, ou se surgir dúvida real de classificação) — não releia o exemplo a cada documento novo do mesmo emissor na mesma execução, o gabarito não muda no meio da execução.
 
@@ -536,7 +546,7 @@ separado em 3 fragmentos, com só 2 arquivados, não pode ser tratado como
 </secao>
 
 <secao n="9" titulo="LOG DE PURGAS DA QUARENTENA — ESTRUTURA">
-`G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\MANIFESTO\purgas.jsonl`, append-only,
+`<RAIZ_REGRAS>\_CONTROLE\MANIFESTO\purgas.jsonl`, append-only,
 uma linha por pasta-dia de `BACKUP ROTINA` avaliada na Fase 0 de cada execução
 PRODUCAO (não só as purgadas — toda avaliação, inclusive adiada ou inválida, pra manter
 histórico completo):
@@ -583,7 +593,7 @@ nome igual vindos de subpastas diferentes colidem — ver Fase 4b em 01-ORQUESTR
 </secao>
 
 <secao n="11" titulo="LOG DE QUALIDADE DE ROTEAMENTO — ESTRUTURA">
-`G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\MANIFESTO\qualidade.jsonl`,
+`<RAIZ_REGRAS>\_CONTROLE\MANIFESTO\qualidade.jsonl`,
 append-only, uma linha por execução PRODUCAO, gravada ao final da Fase 4b:
 
 {"id_execucao":"<id>","timestamp":"<ISO-8601>","N_pais":<N>,"nao_identificados_count":<N>,"alerta":"NENHUM|VOLUME_NAO_IDENTIFICADO_INCOMUM"}

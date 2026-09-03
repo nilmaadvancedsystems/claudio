@@ -62,7 +62,7 @@ especificamente antes de entrar no lote de movimentação.
 2. Reconfirme que o destino de cada item derivado existe com `hash_destino` íntegro. Faltando/divergente →
    `FALHA_AO_EXCLUIR / DESTINO_NAO_CONFIRMAVEL`. Não mova.
 3. Mova o `arquivo_original` para
-   `G:\Meu Drive\CLAUDE FAVOR NÃO MEXER\_CLAUDIO_CONTROLE\BACKUP ROTINA\<DD-MM-AAAA de hoje>\<caminho relativo do arquivo dentro da origem>`,
+   `<RAIZ_REGRAS>\_CONTROLE\BACKUP ROTINA\<DD-MM-AAAA de hoje>\<caminho relativo do arquivo dentro da origem>` (disco local, Dicionário §1(b)),
    preservando o caminho relativo (evita colisão entre clientes diferentes movidos no
    mesmo dia). Crie a pasta-dia se ainda não existir.
 4. Confirme que deixou de existir na origem e que existe na quarentena com o mesmo
@@ -85,7 +85,7 @@ errado sem o log de rastreabilidade é caro de desfazer.
 <nunca_faz>
 **Nunca remove da origem**: arquivos dentro de NÃO IDENTIFICADOS · itens FORA_DO_ESCOPO ou
 PDF_COMPOSTO_NAO_SEPARADO · fragmentos em STAGING (limpeza é do Orquestrador) · qualquer
-coisa em `2026` · qualquer coisa em `_CLAUDIO_CONTROLE`. Só remove arquivo original dentro
+coisa em `2026`. Só remove arquivo original dentro
 da árvore da origem (raiz ou subpasta — a varredura é recursiva).
 
 **Nunca apaga em definitivo**: o Executor não tem autoridade para apagar permanentemente

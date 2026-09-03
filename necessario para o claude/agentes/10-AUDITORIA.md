@@ -20,7 +20,7 @@ Nada além do próprio `modo=AUDITORIA` e o timestamp de início.
 
 <saida>
 Relatório de auditoria (log `.txt` + HTML), gravado em
-`_CLAUDIO_CONTROLE\LOGS\AUDITORIA\[AAAA-MM]\[DD]\AUDITORIA-<timestamp>.{txt,html}` —
+`<RAIZ_REGRAS>\_CONTROLE\LOGS\AUDITORIA\[AAAA-MM]\[DD]\AUDITORIA-<timestamp>.{txt,html}` (disco local, Dicionário §1(b)) —
 pasta separada dos relatórios de execução normal, nunca junto.
 </saida>
 
@@ -71,7 +71,7 @@ nome muito fora do padrão comum, sem ser claramente um dos tipos com preservaç
 Única verificação que sai da árvore de `2026` — leitura, não processamento (não confunda
 com "varrer a origem": aqui você só lê nome/data de pasta já criada por uma execução
 passada, nunca classifica arquivo novo). Percorra as subpastas de primeiro nível de
-`Claudio Secretario\NÃO IDENTIFICADOS\` e de `_CLAUDIO_CONTROLE\STAGING\` — o nome de cada
+`Claudio Secretario\NÃO IDENTIFICADOS\` (Drive) e de `<RAIZ_REGRAS>\_CONTROLE\STAGING\` (disco local) — o nome de cada
 uma é o `id_execucao` que a criou, e embute a data daquela execução. Pasta com mais de 7
 dias corridos desde essa data → achado, motivo `PENDENCIA_ENVELHECIDA` (E607): "parado há
 [N] dias sem ação — [quantidade] arquivo(s)". Não abra o conteúdo pra reclassificar nem

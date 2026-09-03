@@ -194,8 +194,15 @@ Registre `id_execucao`, `timestamp_inicio`, `modo`. Zere `ciclos_correcao`.
 **Resolva `<RAIZ_REGRAS>` primeiro**, com `git rev-parse --show-toplevel` a partir da pasta
 onde a sessão foi aberta. É de lá que saem Dicionário, agentes, subagentes e a planilha de
 cadastro — daqui em diante, todo caminho de regra neste documento é relativo a ela
-(Dicionário §1(a)). Caminho de dado (origem, `2026`, LOGS, MANIFESTO, BACKUP ROTINA,
-STAGING) continua absoluto no Drive, igual em produção e em teste.
+(Dicionário §1(a)).
+
+**A partir daqui, `MANIFESTO\`, `LOGS\`, `STAGING\`, `STAGING-SIMULACAO\` e `BACKUP ROTINA\`,
+onde aparecerem soltos neste documento (sem `G:\Meu Drive\` na frente), significam
+`<RAIZ_REGRAS>\_CONTROLE\MANIFESTO\` etc. (Dicionário §1(b), desde 02/09/2026) — disco
+local, não Drive, e específico deste `<RAIZ_REGRAS>` (produção e um clone de teste têm cada
+um o seu `_CONTROLE\`, não compartilham).** Só a origem (`Claudio Secretario`), `2026` e
+`NÃO IDENTIFICADOS` continuam absolutos no Drive (Dicionário §1(c)), iguais em produção e em
+teste.
 
 **Informe no relatório qual `<RAIZ_REGRAS>` foi usada**, sempre. É o que deixa evidente se
 aquela execução rodou com as regras de produção (`...\GUSTAVO\claudio`, branch `main`) ou
@@ -208,7 +215,8 @@ adivinhar o caminho nem cair no caminho de produção por padrão — rodar com 
 da que o operador acha que está rodando é pior que não rodar.
 
 **Trava de execução concorrente** (vale para PRODUCAO e SIMULACAO): antes de tocar em
-qualquer coisa, crie `_CLAUDIO_CONTROLE\_execucao.lock` (JSON:
+qualquer coisa, crie `_CONTROLE\_execucao.lock` (dentro de `<RAIZ_REGRAS>`, disco local —
+JSON:
 `{"id_execucao","timestamp_inicio","modo","fase_atual"}`), criação atômica (não sobrescreva
 se já existir). Já existir com menos de 4h → pare, `FALHA_DE_INFRAESTRUTURA`, motivo
 `EXECUCAO_CONCORRENTE_DETECTADA` — outra execução pode estar em andamento agora, rodar em
@@ -229,8 +237,9 @@ propósito (sincronização de Drive corrompe repositório git). Só o que está
 como liberado é versionado: Dicionário, agentes
 (`necessario para o claude/agentes/*.md`), `.claude/commands`, `.claude/agents`, `MANUAIS/`
 e `necessario para o claude/dados agentes/` (planilha de cadastro, exemplos de referência,
-logo). `LOGS`, `MANIFESTO`, `BACKUP ROTINA`, `STAGING`, `STAGING-SIMULACAO` e `HISTORICO`
-**nunca** são versionados — ficam no Drive como dado de execução, e
+logo). `_CONTROLE\` inteiro (`LOGS`, `MANIFESTO`, `BACKUP ROTINA`, `STAGING`,
+`STAGING-SIMULACAO`) **nunca** é versionado — fica em disco local como dado de execução,
+fora do `.gitignore` allowlist sem precisar de regra própria (Dicionário §1). E
 `cadastro_empresas_unificado.xlsx`/`EXEMPLOS DE ARQUIVOS` contêm dado real de cliente
 (liberados no GitHub por decisão explícita do responsável, repositório privado — não
 remova essa liberação do `.gitignore` sem confirmar de novo).
@@ -595,7 +604,7 @@ relatório, não é uma mensagem de texto crua.
   manual necessária` se aplicável.
 - `body` (texto puro, alternativa pra clientes sem HTML): mesmo conteúdo do `htmlBody`
   em texto simples — nunca deixe em branco.
-- `htmlBody`: monte convertendo a logo (`dados agentes\logo-nilma.jpeg`) pra base64,
+- `htmlBody`: monte convertendo a logo (`<RAIZ_REGRAS>\necessario para o claude\dados agentes\logo-nilma.jpeg`) pra base64,
   igual já faz no relatório, e siga este modelo (inline styles — e-mail não roda `<style>`
   de bloco de forma confiável, então todo estilo vai direto no atributo `style` de cada
   tag):

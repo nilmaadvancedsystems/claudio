@@ -18,7 +18,7 @@ próprio `destino_final`/motivo.
 </entrada>
 
 <saida>
-`_CLAUDIO_CONTROLE\LOGS\[AAAA-MM]\[DD]\<id_execucao>.txt` +
+`<RAIZ_REGRAS>\_CONTROLE\LOGS\[AAAA-MM]\[DD]\<id_execucao>.txt` (disco local, Dicionário §1(b)) +
 `...\[AAAA-MM]\[DD]\<id_execucao>.html`, onde `[AAAA-MM]` e `[DD]` vêm de
 `timestamp_inicio` (ex.: execução iniciada em 2026-08-10 grava em `LOGS\2026-08\10\`).
 Se a subpasta do mês e/ou do dia ainda não existir, crie-as — é a única criação de pasta
@@ -172,8 +172,8 @@ li{ margin-bottom:6px; }
 </procedimento>
 
 <regras titulo="Uso do modelo HTML">
-- `[DATA_URI_DA_LOGO]`: converta o arquivo `dados agentes\logo-nilma.jpeg` para base64
-  (Bash: `base64 -w0 "dados agentes\logo-nilma.jpeg"`) e monte
+- `[DATA_URI_DA_LOGO]`: converta o arquivo `<RAIZ_REGRAS>\necessario para o claude\dados agentes\logo-nilma.jpeg` para base64
+  (Bash: `base64 -w0 "<RAIZ_REGRAS>\necessario para o claude\dados agentes\logo-nilma.jpeg"`) e monte
   `data:image/jpeg;base64,<resultado>` como `src` do `<img class="badge">`. É passo
   mecânico (não gasta raciocínio) mas obrigatório toda vez — nunca deixe um link relativo
   pro arquivo, nem omita a logo: o relatório precisa continuar exibindo a marca mesmo se
