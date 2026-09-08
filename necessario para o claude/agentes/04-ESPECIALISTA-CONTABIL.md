@@ -71,6 +71,7 @@ Todo caminho abaixo é relativo a `<cliente_destino>\CONTÁBIL\`.
 | Recebimento de Clientes | `RECEBIMENTO DE CLIENTES\[ANO]\[MÊS]\` | `[BANCO] [MÊS E ANO].pdf` | banco+competência |
 | Venda de Ativos | `VENDA DE ATIVOS\[ANO]\` | nome original, `nome_original_preservado=true` | ano |
 | Registro de Livros | `REGISTRO DE LIVROS\([Nº 3 dígitos]) [ANO]\` (ex. `(001) 2026`) | nome original preservado | nº do livro+ano |
+| Relatório LJ Sistemas | `Relatorios LJ\` — **exceção**: fora de `CONTÁBIL`, direto em `<cliente_destino>\Relatorios LJ\` | `[MÊS E ANO].pdf` | competência |
 
 `[ANO]`/`[MÊS]` sempre da competência do documento, nunca da data de download/disco.
 
@@ -82,6 +83,8 @@ Todo caminho abaixo é relativo a `<cliente_destino>\CONTÁBIL\`.
 
 **Fallback extrato avulso**: banco identificável, categoria não → `EXTRATOS\[ANO]\[MÊS]\` (sem subpasta), nome `EXTRATO_[BANCO]_[MÊS E ANO].pdf`. Banco também não identificável → `NAO_IDENTIFICADO` (não usar fallback).
 
+**Relatório LJ Sistemas**: título "RELATÓRIO PERIÓDICO (SALDO/EXTRATO)" com rodapé "LJ SISTEMAS" — é relatório interno de movimentação de caixa/banco gerado pelo próprio sistema contábil do cliente, não um extrato emitido por banco (campo "Conta Nº"/banco fica em branco no documento). Não aplicar Fallback extrato avulso nem `NAO_IDENTIFICADO/BANCO_AUSENTE` nesse caso → `Relatorios LJ\[MÊS E ANO].pdf` (ex. `08-2026.pdf`), pasta na raiz do cliente. Competência ilegível/ausente → `NAO_IDENTIFICADO/COMPETENCIA_AUSENTE`.
+
 **Colisão de maior risco — Bancário × Recebimento de Clientes** (nomes finais quase idênticos): título "Relatório de Recebimentos"/"Títulos Liquidados"/"Relatório de Cobrança"/"Cobrança — Títulos Baixados" → Recebimento; "Extrato de Conta"/"Extrato de Conta Corrente"/"Extrato Financeiro" → Bancários. Dúvida → `NAO_IDENTIFICADO/COLISAO_BANCARIO_RECEBIMENTO`. Nunca decidir por extensão/emissor/nome do arquivo original.
 
 **Operações de Câmbio** (contrato/comprovante de compra ou venda de moeda estrangeira — comum em cliente que importa, exporta, ou recebe/envia pagamento internacional): reconheça pelo título "Contrato de Câmbio"/"Boleto de Câmbio" (com número de contrato, taxa e valor em moeda estrangeira) → `CONTRATO.pdf`; título "Comprovante de Câmbio"/"Nota de Câmbio"/"Confirmação de Câmbio" (documento de liquidação da operação, com data) → `COMPROVANTE [DATA].pdf`, `[DATA]` = data da liquidação/operação (Dicionário §2, DD-MM-AAAA), nunca a data de download. Mesmo `[Nº CONTRATO]` de câmbio pode gerar contrato + um ou mais comprovantes (liquidação em parcelas) — todos na mesma pasta `[Nº CONTRATO]\`. Nº do contrato ilegível → não force um destino: `NAO_IDENTIFICADO/CONTRATO_SEM_NUMERO`.
@@ -90,7 +93,7 @@ Todo caminho abaixo é relativo a `<cliente_destino>\CONTÁBIL\`.
 
 **Duplicidade**: você decide o `nome_final` normalmente, seguindo a regra da sub-regra correspondente — não precisa checar disco nem prever colisão, é o Orquestrador quem confere o destino real e resolve (mesmo nome+hash → `DUPLICADO/IDENTICO_JA_ARQUIVADO`; mesmo nome+hash diferente → sufixo `(N)` do Dicionário §2, `CONFLITO_MESMO_NOME_CONTEUDO_DIFERENTE` só informativo) na gravação em lote (01, Fase 3-4). Movimentação para NÃO IDENTIFICADOS é do Orquestrador (fase 4b), você só marca `status`/`motivo`.
 
-**Dados ausentes por sub-regra** → `NAO_IDENTIFICADO` com motivo nomeando o campo: Extratos `BANCO_AUSENTE`/`COMPETENCIA_AUSENTE` · Op.Crédito `CONTRATO_SEM_NUMERO`/`TIPO_AUSENTE`/`BANCO_AUSENTE` · Op.Câmbio `CONTRATO_SEM_NUMERO`/`BANCO_AUSENTE` · Fornecedores `VOCABULARIO_AUSENTE` · Livros `LIVRO_SEM_NUMERO`. Nunca inventar valor/data de sistema.
+**Dados ausentes por sub-regra** → `NAO_IDENTIFICADO` com motivo nomeando o campo: Extratos `BANCO_AUSENTE`/`COMPETENCIA_AUSENTE` · Op.Crédito `CONTRATO_SEM_NUMERO`/`TIPO_AUSENTE`/`BANCO_AUSENTE` · Op.Câmbio `CONTRATO_SEM_NUMERO`/`BANCO_AUSENTE` · Fornecedores `VOCABULARIO_AUSENTE` · Livros `LIVRO_SEM_NUMERO` · Relatório LJ Sistemas `COMPETENCIA_AUSENTE`. Nunca inventar valor/data de sistema.
 </regras>
 
 </agente>
