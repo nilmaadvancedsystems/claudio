@@ -15,8 +15,13 @@ Raiz: `<cliente_destino>\FISCAL\SIMPLES NACIONAL\`
 03. DOCUMENTOS FISCAIS\     → 05d §1
 04. DeSTDA\
 05. SINTEGRA\
-06. PARCELAMENTOS\          → 05d §2
+06. PARCELAMENTOS\          → 05d §2 (inclui subpasta ESTADUAL\; não tem FEDERAL\ neste regime)
 07. RESTITUIÇÃO\            → 05d §3
+08. DAM\                    → nome no 05d §4
+09. REEMBOLSO\              → 05d §3
+10. RESSARCIMENTO\          → 05d §3
+11. COMPENSAÇÃO\            → 05d §3
+12. XML\                    → 05d §1b
 ```
 
 | Tipo | Pasta | Nome final | Dados obrigatórios |

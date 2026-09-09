@@ -57,8 +57,25 @@ RECEBIDOS\ (mesma estrutura ESPECÍFICOS\)
 | MDF-e / Manifesto | `[DATA] - MDF-e [Nº MANIFESTO] - [RAZÃO SOCIAL EMISSOR].pdf` |
 
 `[RAZÃO SOCIAL EMISSOR]` segue a normalização do Dicionário §5.2 (maiúsculas, sem sufixo societário, sem pontuação). Dado obrigatório ausente/ilegível pro tipo (nº da nota/CIOT/CT-e/manifesto/apólice, data, ou razão social do emissor) → não force o nome: `NAO_IDENTIFICADO/VOCABULARIO_AUSENTE`.
+</regra>
 
-**XML**: não passa pelo Separador, não tem "título" — classificar pelas tags (`<mod>`, `<CFOP>`, `<emit><CNPJ>`), não pelo nome do arquivo. NF-e + seu XML vão pra mesma pasta.
+<regra n="1b" titulo="XML ([NN]. XML\, pasta própria — NN informado pelo doc do regime)">
+Não passa pelo Separador, não tem "título" — classificar pelas tags internas
+(`<mod>`, `<CFOP>`, `<emit><CNPJ>`), nunca pelo nome do arquivo (mesmo princípio já
+usado pro OFX bancário, ver 04-ESPECIALISTA-CONTABIL.md). Estrutura: `XML\[TIPO]\`
+(`TIPO` = NFC-e, NF-e, NFS-e, CT-e ou NFCom).
+
+| Tipo | Nome final |
+|---|---|
+| NFC-e | `[MÊS E ANO]_NFC-e_[Nº NOTA].xml` |
+| NF-e | `[MÊS E ANO]_NF-e_[Nº NOTA].xml` |
+| NFS-e | `[MÊS E ANO]_NFS-e_[Nº NOTA].xml` |
+| CT-e | `[MÊS E ANO]_CT-e_[Nº CT-e].xml` |
+| NFCom | `[MÊS E ANO]_NFCom_[Nº NOTA].xml` |
+
+Extensão `.xml` sempre preservada, nunca convertida pra `.pdf` (Dicionário §6.1.4). O PDF
+correspondente (se houver) segue sua própria sub-regra em `03. DOCUMENTOS FISCAIS\` — não
+precisa ficar na mesma pasta do XML. Tag ilegível/corrompida → `NAO_IDENTIFICADO/CONTEUDO_ILEGIVEL`.
 </regra>
 
 <regra n="2" titulo="Parcelamentos ([NN]. PARCELAMENTOS\, NN=06 Simples · 08 Presumido · 07 Real)">
@@ -72,21 +89,44 @@ DÍVIDA ATIVA\[ANO]\[MÊS]\ · PREVIDENCIÁRIA\[ANO]\[MÊS]\ · SIMPLES NACIONAL
 | DÍVIDA ATIVA\ | `[MÊS E ANO] - PARCELAMENTO PGFN - PARCELA [Nº PARCELA] - VALOR [VALOR].pdf` |
 | PREVIDENCIÁRIA\ | `[MÊS E ANO] - PARCELAMENTO INSS - PARCELA [Nº PARCELA] - VALOR [VALOR].pdf` |
 | SIMPLES NACIONAL\ | `[MÊS E ANO] - PARCELAMENTO SIMPLES - PARCELA [Nº PARCELA] - VALOR [VALOR].pdf` |
+| FEDERAL\ (só Presumido/Real) | `[MÊS E ANO] - PARCELAMENTO FEDERAL - PARCELA [Nº PARCELA] - VALOR [VALOR].pdf` |
+| ESTADUAL\ (Simples/Presumido/Real) | `[MÊS E ANO] - PARCELAMENTO ESTADUAL - PARCELA [Nº PARCELA] - VALOR [VALOR].pdf` |
+
+`FEDERAL\` = parcelamento ordinário de tributo federal (Receita Federal), diferente de `DÍVIDA ATIVA\` (que é especificamente PGFN/dívida inscrita). Não existe em cliente do Simples (lá, débito federal em atraso vira parcelamento do próprio Simples ou Dívida Ativa, nunca "Federal" à parte). `ESTADUAL\` = parcelamento de ICMS/tributo estadual junto à Sefaz, existe nos três regimes.
 
 `[MÊS E ANO]` = competência da parcela (mês de referência do parcelamento), nunca a data de emissão do boleto. Nº da parcela ou valor ilegível → `NAO_IDENTIFICADO/VOCABULARIO_AUSENTE`.
 </regra>
 
-<regra n="3" titulo="Restituição ([NN]. RESTITUIÇÃO\, NN=07 Simples · 09 Presumido · 08 Real)">
-Nome final: `[MÊS E ANO] - PER RESTITUICAO [Nº PEDIDO] - VALOR [VALOR].pdf`. `[MÊS E ANO]` = competência do pedido/protocolo. Nº do pedido ou valor ilegível → `NAO_IDENTIFICADO/VOCABULARIO_AUSENTE`.
+<regra n="3" titulo="Restituição, Reembolso, Ressarcimento, Compensação — família PER/DCOMP (pastas próprias no nível [NN], uma por tipo)">
+Mesmo instrumento (Pedido Eletrônico de Restituição/Ressarcimento e Declaração de
+Compensação — PER/DCOMP), com pastas de destino separadas por tipo de crédito
+pleiteado. `[NN]. RESTITUIÇÃO\` já existe (07 Simples · 09 Presumido · 08 Real);
+`[NN]. REEMBOLSO\`, `[NN]. RESSARCIMENTO\` e `[NN]. COMPENSAÇÃO\` são novas nos três
+regimes — NN informado pelo doc do regime.
+
+| Pasta | Nome final |
+|---|---|
+| RESTITUIÇÃO\ | `[MÊS E ANO] - PER RESTITUICAO [Nº PEDIDO] - VALOR [VALOR].pdf` |
+| REEMBOLSO\ | `[MÊS E ANO] - PER REEMBOLSO [Nº PEDIDO] - VALOR [VALOR].pdf` |
+| RESSARCIMENTO\ | `[MÊS E ANO] - PER RESSARCIMENTO [Nº PEDIDO] - VALOR [VALOR].pdf` |
+| COMPENSAÇÃO\ | `[MÊS E ANO] - DCOMP [Nº PEDIDO] - VALOR [VALOR].pdf` |
+
+Decidir qual dos quatro pelo tipo de crédito declarado no próprio PER/DCOMP (campo
+"Tipo de Crédito"/cabeçalho do documento), nunca por suposição — dúvida entre eles →
+`NAO_IDENTIFICADO/COLISAO_PERDCOMP`. `[MÊS E ANO]` = competência do pedido/protocolo.
+Nº do pedido ou valor ilegível → `NAO_IDENTIFICADO/VOCABULARIO_AUSENTE`.
 </regra>
 
 <regra n="4" titulo="Guias com regra compartilhada">
-DAE e DARF aparecem em mais de um regime — nome mora aqui uma vez só; o doc do regime só informa o prefixo numérico da pasta.
+DAE, DARF e DAM aparecem em mais de um regime — nome mora aqui uma vez só; o doc do regime só informa o prefixo numérico da pasta.
 
 | Guia | Regimes | Pasta [NN] por regime | Nome final |
 |---|---|---|---|
 | DAE | Simples · Presumido · Real | 02 · 06 · 05 | `[MÊS E ANO] - DAE [TRIBUTO] - VALOR [VALOR] - VENCIMENTO [VENCIMENTO DA GUIA].pdf` |
 | DARF | Presumido · Real | 05 · 04 | `[MÊS E ANO] - DARF [TRIBUTO] - VALOR [VALOR] - VENCIMENTO [VENCIMENTO DA GUIA].pdf` |
+| DAM | Simples · Presumido · Real | NN próprio, informado pelo doc do regime (pasta nova) | `[MÊS E ANO] - DAM [TRIBUTO] - VALOR [VALOR] - VENCIMENTO [VENCIMENTO DA GUIA].pdf` |
+
+**DAM × DAE × DARF** (guias que podem chegar juntas): DAM = "Documento de Arrecadação Municipal", tributo/taxa de competência municipal (ex. ISS, taxas municipais) — órgão emissor é a prefeitura/secretaria municipal de fazenda, nunca estadual ou federal. Dúvida entre as três → `NAO_IDENTIFICADO/COLISAO_GUIAS_FEDERAL_ESTADUAL` (mesmo motivo já usado pra DARF×DAE×DAPI no Presumido/Real — a colisão é sempre "de qual ente é essa guia").
 
 `[VENCIMENTO DA GUIA]` no formato `[DATA]` do Dicionário §2 (DD-MM-AAAA). `[MÊS E ANO]` = período de apuração/competência da guia, nunca a data de vencimento nem a de download. Tributo, valor ou vencimento ilegível → `NAO_IDENTIFICADO/VOCABULARIO_AUSENTE`.
 </regra>

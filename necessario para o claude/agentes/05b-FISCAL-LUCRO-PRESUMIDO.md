@@ -17,8 +17,13 @@ Raiz: `<cliente_destino>\FISCAL\LUCRO PRESUMIDO\`
 05. DARF\                   → nome no 05d §4
 06. DAE\                    → nome no 05d §4
 07. DAPI\
-08. PARCELAMENTOS\          → 05d §2
+08. PARCELAMENTOS\          → 05d §2 (inclui subpastas FEDERAL\ e ESTADUAL\)
 09. RESTITUIÇÃO\            → 05d §3
+10. DAM\                    → nome no 05d §4
+11. REEMBOLSO\              → 05d §3
+12. RESSARCIMENTO\          → 05d §3
+13. COMPENSAÇÃO\            → 05d §3
+14. XML\                    → 05d §1b
 ```
 
 | Tipo | Pasta | Nome final | Dados obrigatórios |

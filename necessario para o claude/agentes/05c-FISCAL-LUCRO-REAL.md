@@ -16,9 +16,14 @@ Raiz: `<cliente_destino>\FISCAL\LUCRO REAL\`
 04. DARF\                   → nome no 05d §4
 05. DAE\                    → nome no 05d §4
 06. DAPI\
-07. PARCELAMENTOS\          → 05d §2
+07. PARCELAMENTOS\          → 05d §2 (inclui subpastas FEDERAL\ e ESTADUAL\)
 08. RESTITUIÇÃO\            → 05d §3
 09. CONTROLES\CONTROLE DE CRÉDITOS FISCAIS\
+10. DAM\                    → nome no 05d §4
+11. REEMBOLSO\              → 05d §3
+12. RESSARCIMENTO\          → 05d §3
+13. COMPENSAÇÃO\            → 05d §3
+14. XML\                    → 05d §1b
 ```
 ⚠️ Numeração própria deste regime: aqui DARF=04, DAE=05 (no Presumido são 05 e 06). Pasta vem sempre deste documento, nunca de memória de outro regime.
 
