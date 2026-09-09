@@ -45,7 +45,18 @@ RECEBIDOS\ (mesma estrutura ESPECÍFICOS\)
 
 **Específico × geral**: só entra em ESPECÍFICOS\ quando o próprio documento evidencia a natureza (CFOP, descrição do produto/serviço, tipo do documento) — nunca pelo ramo do cliente (transportadora pode comprar café e emitir nota de serviço comum). Sem evidência → direto em EMITIDOS\/RECEBIDOS\.
 
-Nomes finais: NF-e (geral/café/carvão/gado), apólice/seguro, CIOT, CT-e, MDF-e/Manifesto — **todos `A DEFINIR`** (tratar como FORA_DO_ESCOPO/NOMENCLATURA_NAO_DEFINIDA por ora).
+| Tipo | Nome final |
+|---|---|
+| NF-e (geral) | `[DATA] - NF-e [Nº NOTA] - [RAZÃO SOCIAL EMISSOR].pdf` |
+| NF-e — Café | `[DATA] - NF-e CAFE [Nº NOTA] - [RAZÃO SOCIAL EMISSOR].pdf` |
+| NF-e — Carvão | `[DATA] - NF-e CARVAO [Nº NOTA] - [RAZÃO SOCIAL EMISSOR].pdf` |
+| NF-e — Gado | `[DATA] - NF-e GADO [Nº NOTA] - [RAZÃO SOCIAL EMISSOR].pdf` |
+| Apólice / Seguro | `[DATA] - APOLICE [Nº APÓLICE] - [RAZÃO SOCIAL EMISSOR] - [SEGURADORA].pdf` |
+| CIOT | `[MÊS E ANO] - CIOT [Nº CIOT] - [RAZÃO SOCIAL EMISSOR] - VALOR [VALOR].pdf` |
+| CT-e | `[DATA] - CT-e [Nº CT-e] - [RAZÃO SOCIAL EMISSOR].pdf` |
+| MDF-e / Manifesto | `[DATA] - MDF-e [Nº MANIFESTO] - [RAZÃO SOCIAL EMISSOR].pdf` |
+
+`[RAZÃO SOCIAL EMISSOR]` segue a normalização do Dicionário §5.2 (maiúsculas, sem sufixo societário, sem pontuação). Dado obrigatório ausente/ilegível pro tipo (nº da nota/CIOT/CT-e/manifesto/apólice, data, ou razão social do emissor) → não force o nome: `NAO_IDENTIFICADO/VOCABULARIO_AUSENTE`.
 
 **XML**: não passa pelo Separador, não tem "título" — classificar pelas tags (`<mod>`, `<CFOP>`, `<emit><CNPJ>`), não pelo nome do arquivo. NF-e + seu XML vão pra mesma pasta.
 </regra>
@@ -54,11 +65,19 @@ Nomes finais: NF-e (geral/café/carvão/gado), apólice/seguro, CIOT, CT-e, MDF-
 ```
 DÍVIDA ATIVA\[ANO]\[MÊS]\ · PREVIDENCIÁRIA\[ANO]\[MÊS]\ · SIMPLES NACIONAL\[ANO]\[MÊS]\
 ```
-`SIMPLES NACIONAL\` aqui = parcelamento de débito do Simples, pode existir em cliente de **qualquer** regime (ex.: cliente hoje no Presumido pagando parcelamento de quando era optante do Simples) — não confundir com o regime do cliente. Nomes finais (Dívida Ativa/Previdenciária/Simples Nacional) — todos `A DEFINIR`.
+`SIMPLES NACIONAL\` aqui = parcelamento de débito do Simples, pode existir em cliente de **qualquer** regime (ex.: cliente hoje no Presumido pagando parcelamento de quando era optante do Simples) — não confundir com o regime do cliente.
+
+| Pasta | Nome final |
+|---|---|
+| DÍVIDA ATIVA\ | `[MÊS E ANO] - PARCELAMENTO PGFN - PARCELA [Nº PARCELA] - VALOR [VALOR].pdf` |
+| PREVIDENCIÁRIA\ | `[MÊS E ANO] - PARCELAMENTO INSS - PARCELA [Nº PARCELA] - VALOR [VALOR].pdf` |
+| SIMPLES NACIONAL\ | `[MÊS E ANO] - PARCELAMENTO SIMPLES - PARCELA [Nº PARCELA] - VALOR [VALOR].pdf` |
+
+`[MÊS E ANO]` = competência da parcela (mês de referência do parcelamento), nunca a data de emissão do boleto. Nº da parcela ou valor ilegível → `NAO_IDENTIFICADO/VOCABULARIO_AUSENTE`.
 </regra>
 
 <regra n="3" titulo="Restituição ([NN]. RESTITUIÇÃO\, NN=07 Simples · 09 Presumido · 08 Real)">
-Nome final (pedido/comprovante de restituição) — `A DEFINIR`.
+Nome final: `[MÊS E ANO] - PER RESTITUICAO [Nº PEDIDO] - VALOR [VALOR].pdf`. `[MÊS E ANO]` = competência do pedido/protocolo. Nº do pedido ou valor ilegível → `NAO_IDENTIFICADO/VOCABULARIO_AUSENTE`.
 </regra>
 
 <regra n="4" titulo="Guias com regra compartilhada">
@@ -66,10 +85,10 @@ DAE e DARF aparecem em mais de um regime — nome mora aqui uma vez só; o doc d
 
 | Guia | Regimes | Pasta [NN] por regime | Nome final |
 |---|---|---|---|
-| DAE | Simples · Presumido · Real | 02 · 06 · 05 | A DEFINIR |
-| DARF | Presumido · Real | 05 · 04 | A DEFINIR |
+| DAE | Simples · Presumido · Real | 02 · 06 · 05 | `[MÊS E ANO] - DAE [TRIBUTO] - VALOR [VALOR] - VENCIMENTO [VENCIMENTO DA GUIA].pdf` |
+| DARF | Presumido · Real | 05 · 04 | `[MÊS E ANO] - DARF [TRIBUTO] - VALOR [VALOR] - VENCIMENTO [VENCIMENTO DA GUIA].pdf` |
 
-Referência do padrão antigo (reaproveitar ao definir, se fizer sentido): `DAE_ICMS_ST_R$[VALOR]_[MÊS E ANO].pdf` · `DARF_[TRIBUTO]_R$[VALOR]_[VENCIMENTO].pdf`.
+`[VENCIMENTO DA GUIA]` no formato `[DATA]` do Dicionário §2 (DD-MM-AAAA). `[MÊS E ANO]` = período de apuração/competência da guia, nunca a data de vencimento nem a de download. Tributo, valor ou vencimento ilegível → `NAO_IDENTIFICADO/VOCABULARIO_AUSENTE`.
 </regra>
 
 <regra n="5" titulo="Duplicidade e dados ausentes">
