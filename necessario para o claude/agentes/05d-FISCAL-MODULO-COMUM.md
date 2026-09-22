@@ -55,8 +55,11 @@ RECEBIDOS\ (mesma estrutura ESPECÍFICOS\)
 | CIOT | `[MÊS E ANO] - CIOT [Nº CIOT] - [RAZÃO SOCIAL EMISSOR] - VALOR [VALOR].pdf` |
 | CT-e | `[DATA] - CT-e [Nº CT-e] - [RAZÃO SOCIAL EMISSOR].pdf` |
 | MDF-e / Manifesto | `[DATA] - MDF-e [Nº MANIFESTO] - [RAZÃO SOCIAL EMISSOR].pdf` |
+| Relatório Mensal de Notas Emitidas (listagem consolidada, não é NF-e individual) | `EMITIDOS\RELATÓRIO MENSAL\[ANO]\[MÊS E ANO] - RELATORIO NOTAS EMITIDAS - [RAZÃO SOCIAL EMISSOR].pdf` |
 
 `[RAZÃO SOCIAL EMISSOR]` segue a normalização do Dicionário §5.2 (maiúsculas, sem sufixo societário, sem pontuação). Dado obrigatório ausente/ilegível pro tipo (nº da nota/CIOT/CT-e/manifesto/apólice, data, ou razão social do emissor) → não force o nome: `NAO_IDENTIFICADO/VOCABULARIO_AUSENTE`.
+
+**Relatório Mensal de Notas Emitidas**: listagem/relatório consolidado de várias notas emitidas no mês (não uma NF-e individual) — reconheça pelo formato de tabela (várias notas, uma linha cada) em vez de uma nota só. Só existe em `EMITIDOS\` (é sempre sobre notas que o próprio cliente emitiu); não há equivalente em `RECEBIDOS\`. Competência ausente → `NAO_IDENTIFICADO/COMPETENCIA_AUSENTE`.
 </regra>
 
 <regra n="1b" titulo="XML ([NN]. XML\, pasta própria — NN informado pelo doc do regime)">
