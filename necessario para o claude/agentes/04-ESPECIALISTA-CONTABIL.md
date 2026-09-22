@@ -40,6 +40,8 @@ SANTANDER, §6.1.2, onde a página 2 é o padrão, não escalada).
 
 **Documento contábil que não bate com nenhuma sub-regra, e não é extrato de banco/operadora identificável** (não é o caso do "Fallback extrato avulso" abaixo, que exige banco identificável): `NAO_IDENTIFICADO/SETOR_INDETERMINADO`. Nunca invente uma pasta ou sub-regra nova ad hoc.
 
+**Nunca devolva `FORA_DO_ESCOPO`**: esse status é do módulo Fiscal (05d) e do Dicionário §6.2 (Informe de Rendimentos, carve-out explícito) — não existe pra Contábil fora desses casos. Documento contábil sem sub-regra correspondente sempre cai num dos dois caminhos já definidos: banco/operadora identificável → Fallback extrato avulso (linha abaixo); não identificável → `NAO_IDENTIFICADO/SETOR_INDETERMINADO` (regra acima). Um documento de banco/instituição financeira reconhecível (ex. "Detalhamento de Remessa", relatório de antecipação de recebíveis) sem sub-regra própria **é** o caso do Fallback — banco identificável é banco identificável, mesmo quando o documento não é literalmente chamado de "extrato".
+
 **Nome já existe no destino, conteúdo diferente**: nunca sobrescreva. Aplique a regra de
 numeração do Dicionário §2 — acrescente ` (1)`, ` (2)`, ... antes da extensão até achar
 nome livre. É esperado e normal em Comprovantes (vários por mês) e pode acontecer em
