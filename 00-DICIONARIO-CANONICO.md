@@ -98,7 +98,7 @@ partir dele arquivaria pra valer com regra ainda não aprovada.
 
 Regra de varredura da origem: a varredura é RECURSIVA — entra em qualquer subpasta dentro da origem, em qualquer profundidade, e trata cada arquivo encontrado como um item próprio (arquivo_original), igual a um arquivo solto na raiz. A estrutura de subpasta não importa para a classificação — o Roteador e os Especialistas decidem pelo conteúdo do documento, não pelo caminho onde ele estava. Excluídas da varredura, em qualquer profundidade: a própria pasta NÃO IDENTIFICADOS, CLAUDE FAVOR NÃO MEXER (e tudo dentro dela) e qualquer pasta iniciada por _.
 
-Regra de extração de .zip: um arquivo `.zip` encontrado na varredura não vira item direto — é extraído para `_CONTROLE\STAGING\<id_execucao>\` (Fase 1b do Orquestrador, procedimento mecânico). Cada arquivo extraído vira item próprio, apontando para o `.zip` como `arquivo_original` — mesmo modelo já usado para PDF composto: o `.zip` só sai da origem (via Executor) quando todos os itens extraídos dele estiverem resolvidos. Se um arquivo extraído for ele mesmo um `.zip`, extraia de novo, recursivamente, até não sobrar `.zip`.
+Regra de extração de .zip/.rar: um arquivo `.zip` ou `.rar` encontrado na varredura não vira item direto — é extraído para `_CONTROLE\STAGING\<id_execucao>\` (Fase 1b do Orquestrador, procedimento mecânico). Cada arquivo extraído vira item próprio, apontando para o `.zip`/`.rar` como `arquivo_original` — mesmo modelo já usado para PDF composto: o compactado só sai da origem (via Executor) quando todos os itens extraídos dele estiverem resolvidos. Se um arquivo extraído for ele mesmo um `.zip`/`.rar`, extraia de novo, recursivamente, até não sobrar compactado. `.rar` depende de ferramenta externa (Fase 1b) — se ausente na máquina, `motivo=FERRAMENTA_EXTRACAO_AUSENTE`, `.rar` intocado na origem, nunca tente ler o conteúdo sem extrair.
 
 Regra de escrita: arquivos de cliente só podem ser gravados dentro de G:\Meu Drive\2026. `_CONTROLE\` (local, dentro de `<RAIZ_REGRAS>`) é área de controle da própria rotina e não é destino de arquivo de cliente.
 
@@ -302,6 +302,8 @@ Integridade: DESTINO_INEXISTENTE · DESTINO_VAZIO · TAMANHO_DIVERGENTE · HASH_
 Exclusão: HASH_MUDOU_ANTES_DA_EXCLUSAO · DESTINO_NAO_CONFIRMAVEL · EXCLUSAO_NAO_EFETIVADA · ITEM_PENDENTE · PURGA_ADIADA_VOLUME_INCOMUM · PASTA_QUARENTENA_DATA_INVALIDA · PENDENCIA_ENVELHECIDA
 
 Separação: SEPARACAO_AMBIGUA · PAGINAS_NAO_COBREM_O_ORIGINAL
+
+Extração de compactado: FERRAMENTA_EXTRACAO_AUSENTE (ferramenta de `.rar` não encontrada na máquina — ver Fase 1b do Orquestrador) · ARQUIVO_COMPACTADO_CORROMPIDO
 
 Simulação: SIMULACAO_SEM_DESTINO · SIMULACAO_SEM_FRAGMENTO
 
@@ -540,9 +542,9 @@ manifesto.jsonl, append-only, uma linha JSON por arquivo arquivado:
 Serve para: detectar reprocessamento após queda, evitar recópia, e permitir auditoria histórica de duplicidade contra execuções anteriores.
 
 `pai_completo` (desde 31/08/2026): `true` só quando `hash_origem == hash_original` — ou seja, o
-`arquivo_original` nunca foi separado (PDF composto) nem extraído de `.zip`, então esta única
+`arquivo_original` nunca foi separado (PDF composto) nem extraído de `.zip`/`.rar`, então esta única
 linha já corresponde ao arquivo inteiro. `false` quando este item é um fragmento ou um arquivo
-extraído de `.zip` — nesse caso, o `arquivo_original` só está de fato arquivado quando **todos**
+extraído de `.zip`/`.rar` — nesse caso, o `arquivo_original` só está de fato arquivado quando **todos**
 os fragmentos/extraídos dele tiverem, cada um, sua própria linha no manifesto. Existe porque
 bater um hash contra o manifesto não prova sozinho que o pai inteiro foi resolvido: um pai
 separado em 3 fragmentos, com só 2 arquivados, não pode ser tratado como

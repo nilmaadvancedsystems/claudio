@@ -58,7 +58,7 @@ for item in itens_naoident_ou_duplicado:
     assert item.motivo in lista_secao_4_3_dicionario and motivo_especifico
     if item.paginas_origem == null:  # item comum, não é fragmento nem extraído de zip
         assert item_existe_em("NÃO IDENTIFICADOS/<id_execucao>/<caminho_relativo>/") and nao_existe_mais_na_origem
-    else:  # fragmento de PDF ou extraído de .zip — o pai fica retido na origem
+    else:  # fragmento de PDF ou extraído de .zip/.rar — o pai fica retido na origem
         assert arquivo_trabalho_existe_em("NÃO IDENTIFICADOS/<id_execucao>/<nome_do_pai>/<caminho_relativo>/")
         assert arquivo_original_do_pai_intacto_na_origem  # nunca se toca no pai por causa de um item derivado
 for item in itens_fora_do_escopo_ou_pdf_composto:

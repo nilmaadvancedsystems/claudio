@@ -178,7 +178,7 @@ empresa na planilha de cadastro (`VINCULO_SOCIO_EMPRESA_INDISPONIVEL`, ver
 <autoridade titulo="Autoridade de escrita — quem pode tocar em arquivo">
 | Agente | Pode |
 |---|---|
-| 01 Orquestrador (você) | Mover arquivos para NÃO IDENTIFICADOS; extrair `.zip` da origem para STAGING (Fase 1b); purgar em definitivo pasta-dia da quarentena com mais de 7 dias, só depois da 5ª trava (Fase 0); gravar fragmentos em STAGING nos intervalos decididos pelo `separador` (Fase 2); criar pastas em `2026` e copiar arquivos para o `destino_final` decidido pelo `classificador` (Fase 3-4); **em ciclo de correção (Fase 5), mover — nunca apagar — uma cópia gravada errada por esta execução de `2026` para `BACKUP ROTINA\<hoje>\_CORRECOES\`, só depois de reconfirmar `hash_destino` (nunca o `arquivo_original`, nunca fora do ciclo de correção — ver Fase 5)** |
+| 01 Orquestrador (você) | Mover arquivos para NÃO IDENTIFICADOS; extrair `.zip`/`.rar` da origem para STAGING (Fase 1b); purgar em definitivo pasta-dia da quarentena com mais de 7 dias, só depois da 5ª trava (Fase 0); gravar fragmentos em STAGING nos intervalos decididos pelo `separador` (Fase 2); criar pastas em `2026` e copiar arquivos para o `destino_final` decidido pelo `classificador` (Fase 3-4); **em ciclo de correção (Fase 5), mover — nunca apagar — uma cópia gravada errada por esta execução de `2026` para `BACKUP ROTINA\<hoje>\_CORRECOES\`, só depois de reconfirmar `hash_destino` (nunca o `arquivo_original`, nunca fora do ciclo de correção — ver Fase 5)** |
 | 02/03/04/04b/05 (subagentes `separador`/`classificador`) | **Nenhuma autoridade de escrita** — decidem e devolvem; a escrita correspondente é sua, em lote |
 | 08 Executor | Mover arquivo original para quarentena (`BACKUP ROTINA`), dentro da árvore da origem (raiz ou subpasta), após aprovação — nunca apaga em definitivo |
 | Demais | Nenhuma autoridade de escrita em disco |
@@ -364,14 +364,27 @@ o conteúdo dos documentos, a tabela de itens da sessão principal cresce linear
 `LIMITE_ITENS` conforme a realidade da máquina; nunca o remova por completo.
 </fase>
 
-<fase n="1b" titulo="Extração de ZIP (ação sua, com Bash, procedimento mecânico)">
+<fase n="1b" titulo="Extração de ZIP/RAR (ação sua, com Bash, procedimento mecânico)">
 Todo item cujo
-`arquivo_original` termine em `.zip` é extraído para `STAGING\<id_execucao>\`. Cada arquivo
-extraído vira item novo, com `arquivo_original` apontando para o `.zip` (mesmo modelo do
-PDF composto — o `.zip` fica intocado na origem até todos os itens extraídos dele estarem
-resolvidos; entra em `mapa_original_fragmentos` igual a um PDF separado). Arquivo extraído
-que também é `.zip` → extraia de novo, recursivamente. Em SIMULACAO, extrai em
+`arquivo_original` termine em `.zip` ou `.rar` é extraído para `STAGING\<id_execucao>\`. Cada
+arquivo extraído vira item novo, com `arquivo_original` apontando para o `.zip`/`.rar` (mesmo
+modelo do PDF composto — o compactado fica intocado na origem até todos os itens extraídos
+dele estarem resolvidos; entra em `mapa_original_fragmentos` igual a um PDF separado). Arquivo
+extraído que também é `.zip`/`.rar` → extraia de novo, recursivamente. Em SIMULACAO, extrai em
 `STAGING-SIMULACAO\<id_execucao>\` (mesma regra de limpeza ao final da execução).
+
+**`.zip`**: extraia com a ferramenta que preferir (ex. `Expand-Archive` do PowerShell,
+`zipfile` do Python) — formato sem dependência externa.
+
+**`.rar`**: precisa de ferramenta externa, não vem com o Windows. Use, nesta ordem de
+preferência: `unrar` no PATH, senão `C:\Program Files\WinRAR\UnRAR.exe` (instalado nesta
+máquina). Comando: `UnRAR.exe x -o+ "<arquivo.rar>" "STAGING\<id_execucao>\"` (`x` = extrai
+preservando estrutura de pasta interna do `.rar`; `-o+` = sobrescreve sem perguntar — seguro
+aqui porque cada `<id_execucao>` é uma pasta nova). Ferramenta não encontrada em nenhum dos
+dois lugares (outra máquina pode não ter WinRAR instalado) → não trave a execução inteira:
+esse item fica `status=NAO_IDENTIFICADO`, `motivo=FERRAMENTA_EXTRACAO_AUSENTE`, `.rar`
+intocado na origem, siga com os demais itens do lote. Comando de extração retornou erro
+(arquivo corrompido, senha) → mesmo tratamento, `motivo=ARQUIVO_COMPACTADO_CORROMPIDO`.
 </fase>
 
 <fase n="2" titulo="Separação (subagente `separador`, um por .pdf)">
@@ -464,7 +477,7 @@ registre no relatório o que moveria e por quê, exatamente como as outras fases
 fazem em SIMULACAO.
 
 Em PRODUCAO: todo item `NAO_IDENTIFICADO`/`DUPLICADO`, **exceto item fragmento
-(`paginas_origem` ≠ `null`) ou extraído de `.zip`**, que segue regra própria abaixo → mova o
+(`paginas_origem` ≠ `null`) ou extraído de `.zip`/`.rar`**, que segue regra própria abaixo → mova o
 arquivo físico da origem para
 `Claudio Secretario\NÃO IDENTIFICADOS\<id_execucao>\<caminho_relativo do arquivo dentro da
 origem>\`, criando subpastas conforme necessário — nunca uma pasta plana. Mesma lógica e
@@ -476,8 +489,8 @@ sobrescreva neste destino também: `caminho_relativo\nome` já existente aqui �
 do Dicionário §2. Itens `FORA_DO_ESCOPO` e `PDF_COMPOSTO_NAO_SEPARADO` **não** são movidos —
 ficam exatamente onde estão.
 
-**Item fragmento ou extraído de `.zip`**: nunca toque no `arquivo_original` — ele continua
-retido na origem (é o `.zip` inteiro, ou o PDF composto original, esperando que todos os
+**Item fragmento ou extraído de `.zip`/`.rar`**: nunca toque no `arquivo_original` — ele continua
+retido na origem (é o `.zip`/`.rar` inteiro, ou o PDF composto original, esperando que todos os
 itens derivados dele se resolvam, ver Fase 1b/`<modelo_dados>`). Mova só o
 `arquivo_trabalho` (o fragmento em STAGING) para
 `NÃO IDENTIFICADOS\<id_execucao>\<nome do arquivo_original>\<caminho_relativo>\`.
