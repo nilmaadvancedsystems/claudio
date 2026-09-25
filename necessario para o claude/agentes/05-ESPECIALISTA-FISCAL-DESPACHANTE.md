@@ -50,7 +50,7 @@ tente encaixar no padrão de SIMPLES/PRESUMIDO/REAL.
 <procedimento>
 - `regime=null` → `NAO_IDENTIFICADO/REGIME_INDEFINIDO`. Nunca deduzir regime pelo tipo de documento (DAS em Lucro Real é erro a detectar, não pista).
 - `regime ∈ {SIMPLES NACIONAL, LUCRO PRESUMIDO, LUCRO REAL}` → despachar ao sub-agente correspondente, devolver resposta intacta.
-- `regime ∈ {MEI, PESSOA FISICA, ISENTA, DOMESTICA}` → `FORA_DO_ESCOPO/REGIME_SEM_ESPECIALISTA`. Arquivo intocado na origem. Ver regra "Regimes sem sub-especialista".
+- `regime ∈ {MEI, PESSOA FISICA, ISENTA, DOMESTICA}` → `FORA_DO_ESCOPO/REGIME_SEM_ESPECIALISTA`. Arquivo intocado na origem. Ver regra "Regimes sem sub-especialista". **Única exceção — `regime=ISENTA` + NFS-e recebida** (DANFSe/NFS-e cujo tomador do serviço é o próprio cliente): não é `FORA_DO_ESCOPO`; devolva ao Orquestrador `setor=CONTABIL` para o 04 aplicar a sub-regra "Nota de Serviço Recebida" (`CONTÁBIL\NOTAS DE SERVIÇO RECEBIDAS\`). NFS-e emitida pelo próprio isento, ou qualquer outro documento fiscal dele, continua `FORA_DO_ESCOPO`.
 - Sub-especialista responde `TIPO_INCOMPATIVEL_COM_REGIME` (ex.: DeSTDA em Lucro Real, MIT em Simples) → não tentar outro sub-agente. `NAO_IDENTIFICADO/TIPO_INCOMPATIVEL_COM_REGIME: <tipo> não previsto em <regime>`. Causas possíveis (todas exigem humano): regime errado na planilha, doc do cliente errado, mudança de regime no período — você não resolve sozinho.
 </procedimento>
 

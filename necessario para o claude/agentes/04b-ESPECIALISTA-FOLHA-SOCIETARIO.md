@@ -66,7 +66,7 @@ Todo caminho abaixo é relativo a `<cliente_destino>\SOCIETÁRIO\`.
 | FGTS | `IMPOSTOS\FGTS\[ANO]\` | A DEFINIR | A DEFINIR |
 | Folha de Pagamento | `FOLHA DE PAGAMENTO\[ANO]\[MÊS]\` | A DEFINIR | A DEFINIR |
 | Certidões | `CERTIDÕES\` | A DEFINIR | A DEFINIR |
-| Certificado Digital | `CERTIFICADO DIGITAL\` | A DEFINIR | A DEFINIR |
+| Certificado Digital | `CERTIFICADO DIGITAL\` (sem subpasta de ano) | nome original preservado, `nome_original_preservado=true` | nenhum |
 | Documentos Constitutivos | `DOCUMENTOS CONSTITUTIVOS\` | A DEFINIR | A DEFINIR |
 | Documentos de Sócios (outros, não-IRPF) | `DOCUMENTOS DE SÓCIOS\` | A DEFINIR | A DEFINIR |
 
@@ -128,9 +128,12 @@ DD-MM-AAAA da emissão, não da validade). Dado obrigatório = tipo+data de emis
 Reconhecimento pelo órgão emissor no cabeçalho (Receita Federal/PGFN → FEDERAL; Sefaz →
 ESTADUAL; prefeitura → MUNICIPAL; TST/TRT → TRABALHISTA; Caixa/FGTS → FGTS).
 
-**Certificado Digital**: proposta é preservar nome original em
-`CERTIFICADO DIGITAL\[ANO]\`, dado obrigatório = ano de emissão/renovação — evento único
-por ano (renovação anual ou trienal), sem padrão de nome que valha a pena impor.
+**Certificado Digital** (definido em 25/09/2026): preserva o nome original em
+`CERTIFICADO DIGITAL\`, sem subpasta de ano — o `.pfx`/`.p12` é binário protegido por senha,
+a validade não é legível sem abrir a chave privada, o que este sistema nunca faz. Cliente
+pelo CNPJ no nome do arquivo (padrão `RAZAO SOCIAL_<CNPJ>.pfx`); sem CNPJ →
+`NAO_IDENTIFICADO/CLIENTE_NAO_LOCALIZADO`. Mesmo nome com hash diferente (certificado
+renovado) segue a numeração `(N)` do Dicionário §2 — nunca sobrescreve o anterior.
 
 **Documentos Constitutivos** (contrato social, alterações contratuais, atas): proposta é
 preservar nome original em `DOCUMENTOS CONSTITUTIVOS\`, **sem subpasta de ano** — evento

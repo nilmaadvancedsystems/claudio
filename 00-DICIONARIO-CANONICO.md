@@ -535,7 +535,7 @@ Staging de simulação: os fragmentos gravados em STAGING-SIMULACAO durante uma 
 </secao>
 
 <secao n="8" titulo="MANIFESTO — ESTRUTURA">
-manifesto.jsonl, append-only, uma linha JSON por arquivo arquivado:
+manifesto.jsonl, append-only, uma linha JSON por arquivo arquivado. **Toda linha de qualquer `.jsonl` desta rotina (manifesto, purgas, qualidade, quarentena, `_nao_identificados`) tem de ser JSON válido: grave com um serializador de JSON (ex. `json.dumps(..., ensure_ascii=False)`), nunca montando a string à mão — caminho do Windows tem `\`, que precisa sair `\\` (bug real: 25 linhas do manifesto ficaram inválidas por isso, consertadas em 25/09/2026).** Depois de gravar, releia a última linha e confirme que faz parse:
 
 {"hash_origem":"<sha256>","hash_original":"<sha256>","nome_original":"<nome>","destino_final":"<caminho>","nome_final":"<nome>","id_execucao":"<id>","timestamp":"<ISO-8601>","pai_completo":true|false}
 

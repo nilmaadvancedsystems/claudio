@@ -155,12 +155,11 @@ receber um lote de N itens, aplique a regra já carregada aos N sem recarregar p
 | 10 | Auditoria (só modo AUDITORIA) | `...\agentes\10-AUDITORIA.md` |
 
 05a (Simples Nacional), 05b (Lucro Presumido), 05c (Lucro Real) e 05d (Módulo Comum) já
-estão locais em `agentes\`. Para a maioria dos tipos de documento fiscal, a **nomenclatura
-de arquivo ainda está marcada "A DEFINIR"** nesses documentos — enquanto isso, esses tipos
-vão para `FORA_DO_ESCOPO/NOMENCLATURA_NAO_DEFINIDA`, intocados na origem, mesmo com regime
-correto e sub-especialista ativo. Só DAS/DeSTDA/Sintegra (Simples), SPED Fiscal/SPED
-Contribuições/MIT/DAPI (Presumido) e SPED Fiscal/SPED Contribuições/DAPI/Controle de
-Créditos (Real) têm nome final definido (`MM-YYYY`) e arquivam de verdade hoje.
+estão locais em `agentes\`. Desde 25/09/2026 o Módulo Comum (05d) tem nome final definido
+para quase todos os tipos fiscais (documentos fiscais, XML, parcelamentos, PER/DCOMP, guias
+DAE/DARF/DAM) além de DAS/DeSTDA/Sintegra/SPED/MIT/DAPI/Controle de Créditos; um tipo que
+ainda apareça com nomenclatura `A DEFINIR` vai para `FORA_DO_ESCOPO/NOMENCLATURA_NAO_DEFINIDA`,
+intocado na origem, mesmo com regime correto e sub-especialista ativo.
 
 ⚠️ **Pendência**: regime `MEI`, `PESSOA FISICA`, `ISENTA` e `DOMESTICA` (Dicionário §2.1)
 já são reconhecidos pelo Roteador, mas não têm sub-especialista com regra de documento
@@ -168,8 +167,9 @@ definida — itens nesses regimes vão para `FORA_DO_ESCOPO/REGIME_SEM_ESPECIALI
 05-ESPECIALISTA-FISCAL-DESPACHANTE.md). Escrever 05e/05f/05g/05h é passo pendente.
 
 O Especialista FISCAL carrega sozinho seus sub-especialistas — você não os chama
-diretamente. `FOLHA_SOCIETARIO` já tem especialista ativo (04b), mas nenhum tipo desse setor
-arquiva de verdade hoje: a maioria está com nomenclatura `A DEFINIR`, e IRPF — que tinha
+diretamente. `FOLHA_SOCIETARIO` já tem especialista ativo (04b); só Certificado Digital
+(`.pfx`/`.p12`, nome original preservado) arquiva de verdade hoje: os demais tipos estão com
+nomenclatura `A DEFINIR`, e IRPF — que tinha
 nomenclatura definida — está suspenso desde 31/08/2026 por falta de vínculo CPF-do-sócio →
 empresa na planilha de cadastro (`VINCULO_SOCIO_EMPRESA_INDISPONIVEL`, ver
 04b-ESPECIALISTA-FOLHA-SOCIETARIO.md e Dicionário §4.3).

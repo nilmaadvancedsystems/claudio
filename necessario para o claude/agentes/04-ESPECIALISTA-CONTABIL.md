@@ -74,6 +74,7 @@ Todo caminho abaixo é relativo a `<cliente_destino>\CONTÁBIL\`.
 | Venda de Ativos | `VENDA DE ATIVOS\[ANO]\` | nome original, `nome_original_preservado=true` | ano |
 | Registro de Livros | `REGISTRO DE LIVROS\([Nº 3 dígitos]) [ANO]\` (ex. `(001) 2026`) | nome original preservado | nº do livro+ano |
 | Relatório LJ Sistemas | `Relatorios LJ\` — **exceção**: fora de `CONTÁBIL`, direto em `<cliente_destino>\Relatorios LJ\` | `[MÊS E ANO].pdf` | competência |
+| Nota de Serviço Recebida (só `regime=ISENTA`) | `NOTAS DE SERVIÇO RECEBIDAS\[ANO]\[MÊS]\` | `[DATA] - NFS-e [Nº NOTA] - [PRESTADOR].pdf` | data de emissão+nº da nota+prestador |
 
 `[ANO]`/`[MÊS]` sempre da competência do documento, nunca da data de download/disco.
 
@@ -82,6 +83,8 @@ Todo caminho abaixo é relativo a `<cliente_destino>\CONTÁBIL\`.
 **Planilha de maquininha sem título nenhum**: antes de mandar pra `NAO_IDENTIFICADO/SETOR_INDETERMINADO` ou `VOCABULARIO_AUSENTE` por falta de cabeçalho, verifique as colunas (Dicionário §6.1.3) — tarifa/taxa junto com débito/crédito ou valor bruto/líquido é conciliação de maquininha, mesmo sem nenhum texto de título. Classifique como `MAQUININHAS`, nunca `NAO_IDENTIFICADO` só por ausência de título.
 
 **Arquivo `.ofx`**: sempre `BANCÁRIOS`, sem desambiguação (Dicionário §6.1.4) — não tem título, é dado estruturado. Leia as tags internas (`<ORG>`/`<FID>`/`<BANKID>` pro banco, `<DTSTART>`/`<DTEND>` pra competência), nunca o nome do arquivo. Indique `nome_final` com a extensão `.ofx` preservada, nunca `.pdf` — o Orquestrador copia com o nome exatamente como você devolver.
+
+**Nota de Serviço Recebida (cliente ISENTA)**: NFS-e/DANFSe cujo **tomador** é o próprio cliente (CNPJ do tomador == CNPJ do cliente) e `regime=ISENTA` — o 05 devolve esse caso pra cá porque isento não tem árvore fiscal. `[DATA]` = data de emissão (DD-MM-AAAA); `[Nº NOTA]` = "Número da NFS-e" como impresso; `[PRESTADOR]` = nome do prestador normalizado (Dicionário §5.2), sem o prefixo de CNPJ nem o CPF que MEIs trazem colados na razão social; `[ANO]`/`[MÊS]` = competência da NFS-e. Nunca em `PAGAMENTOS DE FORNECEDORES` (esse é fatura/relatório de fornecedor, não nota fiscal de serviço). Tomador diferente do cliente → `NAO_IDENTIFICADO/EMITENTE_INDETERMINADO`. Dado ilegível → `NAO_IDENTIFICADO/VOCABULARIO_AUSENTE`.
 
 **Fallback extrato avulso**: banco identificável, categoria não → `EXTRATOS\[ANO]\[MÊS]\` (sem subpasta), nome `EXTRATO_[BANCO]_[MÊS E ANO].pdf`. Banco também não identificável → `NAO_IDENTIFICADO` (não usar fallback).
 
