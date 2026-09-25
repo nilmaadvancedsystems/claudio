@@ -334,6 +334,7 @@ E206 | COLISAO_BANCARIO_RECEBIMENTO | Dúvida entre extrato bancário e recebime
 E207 | COLISAO_DAS_DAE | Dúvida entre guia DAS e guia DAE | Revisar manualmente pelo órgão emissor
 E208 | COLISAO_GUIAS_FEDERAL_ESTADUAL | Dúvida entre DARF, DAE e DAPI | Revisar manualmente pelo órgão emissor
 E209 | VINCULO_SOCIO_EMPRESA_INDISPONIVEL | IRPF do sócio identificado, mas a planilha de cadastro não tem CPF de sócio pra achar a empresa certa | Cadastrar coluna de CPF dos sócios na planilha — pendência de dado, não de regra
+E210 | COLISAO_PERDCOMP | Dúvida entre Restituição, Reembolso, Ressarcimento e Compensação (PER/DCOMP) | Revisar manualmente pelo tipo de crédito declarado no documento
 E301 | CONTRATO_SEM_NUMERO | Número do contrato não aparece no documento | Revisar o documento manualmente
 E302 | LIVRO_SEM_NUMERO | Número do livro contábil não aparece no documento | Revisar o documento manualmente
 E303 | COMPETENCIA_AUSENTE | Mês/ano de referência não aparece no documento | Revisar o documento manualmente
@@ -359,6 +360,8 @@ E606 | PASTA_QUARENTENA_DATA_INVALIDA | Nome de pasta-dia da quarentena não bat
 E607 | PENDENCIA_ENVELHECIDA | Item em NÃO IDENTIFICADOS ou fragmento em STAGING parado há mais de 7 dias sem ação (achado só de AUDITORIA) | Revisar manualmente — decidir se arquiva, corrige a regra que travou, ou descarta
 E701 | SEPARACAO_AMBIGUA | PDF com mais de um documento dentro, mas sem certeza de onde cortar | Revisar manualmente e separar à mão se necessário
 E702 | PAGINAS_NAO_COBREM_O_ORIGINAL | Fragmentos de um PDF separado não cobrem todas as páginas do original | Revisar manualmente
+E703 | FERRAMENTA_EXTRACAO_AUSENTE | Arquivo .rar encontrado, mas o programa que abre .rar (WinRAR/UnRAR) não está instalado neste computador | Instalar o WinRAR ou reenviar o conteúdo como .zip; o .rar fica intocado enquanto isso
+E704 | ARQUIVO_COMPACTADO_CORROMPIDO | O .zip/.rar não abriu (corrompido ou protegido por senha) | Pedir o arquivo de novo ao cliente ou informar a senha; o compactado fica intocado
 E801 | SIMULACAO_SEM_DESTINO | Só ocorre em modo teste — não é erro real | Nenhuma
 E802 | SIMULACAO_SEM_FRAGMENTO | Só ocorre em modo teste — não é erro real | Nenhuma
 E901 | VIOLACAO_DE_CONTRATO | Um agente devolveu dado fora do formato esperado — bug do sistema, não do documento | **Parar e chamar responsável técnico**
