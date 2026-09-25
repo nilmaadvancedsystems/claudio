@@ -53,7 +53,10 @@ Autocontido, tema claro/escuro via `prefers-color-scheme`, cabeçalho com iníci
 (`HH:MM:SS`)/`id_execucao`, tabelas com rolagem horizontal própria (nunca a página inteira).
 
 ⚠️ **OBRIGATÓRIO, sem exceção — inclusive em lote vazio (N_pais=0) ou execução trivial**:
-copie o bloco `<style>` abaixo **caractere por caractere**. Não recrie, não resuma, não
+copie o CSS do bloco de código abaixo **caractere por caractere** — só o que fica entre a linha
+que abre a tag de estilo e a linha que a fecha; este parágrafo de instrução e a cerca de
+código nunca entram no arquivo gerado (bug real de 22/09 e 25/09: o texto desta instrução
+vazou pra dentro do CSS do relatório e quebrou o layout). Não recrie, não resuma, não
 "simplifique porque não tem muito conteúdo", não troque nenhuma cor por outra parecida,
 não invente classe nova. Um relatório de execução vazia usa exatamente o mesmo CSS de um
 relatório cheio — a marca (selo "N", vermelho `#B23A44`, `.header`/`.card`/`section` com
