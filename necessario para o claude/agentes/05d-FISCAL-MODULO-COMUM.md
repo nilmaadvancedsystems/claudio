@@ -48,6 +48,7 @@ RECEBIDOS\ (mesma estrutura ESPECÍFICOS\)
 | Tipo | Nome final |
 |---|---|
 | NF-e (geral) | `[DATA] - NF-e [Nº NOTA] - [RAZÃO SOCIAL EMISSOR].pdf` |
+| NFS-e (nota de serviço municipal — DANFSe ou PDF da prefeitura; não é NF-e) | `[DATA] - NFS-e [Nº NOTA] - [RAZÃO SOCIAL EMISSOR].pdf` (`[RAZÃO SOCIAL EMISSOR]` = prestador; emitida ou recebida pela regra de Emitido × Recebido acima) |
 | NF-e — Café | `[DATA] - NF-e CAFE [Nº NOTA] - [RAZÃO SOCIAL EMISSOR].pdf` |
 | NF-e — Carvão | `[DATA] - NF-e CARVAO [Nº NOTA] - [RAZÃO SOCIAL EMISSOR].pdf` |
 | NF-e — Gado | `[DATA] - NF-e GADO [Nº NOTA] - [RAZÃO SOCIAL EMISSOR].pdf` |
@@ -58,6 +59,8 @@ RECEBIDOS\ (mesma estrutura ESPECÍFICOS\)
 | Relatório Mensal de Notas Emitidas (listagem consolidada, não é NF-e individual) | `EMITIDOS\RELATÓRIO MENSAL\[ANO]\[MÊS E ANO] - RELATORIO NOTAS EMITIDAS - [RAZÃO SOCIAL EMISSOR].pdf` |
 
 `[RAZÃO SOCIAL EMISSOR]` segue a normalização do Dicionário §5.2 (maiúsculas, sem sufixo societário, sem pontuação). Dado obrigatório ausente/ilegível pro tipo (nº da nota/CIOT/CT-e/manifesto/apólice, data, ou razão social do emissor) → não force o nome: `NAO_IDENTIFICADO/VOCABULARIO_AUSENTE`.
+
+**NFS-e × NF-e**: NFS-e é nota de **serviço** da prefeitura (DANFSe, "Nota Fiscal de Serviço", "Inscrição Municipal", ISS) — vai direto em `EMITIDOS\`/`RECEBIDOS\` (nunca em `ESPECÍFICOS\`) e nunca recebe o nome de NF-e; NF-e é nota de **produto** (SEFAZ, chave de 44 dígitos, "DANFE"). Título e cabeçalho decidem, nunca o nome do arquivo (arquivo "NF 154" pode ser qualquer um dos dois). `[DATA]` = data de emissão da nota; se o documento trouxer só "Data Fato Gerador", use essa. Sem `A DEFINIR`: o tipo arquiva de verdade (antes de 28/09/2026 cai em `NOMENCLATURA_NAO_DEFINIDA`).
 
 **Relatório Mensal de Notas Emitidas**: listagem/relatório consolidado de várias notas emitidas no mês (não uma NF-e individual) — reconheça pelo formato de tabela (várias notas, uma linha cada) em vez de uma nota só. Só existe em `EMITIDOS\` (é sempre sobre notas que o próprio cliente emitiu); não há equivalente em `RECEBIDOS\`. Competência ausente → `NAO_IDENTIFICADO/COMPETENCIA_AUSENTE`.
 </regra>
