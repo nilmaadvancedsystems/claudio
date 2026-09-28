@@ -278,6 +278,11 @@ desde a última execução.
 <fase n="0-purga" titulo="Purga da quarentena (só em PRODUCAO, antes de processar qualquer arquivo novo)">
 Liste
 as pastas-dia em `BACKUP ROTINA\`. Para cada uma:
+- Nome começa com `ORGANIZACAO-MANUAL-` → é área de retenção **manual** (trabalho de
+  reorganização feito à mão, sem `_quarentena.jsonl` porque não veio da rotina): nunca
+  purgue, nunca avalie, e **não** reporte como `PASTA_QUARENTENA_DATA_INVALIDA` — cite só uma
+  linha informativa no relatório ("retenção manual: N pastas, decisão do responsável"). Só o
+  responsável apaga essas pastas.
 - Nome não bate com o formato `DD-MM-AAAA` → não purgue, `PASTA_QUARENTENA_DATA_INVALIDA`,
   reporte e siga para a próxima.
 - Data é hoje ou no futuro → não purgue (não deveria existir ainda; se existir, é
@@ -335,7 +340,11 @@ ativo correspondente, então a rotação nunca afeta esses cálculos.
 <fase n="1" titulo="Inventário">
 Varra a origem **recursivamente** (qualquer subpasta, qualquer
 profundidade), excluindo em qualquer profundidade NÃO IDENTIFICADOS, CLAUDE FAVOR NÃO
-MEXER e pastas iniciadas por `_`. Cada arquivo encontrado — solto na raiz ou dentro de
+MEXER e pastas iniciadas por `_`, e ignorando por extensão **arquivos de vídeo/áudio**
+(`.mp4 .mov .avi .mkv .wmv .webm .mp3 .wav .m4a`): não são documento — não viram item, não
+entram em `N_pais`, não vão para NÃO IDENTIFICADOS (gravação de reunião/treinamento chega a
+gigabytes e não tem classificação possível), ficam intocados na origem. Só conte quantos
+foram ignorados e cite numa linha em "Pendências para o responsável" (Dicionário §1). Cada arquivo encontrado — solto na raiz ou dentro de
 subpasta — vira um item (`arquivo_original`) igual, sem distinção pela profundidade onde
 estava. Registre `N_pais`. Calcule `hash_original` + `tamanho_original` de todos os
 arquivos **num único comando em lote** (ex. `find` + `sha256sum` encadeados numa só chamada
