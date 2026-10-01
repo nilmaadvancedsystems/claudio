@@ -301,8 +301,12 @@ as pastas-dia em `BACKUP ROTINA\`. Para cada uma:
 
 **5ª trava — confirmação de destino** (só chega aqui quem passou pelas 4 travas acima e
 seria purgado agora): leia `<pasta-dia>\_quarentena.jsonl` e confirme, em lote, que cada
-`destino_final\nome_final` listado existe em disco com tamanho > 0. Alguma entrada não
-confirmável (arquivo ausente, ou 0 bytes) → **não purgue**: `resultado=BLOQUEADA` em
+`destino_final\nome_final` listado existe em disco com tamanho > 0. **Entrada com
+`"tipo": "container_extraido"` (08 §5) não tem `destino_final` próprio** — confirme em vez
+disso que `MANIFESTO\manifesto.jsonl` tem pelo menos uma linha com este mesmo
+`hash_original`, e que o `destino_final` de **todas** elas existe em disco com tamanho > 0;
+zero linhas encontradas também é não confirmável, nunca trate ausência de linha como
+sucesso. Alguma entrada não confirmável (arquivo ausente, ou 0 bytes) → **não purgue**: `resultado=BLOQUEADA` em
 `purgas.jsonl` (Dicionário §9), motivo `DESTINO_NAO_CONFIRMAVEL`, destaque no relatório e no
 e-mail. Pasta-dia sem `_quarentena.jsonl` legível também não é purgada — mesmo motivo. Só
 purgue de verdade a pasta-dia inteira depois que **todas** as entradas dela confirmarem. Esta

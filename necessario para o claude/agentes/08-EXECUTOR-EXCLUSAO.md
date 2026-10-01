@@ -75,6 +75,14 @@ especificamente antes de entrar no lote de movimentação.
    saber que cliente/documento cada arquivo em quarentena era. Falha ao gravar não impede a
    exclusão (o arquivo já está seguro na quarentena), mas registre como pendência no
    relatório.
+
+   **Container extraído (`.zip`/`.rar` com N itens derivados)**: não existe um único
+   `destino_final` — cada item derivado tem o seu próprio (05d §1/§1b). Grave
+   `"destino_final": null, "nome_final": null, "tipo": "container_extraido"` em vez de texto
+   placeholder no lugar de um caminho (bug real: `"(container extraído — 05d 1b, múltiplos
+   itens)"` foi tratado como caminho literal pela 5ª trava da purga, Fase 0-purga, 01, e
+   bloqueou a pasta-dia por 2 execuções seguidas). A confirmação desse registro na purga é:
+   todo item do manifesto com este mesmo `hash_original` existe no destino — ver Fase 0-purga.
 6. `EXCLUIDO_DA_ORIGEM` (significa "removido da origem e movido para quarentena", não apagado em definitivo).
 
 As reconfirmações 1 e 2 são redundantes de propósito com o Conferente — pode ter passado
