@@ -82,6 +82,15 @@ usado pro OFX bancário, ver 04-ESPECIALISTA-CONTABIL.md). Estrutura: `XML\[TIPO
 Extensão `.xml` sempre preservada, nunca convertida pra `.pdf` (Dicionário §6.1.4). O PDF
 correspondente (se houver) segue sua própria sub-regra em `03. DOCUMENTOS FISCAIS\` — não
 precisa ficar na mesma pasta do XML. Tag ilegível/corrompida → `NAO_IDENTIFICADO/CONTEUDO_ILEGIVEL`.
+
+**Evento de NF-e** (definido em 01/10/2026): XML raiz `<procEventoNFe>` (não `<NFe>`) — é
+cancelamento, carta de correção etc. de uma NF-e já emitida, não a nota em si. Pasta
+`XML\NF-e\EVENTOS\`. Nome: `[DATA] - [TIPO EVENTO] NF-e [Nº NOTA].xml` — `[DATA]` = data do
+evento (tag `<dhEvento>`, não a data da nota original); `[Nº NOTA]` = dígitos 26-34 da tag
+`<chNFe>` (44 dígitos), sem zeros à esquerda; `[TIPO EVENTO]` pela tag `<descEvento>`,
+normalizado em maiúsculas sem acento (ex. "Cancelamento" → `CANCELAMENTO`, "Carta de
+Correção" → `CARTA DE CORRECAO`). `<chNFe>`/`<dhEvento>`/`<descEvento>` ilegível →
+`NAO_IDENTIFICADO/VOCABULARIO_AUSENTE`.
 </regra>
 
 <regra n="2" titulo="Parcelamentos ([NN]. PARCELAMENTOS\, NN=06 Simples · 08 Presumido · 07 Real)">
