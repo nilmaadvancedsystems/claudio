@@ -57,6 +57,17 @@ Num PDF com vários comprovantes de contas diferentes, cada página tem o seu ti
 Dois CNPJs presentes, cada um casando com uma linha diferente da planilha, e o papel de cada
 um não estiver explícito no documento → não escolha um: `NAO_IDENTIFICADO/CLIENTE_AMBIGUO`.
 
+**Apelidos confirmados pelo responsável** (documento sem CNPJ cujo nome casa com mais de um
+cliente da planilha — decisão humana já tomada, aplique sem perguntar de novo; vale só quando
+o nome do documento é exatamente o da coluna "Nome no documento"; qualquer outro nome volta
+a ser `CLIENTE_AMBIGUO`):
+
+| Nome no documento | Cliente | Confirmado em | Contexto |
+|---|---|---|---|
+| FITO A EIRELI ME | 309 - FITO ALIMENTOS LTDA | 02/10/2026 | extrato de cartão Sicoob, conta cartão 7563144207668 (a planilha tem também a 292 - FITO INDUSTRIA E COMERCIO DE ALIMENTOS LTDA, mesmo nome fantasia) |
+
+Novo apelido só entra aqui por decisão do responsável, nunca por inferência do agente.
+
 **CNPJ que não bate com nenhuma linha nos 14 dígitos completos**: não caia direto pra
 Inscrição Estadual/nome. Compare a **raiz** (8 primeiros dígitos) contra a raiz de cada CNPJ
 da planilha — raiz igual, sufixo de filial diferente (matriz × filial do mesmo grupo, ou
