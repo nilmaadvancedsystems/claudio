@@ -59,12 +59,12 @@ um não estiver explícito no documento → não escolha um: `NAO_IDENTIFICADO/C
 
 **Apelidos confirmados pelo responsável** (documento sem CNPJ cujo nome casa com mais de um
 cliente da planilha — decisão humana já tomada, aplique sem perguntar de novo; vale só quando
-o nome do documento é exatamente o da coluna "Nome no documento"; qualquer outro nome volta
+o nome do documento é o da coluna "Nome no documento"; qualquer outro nome volta
 a ser `CLIENTE_AMBIGUO`):
 
 | Nome no documento | Cliente | Confirmado em | Contexto |
 |---|---|---|---|
-| FITO A EIRELI ME | 309 - FITO ALIMENTOS LTDA | 02/10/2026 | extrato de cartão Sicoob, conta cartão 7563144207668 (a planilha tem também a 292 - FITO INDUSTRIA E COMERCIO DE ALIMENTOS LTDA, mesmo nome fantasia) |
+| FITO A (com ou sem sufixo societário: "FITO A EIRELI ME", "FITO A LTDA") | 309 - FITO ALIMENTOS LTDA | 02/10/2026 | "FITO A" é a abreviação de **FITO ALIMENTOS** (explicação do responsável). Não confundir com a 292 - FITO INDUSTRIA E COMERCIO DE ALIMENTOS LTDA, que nos documentos aparece como "FITO IND. E COM. DE ALIMENTOS" ou "FITO INDUSTRIA E COMERCIO...". Caso original: extrato de cartão Sicoob, conta cartão 7563144207668 |
 
 Novo apelido só entra aqui por decisão do responsável, nunca por inferência do agente.
 
