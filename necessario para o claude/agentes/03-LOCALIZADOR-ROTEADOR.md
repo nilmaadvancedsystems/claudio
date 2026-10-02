@@ -46,6 +46,14 @@ Clientes Pessoa Física têm CPF (11 dígitos) na coluna CNPJ, não confundir co
 nota fiscal citando emitente e destinatário): o cliente é sempre o CNPJ no papel de
 **destinatário/sacado/tomador/titular da conta** — nunca o emitente/fornecedor/banco —,
 exceto documento fiscal emitido pelo próprio cliente (05d §1, onde o emitente É o cliente).
+**Comprovante bancário (pagamento de boleto/título, transferência, PIX)**: o cliente é o
+**titular da conta debitada** — campo `Cliente:`/`Conta:` do cabeçalho do banco (ex. Sicoob:
+"Cliente: <razão social>") —, nunca o `Pagador`, `Beneficiário` ou `Favorecido` do título.
+O Pagador de um boleto é quem foi cobrado e muitas vezes é um sócio (CPF) cujo boleto a
+empresa pagou: se o seu CPF não está na planilha, isso **não** é `CLIENTE_NAO_LOCALIZADO` —
+olhe o titular da conta antes de desistir (bug real de 02/10/2026: 2 comprovantes do Sicoob
+da VOLPONI INDUSTRIA MECANICA foram para NÃO IDENTIFICADOS por causa do CPF do Pagador).
+Num PDF com vários comprovantes de contas diferentes, cada página tem o seu titular.
 Dois CNPJs presentes, cada um casando com uma linha diferente da planilha, e o papel de cada
 um não estiver explícito no documento → não escolha um: `NAO_IDENTIFICADO/CLIENTE_AMBIGUO`.
 
