@@ -44,7 +44,7 @@ ambígua, e nunca conclua motivo de dado ausente sem ter escalado antes.
    (04/04b já mandam fazer isso; você é quem está lendo o documento, então é você quem faz).
    Divergência → `status=NAO_IDENTIFICADO`, `motivo=CLIENTE_AMBIGUO`, não chame especialista.
 3b. **Regime sem especialista** (`regime` ∈ MEI, PESSOA FISICA, ISENTA, DOMESTICA) e setor
-   `FISCAL` ou `FOLHA_SOCIETARIO`: devolva `status=FORA_DO_ESCOPO`,
+   `FISCAL` (somente — CONTABIL e FOLHA_SOCIETARIO arquivam normalmente em qualquer regime): devolva `status=FORA_DO_ESCOPO`,
    `motivo=REGIME_SEM_ESPECIALISTA` (Dicionário §2.1) — **nunca `PENDENTE`**: `PENDENTE` é
    estado interno do Orquestrador e um classificador nunca o devolve (bug de 05/10/2026: 4
    fragmentos da CDL, regime Isentas, voltaram `PENDENTE`). Exceção: NFS-e recebida por

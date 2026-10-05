@@ -73,6 +73,7 @@ Todo caminho abaixo é relativo a `<cliente_destino>\CONTÁBIL\`.
 | Recebimento de Clientes | `RECEBIMENTO DE CLIENTES\[ANO]\[MÊS]\` | `[BANCO] [MÊS E ANO].pdf` | banco+competência |
 | Venda de Ativos | `VENDA DE ATIVOS\[ANO]\` | nome original, `nome_original_preservado=true` | ano |
 | Registro de Livros | `REGISTRO DE LIVROS\([Nº 3 dígitos]) [ANO]\` (ex. `(001) 2026`) | nome original preservado | nº do livro+ano |
+| Balancete / Balancete-ECD (balancete anual ou mensal, escrituração contábil digital) | `REGISTRO DE LIVROS\(001) [ANO]\` — o balancete é arquivado como o livro **nº 001** do ano | nome original preservado, `nome_original_preservado=true` | ano do balancete (nunca exige nº de livro) |
 | Relatório LJ Sistemas | `Relatorios LJ\` — **exceção**: fora de `CONTÁBIL`, direto em `<cliente_destino>\Relatorios LJ\` | `[MÊS E ANO].pdf` | competência |
 | Nota de Serviço Recebida (só `regime=ISENTA`) | `NOTAS DE SERVIÇO RECEBIDAS\[ANO]\[MÊS]\` | `[DATA] - NFS-e [Nº NOTA] - [PRESTADOR].pdf` | data de emissão+nº da nota+prestador |
 
@@ -91,6 +92,8 @@ Todo caminho abaixo é relativo a `<cliente_destino>\CONTÁBIL\`.
 **Fallback extrato avulso**: banco identificável, categoria não → `EXTRATOS\[ANO]\[MÊS]\` (sem subpasta), nome `EXTRATO_[BANCO]_[MÊS E ANO].pdf`. Banco também não identificável → `NAO_IDENTIFICADO` (não usar fallback).
 
 **Relação de títulos pagos / recebidos (LJ Sistemas)** (definido em 05/10/2026): "RELAÇÃO DE TÍTULOS PAGOS / FORNECEDOR" e "RELAÇÃO DE TÍTULOS RECEBIDOS" (contas a pagar/receber do sistema do cliente, período mensal no cabeçalho) → mesma pasta do Relatório LJ: `Relatorios LJ\[MÊS E ANO] - TITULOS PAGOS.pdf` e `Relatorios LJ\[MÊS E ANO] - TITULOS RECEBIDOS.pdf` (a pasta `Relatorios LJ\` é criada em qualquer cliente que receba o primeiro relatório LJ, não só na 292/309). **Cliente pelo cabeçalho "EMPRESA"/CNPJ do próprio relatório, nunca pela subpasta de origem** (bug de 05/10: 2 relações da ACO FORTE METAIS (450) chegaram numa pasta da SERRALHERIA). Mais de um do mesmo mês e tipo (períodos diferentes) → `(N)` do Dicionário §2.
+
+**Balancete e ECD** (definido em 05/10/2026, decisão do responsável): reconheça pelo título "Balancete"/"Balancete de Verificação"/"ECD"/"Escrituração Contábil Digital". `[ANO]` = ano a que o balancete se refere ("Balancete 2025" → `(001) 2025`; balancete mensal "01.2026" → `(001) 2026`), nunca o ano de entrega. Número do livro é sempre `001` para balancete — não dê `LIVRO_SEM_NUMERO` (esse motivo é só pra Diário/Razão/outros livros sem nº impresso). Mesmo ano com vários (ex. `577Balancete2025.pdf`, `...-ECD.pdf`, versão assinada): nomes originais diferentes coexistem; mesmo nome e conteúdo diferente → `(N)` do Dicionário §2; mesmo conteúdo → `DUPLICADO`. CNPJ não impresso no balancete: use a razão social do cabeçalho (03, "nome só decide quando o documento não traz CNPJ"); nome que case com mais de um cliente → `CLIENTE_AMBIGUO`, nunca pelo nome do arquivo.
 
 **Livro fiscal de ICMS (Registro de Entradas/Saídas/Apuração) não é "Registro de Livros"**: é setor FISCAL (05d §1c). Esta sub-regra do 04 é só para livro **contábil** (Diário, Razão…) com nº do livro.
 

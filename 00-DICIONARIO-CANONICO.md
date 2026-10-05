@@ -195,7 +195,7 @@ VOCABULARIO_AUSENTE (regime novo, decisão humana antes de adicionar aqui).
 MEI, PESSOA FISICA, ISENTA e DOMESTICA ainda não têm sub-especialista com regras de
 documento definidas (só SIMPLES NACIONAL/LUCRO PRESUMIDO/LUCRO REAL têm, via 05a/05b/05c).
 Até existirem: item com um desses 4 regimes → FORA_DO_ESCOPO, motivo
-REGIME_SEM_ESPECIALISTA. Intocado na origem, mesmo tratamento dado a setor sem
+REGIME_SEM_ESPECIALISTA — **só para o setor FISCAL** (05): o setor CONTÁBIL (04) e o FOLHA_SOCIETARIO (04b) não dependem do regime e arquivam normalmente para cliente MEI/Física/Isenta/Doméstica (balancete de cliente ISENTO, p. ex., arquiva; bug de 05/10/2026: balancete da CDL, regime Isentas, parou como FORA_DO_ESCOPO). Intocado na origem, mesmo tratamento dado a setor sem
 especialista.
 </secao>
 

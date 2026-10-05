@@ -163,7 +163,7 @@ intocado na origem, mesmo com regime correto e sub-especialista ativo.
 
 ⚠️ **Pendência**: regime `MEI`, `PESSOA FISICA`, `ISENTA` e `DOMESTICA` (Dicionário §2.1)
 já são reconhecidos pelo Roteador, mas não têm sub-especialista com regra de documento
-definida — itens nesses regimes vão para `FORA_DO_ESCOPO/REGIME_SEM_ESPECIALISTA` (ver
+definida — itens **FISCAIS** nesses regimes vão para `FORA_DO_ESCOPO/REGIME_SEM_ESPECIALISTA` (contábil e folha/societário não dependem do regime) (ver
 05-ESPECIALISTA-FISCAL-DESPACHANTE.md). Escrever 05e/05f/05g/05h é passo pendente.
 
 O Especialista FISCAL carrega sozinho seus sub-especialistas — você não os chama
