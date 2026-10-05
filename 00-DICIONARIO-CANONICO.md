@@ -390,6 +390,8 @@ Canônico
 	Santander, Banco Santander
 	SICREDI
 	Sicredi, Sistema Sicredi
+	BTG PACTUAL
+	BTG, BTG Pactual, Banco BTG Pactual (adicionado em 05/10/2026)
 	BANESE
 	Banese
 	BANRISUL
@@ -621,6 +623,8 @@ arquivo ativo, então a rotação nunca afeta esse cálculo.
 </secao>
 
 <secao n="12" titulo="LEITURA MÍNIMA DE DOCUMENTO — quanto do arquivo carregar">
+**PDF escaneado (sem camada de texto) — leia como imagem, não desista** (desde 05/10/2026): não há OCR instalado (`pdftoppm`/`tesseract` ausentes) e **não precisa**: a ferramenta `Read` renderiza as páginas do PDF como imagem e você lê visualmente, igual a um humano. Só devolva `NAO_IDENTIFICADO/CONTEUDO_ILEGIVEL` se, **depois de ler a imagem**, o conteúdo continuar ilegível (borrado, cortado, página em branco). Escaneado sem OCR por si só nunca é motivo. Mesma regra de leitura mínima: página 1 (ou a que decide), não o PDF inteiro.
+
 Vale para todo agente que lê conteúdo pra decidir (02, 03, 04, 04b, 05a-d, e a Parte B do
 06). Regra geral: **carregue o mínimo necessário pra decidir, e só escale se a decisão
 ainda estiver ambígua.** Não é economia de custo — é o que mantém a execução viável: o

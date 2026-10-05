@@ -43,7 +43,14 @@ ambígua, e nunca conclua motivo de dado ausente sem ter escalado antes.
    identificar — não é redundante, é a segunda checagem contra criar pasta de cliente errado
    (04/04b já mandam fazer isso; você é quem está lendo o documento, então é você quem faz).
    Divergência → `status=NAO_IDENTIFICADO`, `motivo=CLIENTE_AMBIGUO`, não chame especialista.
-4. Aplique o especialista do setor: derive `destino_final` e `nome_final`.
+3b. **Regime sem especialista** (`regime` ∈ MEI, PESSOA FISICA, ISENTA, DOMESTICA) e setor
+   `FISCAL` ou `FOLHA_SOCIETARIO`: devolva `status=FORA_DO_ESCOPO`,
+   `motivo=REGIME_SEM_ESPECIALISTA` (Dicionário §2.1) — **nunca `PENDENTE`**: `PENDENTE` é
+   estado interno do Orquestrador e um classificador nunca o devolve (bug de 05/10/2026: 4
+   fragmentos da CDL, regime Isentas, voltaram `PENDENTE`). Exceção: NFS-e recebida por
+   cliente ISENTA vai para o 04 (ver 05, "Regimes sem sub-especialista").
+4. Aplique o especialista do setor: derive `destino_final` e `nome_final`. PDF escaneado sem
+   texto: leia como imagem com `Read` (Dicionário §12) antes de concluir ilegível.
 5. Devolva. **Não crie pasta, não copie, não mova, não apague nada, e não calcule
    `hash_destino`** — você não tem como calcular o hash de um arquivo que você mesmo não
    gravou. A gravação inteira (pasta, cópia, hash) é feita em lote pela sessão principal
