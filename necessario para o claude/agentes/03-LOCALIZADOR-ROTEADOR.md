@@ -68,6 +68,21 @@ a ser `CLIENTE_AMBIGUO`):
 
 Novo apelido só entra aqui por decisão do responsável, nunca por inferência do agente.
 
+**Contas bancárias confirmadas pelo responsável** (extrato `.ofx` não traz CNPJ, só banco e
+conta; conta que consta aqui identifica o cliente sem perguntar; conta nova continua
+`CLIENTE_NAO_LOCALIZADO`). Nova conta só entra por decisão do responsável:
+
+| Banco (BANKID) | Conta (ACCTID) | Cliente | Confirmado em |
+|---|---|---|---|
+| BANCO DO BRASIL (001) | 40242-7 | 591 - ZELO AGROINDUSTRIAS LTDA | 05/10/2026 |
+| BRADESCO (0237) | 33229 | 591 - ZELO AGROINDUSTRIAS LTDA | 05/10/2026 |
+
+**CNPJ do documento diferente do cadastro por um dígito deslocado**: CNPJ impresso sem
+pontuação ("60958549000115") é comum e é o mesmo CNPJ — normalize e compare os 14 dígitos.
+Se mesmo assim não bater, **releia o número copiando-o literalmente do texto extraído** (nunca
+de memória nem "reconstruindo") antes de concluir `CLIENTE_NAO_LOCALIZADO`: leitura com um
+zero deslocado ("06095854900015" no lugar de "60958549000115") já travou o cliente 567.
+
 **CNPJ que não bate com nenhuma linha nos 14 dígitos completos**: não caia direto pra
 Inscrição Estadual/nome. Compare a **raiz** (8 primeiros dígitos) contra a raiz de cada CNPJ
 da planilha — raiz igual, sufixo de filial diferente (matriz × filial do mesmo grupo, ou
