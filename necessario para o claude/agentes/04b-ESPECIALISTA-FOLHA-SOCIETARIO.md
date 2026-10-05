@@ -67,7 +67,7 @@ Todo caminho abaixo é relativo a `<cliente_destino>\SOCIETÁRIO\`.
 | Folha de Pagamento | `FOLHA DE PAGAMENTO\[ANO]\[MÊS]\` | A DEFINIR | A DEFINIR |
 | Certidões | `CERTIDÕES\` | A DEFINIR | A DEFINIR |
 | Certificado Digital | `CERTIFICADO DIGITAL\` (sem subpasta de ano) | nome original preservado, `nome_original_preservado=true` | nenhum |
-| Documentos Constitutivos | `DOCUMENTOS CONSTITUTIVOS\` | A DEFINIR | A DEFINIR |
+| Documentos Constitutivos | `DOCUMENTOS CONSTITUTIVOS\` (sem subpasta de ano) | nome original preservado, `nome_original_preservado=true` | nenhum |
 | Documentos de Sócios (outros, não-IRPF) | `DOCUMENTOS DE SÓCIOS\` | A DEFINIR | A DEFINIR |
 
 Caminhos dos tipos `A DEFINIR` são a estrutura de pasta já prevista (não é `A DEFINIR` em
@@ -135,10 +135,13 @@ pelo CNPJ no nome do arquivo (padrão `RAZAO SOCIAL_<CNPJ>.pfx`); sem CNPJ →
 `NAO_IDENTIFICADO/CLIENTE_NAO_LOCALIZADO`. Mesmo nome com hash diferente (certificado
 renovado) segue a numeração `(N)` do Dicionário §2 — nunca sobrescreve o anterior.
 
-**Documentos Constitutivos** (contrato social, alterações contratuais, atas): proposta é
-preservar nome original em `DOCUMENTOS CONSTITUTIVOS\`, **sem subpasta de ano** — evento
-não-periódico (uma alteração contratual não tem "competência"), a lista cronológica pelo
-próprio nome/data do arquivo já basta.
+**Documentos Constitutivos** (ativado em 05/10/2026, decisão do responsável): contrato social,
+alterações contratuais, atas, estatuto, ato constitutivo e **cartão CNPJ** (comprovante de inscrição
+e situação cadastral) → nome original preservado em `DOCUMENTOS CONSTITUTIVOS\`, **sem subpasta de
+ano** — evento não-periódico (uma alteração contratual não tem "competência"), a lista cronológica
+pelo próprio nome/data do arquivo já basta. Cartão CNPJ de **filial** vai para a pasta do cliente
+cuja raiz de CNPJ bate (regra de filial do 03). Mesmo nome com conteúdo diferente (cartão atualizado) →
+`(N)` do Dicionário §2, nunca sobrescreve.
 
 **Documentos de Sócios (outros, não-IRPF)** (RG/CPF/comprovante de residência do sócio):
 proposta é preservar nome original em `DOCUMENTOS DE SÓCIOS\`, sem subpasta de ano — mesmo
