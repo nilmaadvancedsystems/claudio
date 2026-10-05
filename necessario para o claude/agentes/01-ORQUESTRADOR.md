@@ -384,7 +384,7 @@ fora não são extraídos nesta execução (sem staging pra limpar).
 **Execução parcial pelo usuário** (`/organizar PRODUCAO pasta=<subpasta> limite=<N>`, ver
 `.claude\commands\organizar.md`): `pasta=` restringe a varredura da Fase 1 a essa subpasta da
 origem (as exclusões de sempre continuam valendo); `limite=` substitui `LIMITE_ITENS` só
-nesta execução. `pasta=?` só lista as pastas de 1º nível da origem com a contagem de arquivos
+nesta execução; `fracao=1/N` equivale a `limite=ceil(N_pais_do_inventario / N)`. `pasta=?` só lista as pastas de 1º nível da origem com a contagem de arquivos
 e encerra sem processar nem criar lock/relatório. Informe no relatório quando a execução foi
 parcial ("pasta=…, limite=…"). A tarefa agendada nunca passa esses argumentos.
 

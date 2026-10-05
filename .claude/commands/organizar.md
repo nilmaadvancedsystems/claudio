@@ -1,6 +1,6 @@
 ---
 description: Executa a rotina de organização da pasta Claudio Secretario (Orquestrador)
-argument-hint: [SIMULACAO|PRODUCAO|AUDITORIA] [pasta=<subpasta da origem>] [limite=<N pais>]
+argument-hint: [SIMULACAO|PRODUCAO|AUDITORIA] [pasta=<subpasta da origem>] [limite=<N pais>] [fracao=1/N]
 ---
 
 Resolva primeiro `<RAIZ_REGRAS>` com `git rev-parse --show-toplevel` — é a raiz do
@@ -19,6 +19,12 @@ execução é a normal, a mesma da tarefa agendada):
   ou `pasta="413 BRAZILIAN filiais"`. Caminho que não existe na origem → pare e avise, não varra tudo.
 - `limite=N` — usa `N` no lugar de `LIMITE_ITENS` (60) nesta execução, ex. `limite=20` pra um
   lote bem pequeno ou `limite=200` pra um maior. `LIMITE_DERIVADOS` (01) continua valendo.
+- `fracao=1/N` — processa só **1/N dos arquivos que o inventário encontrou** (arredonda pra
+  cima; é o mesmo que `limite=ceil(total/N)`, ordem alfabética). Pensado pra pasta enorme
+  que gastaria muito contexto numa rodada só. Como o que é arquivado sai da origem, 1/N é
+  sempre **do que sobrou**: para dividir em 5 partes iguais rode `fracao=1/5`, depois `1/4`,
+  `1/3`, `1/2` e por fim `1/1`. Combina com `pasta=`. `LIMITE_DERIVADOS` continua valendo
+  (um `.rar` grande conta pelos itens que ele gera, não por 1).
 - `pasta=?` — **não processa nada**: lista as pastas de primeiro nível da origem com a
   contagem de arquivos de cada uma (ordem decrescente), para você escolher por onde começar.
 Repita o comando quantas vezes quiser: o que já foi arquivado sai da origem e o manifesto
