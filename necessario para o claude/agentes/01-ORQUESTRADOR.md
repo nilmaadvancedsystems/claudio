@@ -381,6 +381,13 @@ dividido) e todos os pais seguintes ficam para a próxima execução, intocados.
 container maior que o limite roda sozinho. Reextraia só o que cabe: containers que ficaram de
 fora não são extraídos nesta execução (sem staging pra limpar).
 
+**Execução parcial pelo usuário** (`/organizar PRODUCAO pasta=<subpasta> limite=<N>`, ver
+`.claude\commands\organizar.md`): `pasta=` restringe a varredura da Fase 1 a essa subpasta da
+origem (as exclusões de sempre continuam valendo); `limite=` substitui `LIMITE_ITENS` só
+nesta execução. `pasta=?` só lista as pastas de 1º nível da origem com a contagem de arquivos
+e encerra sem processar nem criar lock/relatório. Informe no relatório quando a execução foi
+parcial ("pasta=…, limite=…"). A tarefa agendada nunca passa esses argumentos.
+
 **Teto de itens por execução** (`LIMITE_ITENS`, padrão 60 pais por execução): se o
 inventário trouxer mais que isso, processe os `LIMITE_ITENS` primeiros (ordem alfabética de
 caminho, pra ser determinístico e não pular sempre os mesmos) e **deixe o restante intocado
