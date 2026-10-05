@@ -67,7 +67,12 @@ ambígua, e nunca conclua motivo de dado ausente sem ter escalado antes.
 
 Note que **não há `hash_destino` nesta lista** — esse campo só existe depois que a sessão
 principal grava o arquivo, o que acontece depois da sua resposta. Campo sem valor é `null`,
-nunca ausente. `status` e `motivo` vêm dos enums do Dicionário §4.1/§4.3 — campo ou valor
+nunca ausente. **`status` nunca é `null` nem vazio**: classificação concluída com `destino_final` e
+`nome_final` → `status=PENDENTE` (o Orquestrador promove a `ARQUIVADO` depois da cópia); sem destino
+→ `NAO_IDENTIFICADO`/`FORA_DO_ESCOPO` com `motivo`. **Status sem destino (`NAO_IDENTIFICADO`,
+`FORA_DO_ESCOPO`) devolve `destino_final=null` e `nome_final=null`** — nunca um destino "provável" junto
+com `NAO_IDENTIFICADO` (bug de 05/10: ITBI/DAM veio com destino e `CLIENTE_NAO_LOCALIZADO`; e 2 itens
+vieram com status `null`). `status` e `motivo` vêm dos enums do Dicionário §4.1/§4.3 — campo ou valor
 fora do contrato é `VIOLACAO_DE_CONTRATO`, que aborta a execução inteira na sessão principal
 (mas um campo desta lista simplesmente não produzido por você não é violação — só
 `hash_destino` nunca deveria aparecer aqui, porque não é seu de produzir). Recebendo um

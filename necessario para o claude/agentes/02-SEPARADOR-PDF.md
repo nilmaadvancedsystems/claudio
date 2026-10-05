@@ -45,6 +45,7 @@ nome que o Orquestrador vai usar): `STAGING\<id_execucao>\` (modo PRODUCAO) ou
 - Múltiplos docs, confiança ≥0.90 → decida os intervalos, cobertura de páginas 100% sem
   sobreposição/lacuna, `resultado_separacao=separado`.
 - Único contínuo → `paginas_origem=null`, `resultado_separacao=mantido_integro`.
+- **Livro/relatório contábil contínuo — nunca separe** (Diário, Razão, Balancete, ECD, Balanço): cabeçalho repetido a cada página ("Diário de Setembro", "Folha: n", mesmo CNPJ/NIRE) é **um documento só**, não vários. Bug de 05/10/2026: `577Diario2025.pdf` (2 páginas, Diário de Setembro e de Dezembro) foi cortado em 2 e cada metade propôs um número de livro diferente. → `mantido_integro`.
 - Dúvida/ambiguidade/scan ruim/confiança<0.90 → não corta.
   `resultado_separacao=nao_separado`, motivo descrevendo a ambiguidade. Original intocado
   (corte errado > adiar).
