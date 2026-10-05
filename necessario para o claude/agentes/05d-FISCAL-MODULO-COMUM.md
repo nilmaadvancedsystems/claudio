@@ -180,6 +180,8 @@ DAE, DARF e DAM aparecem em mais de um regime — nome mora aqui uma vez só; o 
 | DARF | Presumido · Real | 05 · 04 | `[MÊS E ANO] - DARF [TRIBUTO] - VALOR [VALOR] - VENCIMENTO [VENCIMENTO DA GUIA].pdf` |
 | DAM | Simples · Presumido · Real | NN próprio, informado pelo doc do regime (pasta nova) | `[MÊS E ANO] - DAM [TRIBUTO] - VALOR [VALOR] - VENCIMENTO [VENCIMENTO DA GUIA].pdf` |
 
+Regime ISENTA (05e): DARF=02, DAE=03, DAM=04 (numeração própria do 05e). Isentas usam os mesmos nomes de arquivo.
+
 **DAM × DAE × DARF** (guias que podem chegar juntas): DAM = "Documento de Arrecadação Municipal", tributo/taxa de competência municipal (ex. ISS, taxas municipais) — órgão emissor é a prefeitura/secretaria municipal de fazenda, nunca estadual ou federal. Dúvida entre as três → `NAO_IDENTIFICADO/COLISAO_GUIAS_FEDERAL_ESTADUAL` (mesmo motivo já usado pra DARF×DAE×DAPI no Presumido/Real — a colisão é sempre "de qual ente é essa guia").
 
 `[VENCIMENTO DA GUIA]` no formato `[DATA]` do Dicionário §2 (DD-MM-AAAA). `[MÊS E ANO]` = período de apuração/competência da guia, nunca a data de vencimento nem a de download. Tributo, valor ou vencimento ilegível → `NAO_IDENTIFICADO/VOCABULARIO_AUSENTE`.

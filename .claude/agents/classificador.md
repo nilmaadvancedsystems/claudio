@@ -21,7 +21,7 @@ Raiz: `<RAIZ_REGRAS>\`
    - `CONTABIL` → `agentes\04-ESPECIALISTA-CONTABIL.md`
    - `FOLHA_SOCIETARIO` → `agentes\04b-ESPECIALISTA-FOLHA-SOCIETARIO.md`
    - `FISCAL` → `agentes\05-ESPECIALISTA-FISCAL-DESPACHANTE.md` + o sub-especialista do
-     regime (`05a`/`05b`/`05c`) + `05d-FISCAL-MODULO-COMUM.md`
+     regime (`05a`/`05b`/`05c`/`05e` para ISENTA) + `05d-FISCAL-MODULO-COMUM.md`
 
 Não carregue especialista de setor que não é o do item — é contexto jogado fora.
 
@@ -43,7 +43,7 @@ ambígua, e nunca conclua motivo de dado ausente sem ter escalado antes.
    identificar — não é redundante, é a segunda checagem contra criar pasta de cliente errado
    (04/04b já mandam fazer isso; você é quem está lendo o documento, então é você quem faz).
    Divergência → `status=NAO_IDENTIFICADO`, `motivo=CLIENTE_AMBIGUO`, não chame especialista.
-3b. **Regime sem especialista** (`regime` ∈ MEI, PESSOA FISICA, ISENTA, DOMESTICA) e setor
+3b. **Regime sem especialista** (`regime` ∈ MEI, PESSOA FISICA, DOMESTICA — ISENTA tem o 05e desde 05/10/2026) e setor
    `FISCAL` (somente — CONTABIL e FOLHA_SOCIETARIO arquivam normalmente em qualquer regime): devolva `status=FORA_DO_ESCOPO`,
    `motivo=REGIME_SEM_ESPECIALISTA` (Dicionário §2.1) — **nunca `PENDENTE`**: `PENDENTE` é
    estado interno do Orquestrador e um classificador nunca o devolve (bug de 05/10/2026: 4

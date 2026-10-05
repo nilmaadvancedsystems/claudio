@@ -161,10 +161,12 @@ DAE/DARF/DAM) além de DAS/DeSTDA/Sintegra/SPED/MIT/DAPI/Controle de Créditos; 
 ainda apareça com nomenclatura `A DEFINIR` vai para `FORA_DO_ESCOPO/NOMENCLATURA_NAO_DEFINIDA`,
 intocado na origem, mesmo com regime correto e sub-especialista ativo.
 
-⚠️ **Pendência**: regime `MEI`, `PESSOA FISICA`, `ISENTA` e `DOMESTICA` (Dicionário §2.1)
+05e (Isentas, desde 05/10/2026) cobre o regime `ISENTA` com os tipos comuns do 05d.
+
+⚠️ **Pendência**: regime `MEI`, `PESSOA FISICA` e `DOMESTICA` (Dicionário §2.1)
 já são reconhecidos pelo Roteador, mas não têm sub-especialista com regra de documento
 definida — itens **FISCAIS** nesses regimes vão para `FORA_DO_ESCOPO/REGIME_SEM_ESPECIALISTA` (contábil e folha/societário não dependem do regime) (ver
-05-ESPECIALISTA-FISCAL-DESPACHANTE.md). Escrever 05e/05f/05g/05h é passo pendente.
+05-ESPECIALISTA-FISCAL-DESPACHANTE.md). Escrever 05f/05g/05h é passo pendente.
 
 O Especialista FISCAL carrega sozinho seus sub-especialistas — você não os chama
 diretamente. `FOLHA_SOCIETARIO` já tem especialista ativo (04b); só Certificado Digital
