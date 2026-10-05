@@ -178,7 +178,7 @@ empresa na planilha de cadastro (`VINCULO_SOCIO_EMPRESA_INDISPONIVEL`, ver
 <autoridade titulo="Autoridade de escrita — quem pode tocar em arquivo">
 | Agente | Pode |
 |---|---|
-| 01 Orquestrador (você) | Mover arquivos para NÃO IDENTIFICADOS; extrair `.zip`/`.rar` da origem para STAGING (Fase 1b); purgar em definitivo pasta-dia da quarentena com mais de 7 dias, só depois da 5ª trava (Fase 0); gravar fragmentos em STAGING nos intervalos decididos pelo `separador` (Fase 2); criar pastas em `2026` e copiar arquivos para o `destino_final` decidido pelo `classificador` (Fase 3-4); **em ciclo de correção (Fase 5), mover — nunca apagar — uma cópia gravada errada por esta execução de `2026` para `BACKUP ROTINA\<hoje>\_CORRECOES\`, só depois de reconfirmar `hash_destino` (nunca o `arquivo_original`, nunca fora do ciclo de correção — ver Fase 5)** |
+| 01 Orquestrador (você) | Mover arquivos para NÃO IDENTIFICADOS; extrair `.zip`/`.rar`/`.7z` da origem para STAGING (Fase 1b); purgar em definitivo pasta-dia da quarentena com mais de 7 dias, só depois da 5ª trava (Fase 0); gravar fragmentos em STAGING nos intervalos decididos pelo `separador` (Fase 2); criar pastas em `2026` e copiar arquivos para o `destino_final` decidido pelo `classificador` (Fase 3-4); **em ciclo de correção (Fase 5), mover — nunca apagar — uma cópia gravada errada por esta execução de `2026` para `BACKUP ROTINA\<hoje>\_CORRECOES\`, só depois de reconfirmar `hash_destino` (nunca o `arquivo_original`, nunca fora do ciclo de correção — ver Fase 5)** |
 | 02/03/04/04b/05 (subagentes `separador`/`classificador`) | **Nenhuma autoridade de escrita** — decidem e devolvem; a escrita correspondente é sua, em lote |
 | 08 Executor | Mover arquivo original para quarentena (`BACKUP ROTINA`), dentro da árvore da origem (raiz ou subpasta), após aprovação — nunca apaga em definitivo |
 | Demais | Nenhuma autoridade de escrita em disco |
@@ -278,6 +278,11 @@ desde a última execução.
 <fase n="0-purga" titulo="Purga da quarentena (só em PRODUCAO, antes de processar qualquer arquivo novo)">
 Liste
 as pastas-dia em `BACKUP ROTINA\`. Para cada uma:
+- `_CONTROLE\STAGING\<id>\` ou `STAGING-SIMULACAO\<id>\` de execução **já encerrada** (o
+  `<id>` tem relatório em `LOGS\` e a execução não é a atual): é derivado regenerável a partir
+  da origem — apague a pasta (é a única exclusão em definitivo permitida no STAGING), sem
+  reportar como pendência. Só preserve fragmento de PDF ainda `PENDENTE` (Dicionário §7).
+  Na dúvida (execução sem relatório = caiu no meio), preserve e cite no relatório.
 - Nome começa com `ORGANIZACAO-MANUAL-` → é área de retenção **manual** (trabalho de
   reorganização feito à mão, sem `_quarentena.jsonl` porque não veio da rotina): nunca
   purgue, nunca avalie, e **não** reporte como `PASTA_QUARENTENA_DATA_INVALIDA` — cite só uma
@@ -359,8 +364,22 @@ Checagem de manifesto: `hash_original` deste item bate com alguma linha do manif
 essa linha tem `pai_completo=true` (Dicionário §8) → `JA_ARQUIVADO_ANTERIORMENTE`, pula fases
 2-4, vai direto pra fase 5 e é conferido na fase 6. Bater só contra linha(s) com
 `pai_completo=false` não é prova de arquivamento — o pai pode ter fragmento ainda pendente de
-uma execução anterior; reentre normalmente pela Fase 2 como se fosse novo. Não confirmado
+uma execução anterior; reentre normalmente pela Fase 2 como se fosse novo — **exceto item
+extraído de `.zip`/`.rar`/`.7z`** cujo `hash_origem` (o do arquivo extraído) bate com uma linha do
+manifesto: se o `destino_final` dela existe em disco com o mesmo hash (mesma checagem do
+Conferente, passo 3), o item é `JA_ARQUIVADO_ANTERIORMENTE` e conta como **resolvido** para o
+container (sem recópia, sem sufixo `(N)`). Sem isso o container reextraído nunca ficava
+elegível: ~770 itens já arquivados viravam `DUPLICADO` e travavam a saída do `.rar` da origem. Não confirmado
 depois → Conferente devolve `MANIFESTO_DESATUALIZADO`, reentra pela fase 2 como novo.
+
+**Teto por derivados** (`LIMITE_DERIVADOS`, padrão 1500 itens; desde 05/10/2026): o teto de pais
+sozinho não basta — 6 `.rar` geraram 1.890 itens e a execução de 05/10 13:28 abortou sem
+escrever nada por "volume". Nunca aborte por volume. Em vez disso, extraia os containers do
+lote um de cada vez, em ordem alfabética, somando `itens extraídos + pais soltos`; ao
+passar de `LIMITE_DERIVADOS`, **o container que estourou entra inteiro** (container nunca é
+dividido) e todos os pais seguintes ficam para a próxima execução, intocados. Um único
+container maior que o limite roda sozinho. Reextraia só o que cabe: containers que ficaram de
+fora não são extraídos nesta execução (sem staging pra limpar).
 
 **Teto de itens por execução** (`LIMITE_ITENS`, padrão 60 pais por execução): se o
 inventário trouxer mais que isso, processe os `LIMITE_ITENS` primeiros (ordem alfabética de
@@ -377,17 +396,22 @@ o conteúdo dos documentos, a tabela de itens da sessão principal cresce linear
 `LIMITE_ITENS` conforme a realidade da máquina; nunca o remova por completo.
 </fase>
 
-<fase n="1b" titulo="Extração de ZIP/RAR (ação sua, com Bash, procedimento mecânico)">
+<fase n="1b" titulo="Extração de ZIP/RAR/7Z (ação sua, com Bash, procedimento mecânico)">
 Todo item cujo
-`arquivo_original` termine em `.zip` ou `.rar` é extraído para `STAGING\<id_execucao>\`. Cada
-arquivo extraído vira item novo, com `arquivo_original` apontando para o `.zip`/`.rar` (mesmo
+`arquivo_original` termine em `.zip`, `.rar` ou `.7z` é extraído para `STAGING\<id_execucao>\`. Cada
+arquivo extraído vira item novo, com `arquivo_original` apontando para o `.zip`/`.rar`/`.7z` (mesmo
 modelo do PDF composto — o compactado fica intocado na origem até todos os itens extraídos
 dele estarem resolvidos; entra em `mapa_original_fragmentos` igual a um PDF separado). Arquivo
-extraído que também é `.zip`/`.rar` → extraia de novo, recursivamente. Em SIMULACAO, extrai em
+extraído que também é `.zip`/`.rar`/`.7z` → extraia de novo, recursivamente. Em SIMULACAO, extrai em
 `STAGING-SIMULACAO\<id_execucao>\` (mesma regra de limpeza ao final da execução).
 
 **`.zip`**: extraia com a ferramenta que preferir (ex. `Expand-Archive` do PowerShell,
 `zipfile` do Python) — formato sem dependência externa.
+
+**`.7z`** (desde 05/10/2026): extraia com o `tar` do Windows (bsdtar/libarchive, já vem no
+sistema, não precisa instalar nada): `C:\Windows\System32\tar.exe -xf "<arquivo.7z>" -C
+"STAGING\<id_execucao>\"` (crie a pasta antes). `.7z` com senha/corrompido → mesmo tratamento
+do `.rar` (`ARQUIVO_COMPACTADO_CORROMPIDO`); `tar` ausente → `FERRAMENTA_EXTRACAO_AUSENTE`.
 
 **`.rar`**: precisa de ferramenta externa, não vem com o Windows. Use, nesta ordem de
 preferência: `unrar` no PATH, senão `C:\Program Files\WinRAR\UnRAR.exe` (instalado nesta
@@ -466,7 +490,12 @@ Antes de cada cópia, nesta ordem:
    entre si. Mantenha o primeiro (por `id_item`) com o nome como veio; aos demais, aplique a
    regra de numeração `(N)` do Dicionário §2, atualizando o `nome_final` de cada um pro nome
    que será de fato gravado.
-2. **Confirme se `destino_final\nome_final` já existe em disco.** Existe com hash igual ao
+2. **Confirme se `destino_final\nome_final` já existe em disco — e se o mesmo conteúdo já
+   está em qualquer arquivo da pasta de destino.** Liste a pasta `destino_final\` e compare o
+   hash do item com o de **todos** os arquivos dela (inclusive os de sufixo `(N)`, não só o do
+   mesmo nome): conteúdo igual a qualquer um → `DUPLICADO/IDENTICO_JA_ARQUIVADO`, nunca recopie
+   com `(N)` (bug real de 05/10: "Comprovantes 09-2026 (4)" saiu idêntico a "(1)").
+   Depois a checagem de nome: Existe com hash igual ao
    `hash_origem` do item → não copie, `status=DUPLICADO`, `motivo=IDENTICO_JA_ARQUIVADO`.
    Existe com hash diferente → aplique `(N)` você mesmo (mesma regra do passo 1), atualizando
    o `nome_final` do item.
@@ -490,7 +519,7 @@ registre no relatório o que moveria e por quê, exatamente como as outras fases
 fazem em SIMULACAO.
 
 Em PRODUCAO: todo item `NAO_IDENTIFICADO`/`DUPLICADO`, **exceto item fragmento
-(`paginas_origem` ≠ `null`) ou extraído de `.zip`/`.rar`**, que segue regra própria abaixo → mova o
+(`paginas_origem` ≠ `null`) ou extraído de `.zip`/`.rar`/`.7z`**, que segue regra própria abaixo → mova o
 arquivo físico da origem para
 `Claudio Secretario\NÃO IDENTIFICADOS\<id_execucao>\<caminho_relativo do arquivo dentro da
 origem>\`, criando subpastas conforme necessário — nunca uma pasta plana. Mesma lógica e
@@ -502,8 +531,8 @@ sobrescreva neste destino também: `caminho_relativo\nome` já existente aqui �
 do Dicionário §2. Itens `FORA_DO_ESCOPO` e `PDF_COMPOSTO_NAO_SEPARADO` **não** são movidos —
 ficam exatamente onde estão.
 
-**Item fragmento ou extraído de `.zip`/`.rar`**: nunca toque no `arquivo_original` — ele continua
-retido na origem (é o `.zip`/`.rar` inteiro, ou o PDF composto original, esperando que todos os
+**Item fragmento ou extraído de `.zip`/`.rar`/`.7z`**: nunca toque no `arquivo_original` — ele continua
+retido na origem (é o `.zip`/`.rar`/`.7z` inteiro, ou o PDF composto original, esperando que todos os
 itens derivados dele se resolvam, ver Fase 1b/`<modelo_dados>`). Mova só o
 `arquivo_trabalho` (o fragmento em STAGING) para
 `NÃO IDENTIFICADOS\<id_execucao>\<nome do arquivo_original>\<caminho_relativo>\`.

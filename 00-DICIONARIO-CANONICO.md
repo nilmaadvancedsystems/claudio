@@ -98,7 +98,7 @@ partir dele arquivaria pra valer com regra ainda não aprovada.
 
 Regra de varredura da origem: a varredura é RECURSIVA — entra em qualquer subpasta dentro da origem, em qualquer profundidade, e trata cada arquivo encontrado como um item próprio (arquivo_original), igual a um arquivo solto na raiz. A estrutura de subpasta não importa para a classificação — o Roteador e os Especialistas decidem pelo conteúdo do documento, não pelo caminho onde ele estava. Excluídas da varredura, em qualquer profundidade: a própria pasta NÃO IDENTIFICADOS, CLAUDE FAVOR NÃO MEXER (e tudo dentro dela) e qualquer pasta iniciada por _. Também ignorados na varredura, por extensão: arquivos de vídeo e áudio (`.mp4 .mov .avi .mkv .wmv .webm .mp3 .wav .m4a`) — não são documento, ficam intocados na origem, sem virar item nem `NAO_IDENTIFICADO` (só a contagem vai pro relatório).
 
-Regra de extração de .zip/.rar: um arquivo `.zip` ou `.rar` encontrado na varredura não vira item direto — é extraído para `_CONTROLE\STAGING\<id_execucao>\` (Fase 1b do Orquestrador, procedimento mecânico). Cada arquivo extraído vira item próprio, apontando para o `.zip`/`.rar` como `arquivo_original` — mesmo modelo já usado para PDF composto: o compactado só sai da origem (via Executor) quando todos os itens extraídos dele estiverem resolvidos. Se um arquivo extraído for ele mesmo um `.zip`/`.rar`, extraia de novo, recursivamente, até não sobrar compactado. `.rar` depende de ferramenta externa (Fase 1b) — se ausente na máquina, `motivo=FERRAMENTA_EXTRACAO_AUSENTE`, `.rar` intocado na origem, nunca tente ler o conteúdo sem extrair.
+Regra de extração de .zip/.rar/.7z: um arquivo `.zip`, `.rar` ou `.7z` encontrado na varredura não vira item direto — é extraído para `_CONTROLE\STAGING\<id_execucao>\` (Fase 1b do Orquestrador, procedimento mecânico). Cada arquivo extraído vira item próprio, apontando para o `.zip`/`.rar`/`.7z` como `arquivo_original` — mesmo modelo já usado para PDF composto: o compactado só sai da origem (via Executor) quando todos os itens extraídos dele estiverem resolvidos. Se um arquivo extraído for ele mesmo um `.zip`/`.rar`/`.7z`, extraia de novo, recursivamente, até não sobrar compactado. `.rar` depende de ferramenta externa (Fase 1b) — se ausente na máquina, `motivo=FERRAMENTA_EXTRACAO_AUSENTE`, `.rar` intocado na origem, nunca tente ler o conteúdo sem extrair.
 
 Regra de escrita: arquivos de cliente só podem ser gravados dentro de G:\Meu Drive\2026. `_CONTROLE\` (local, dentro de `<RAIZ_REGRAS>`) é área de controle da própria rotina e não é destino de arquivo de cliente.
 
@@ -360,7 +360,7 @@ E606 | PASTA_QUARENTENA_DATA_INVALIDA | Nome de pasta-dia da quarentena não bat
 E607 | PENDENCIA_ENVELHECIDA | Item em NÃO IDENTIFICADOS ou fragmento em STAGING parado há mais de 7 dias sem ação (achado só de AUDITORIA) | Revisar manualmente — decidir se arquiva, corrige a regra que travou, ou descarta
 E701 | SEPARACAO_AMBIGUA | PDF com mais de um documento dentro, mas sem certeza de onde cortar | Revisar manualmente e separar à mão se necessário
 E702 | PAGINAS_NAO_COBREM_O_ORIGINAL | Fragmentos de um PDF separado não cobrem todas as páginas do original | Revisar manualmente
-E703 | FERRAMENTA_EXTRACAO_AUSENTE | Arquivo .rar encontrado, mas o programa que abre .rar (WinRAR/UnRAR) não está instalado neste computador | Instalar o WinRAR ou reenviar o conteúdo como .zip; o .rar fica intocado enquanto isso
+E703 | FERRAMENTA_EXTRACAO_AUSENTE | Arquivo .rar/.7z encontrado, mas o programa que o abre (WinRAR/UnRAR para .rar, tar do Windows para .7z) não está disponível neste computador | Instalar o WinRAR ou reenviar o conteúdo como .zip; o compactado fica intocado enquanto isso
 E704 | ARQUIVO_COMPACTADO_CORROMPIDO | O .zip/.rar não abriu (corrompido ou protegido por senha) | Pedir o arquivo de novo ao cliente ou informar a senha; o compactado fica intocado
 E801 | SIMULACAO_SEM_DESTINO | Só ocorre em modo teste — não é erro real | Nenhuma
 E802 | SIMULACAO_SEM_FRAGMENTO | Só ocorre em modo teste — não é erro real | Nenhuma
@@ -436,6 +436,8 @@ Algoritmo, nesta ordem:
 2. Converta para MAIÚSCULAS, preservando acentos.
 3. Remova sufixos societários no fim do nome: LTDA, LTDA., ME, EPP, EIRELI, S.A., S/A, SA, CIA, & CIA, e o traço que os antecede.
 4. Remova pontuação final, e colapse espaços duplos em um.
+4a. Remova também a pontuação **interna** (`.`, `,`, `;`, `/`, `\`, `|`, aspas), trocando por espaço antes de colapsar: "FITO IND. E COM. DE ALIMENTOS" e "FITO IND E COM DE ALIMENTOS" normalizam igual. Hífen entre palavras fica.
+4b. Sufixo societário seguido de identificação de filial ("... LTDA FILIAL 02", "... LTDA - 0002-30") é removido também, e o texto da filial é descartado do nome da pasta (a filial vai para o campo de CNPJ, nunca para o nome).
 5. O resultado é o nome da pasta.
 
 Exemplo: Mitra Transporte e Serviços Ltda - ME → MITRA TRANSPORTE E SERVIÇOS
@@ -545,9 +547,9 @@ manifesto.jsonl, append-only, uma linha JSON por arquivo arquivado. **Toda linha
 Serve para: detectar reprocessamento após queda, evitar recópia, e permitir auditoria histórica de duplicidade contra execuções anteriores.
 
 `pai_completo` (desde 31/08/2026): `true` só quando `hash_origem == hash_original` — ou seja, o
-`arquivo_original` nunca foi separado (PDF composto) nem extraído de `.zip`/`.rar`, então esta única
+`arquivo_original` nunca foi separado (PDF composto) nem extraído de `.zip`/`.rar`/`.7z`, então esta única
 linha já corresponde ao arquivo inteiro. `false` quando este item é um fragmento ou um arquivo
-extraído de `.zip`/`.rar` — nesse caso, o `arquivo_original` só está de fato arquivado quando **todos**
+extraído de `.zip`/`.rar`/`.7z` — nesse caso, o `arquivo_original` só está de fato arquivado quando **todos**
 os fragmentos/extraídos dele tiverem, cada um, sua própria linha no manifesto. Existe porque
 bater um hash contra o manifesto não prova sozinho que o pai inteiro foi resolvido: um pai
 separado em 3 fragmentos, com só 2 arquivados, não pode ser tratado como
