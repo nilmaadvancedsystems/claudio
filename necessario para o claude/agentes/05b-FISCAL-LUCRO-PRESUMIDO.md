@@ -24,6 +24,7 @@ Raiz: `<cliente_destino>\FISCAL\LUCRO PRESUMIDO\`
 12. RESSARCIMENTO\          → 05d §3
 13. COMPENSAÇÃO\            → 05d §3
 14. XML\                    → 05d §1b
+15. LIVROS FISCAIS\          → 05d §1c
 ```
 
 | Tipo | Pasta | Nome final | Dados obrigatórios |

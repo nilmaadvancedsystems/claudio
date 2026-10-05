@@ -90,6 +90,10 @@ Todo caminho abaixo é relativo a `<cliente_destino>\CONTÁBIL\`.
 
 **Fallback extrato avulso**: banco identificável, categoria não → `EXTRATOS\[ANO]\[MÊS]\` (sem subpasta), nome `EXTRATO_[BANCO]_[MÊS E ANO].pdf`. Banco também não identificável → `NAO_IDENTIFICADO` (não usar fallback).
 
+**Relação de títulos pagos / recebidos (LJ Sistemas)** (definido em 05/10/2026): "RELAÇÃO DE TÍTULOS PAGOS / FORNECEDOR" e "RELAÇÃO DE TÍTULOS RECEBIDOS" (contas a pagar/receber do sistema do cliente, período mensal no cabeçalho) → mesma pasta do Relatório LJ: `Relatorios LJ\[MÊS E ANO] - TITULOS PAGOS.pdf` e `Relatorios LJ\[MÊS E ANO] - TITULOS RECEBIDOS.pdf` (a pasta `Relatorios LJ\` é criada em qualquer cliente que receba o primeiro relatório LJ, não só na 292/309). **Cliente pelo cabeçalho "EMPRESA"/CNPJ do próprio relatório, nunca pela subpasta de origem** (bug de 05/10: 2 relações da ACO FORTE METAIS (450) chegaram numa pasta da SERRALHERIA). Mais de um do mesmo mês e tipo (períodos diferentes) → `(N)` do Dicionário §2.
+
+**Livro fiscal de ICMS (Registro de Entradas/Saídas/Apuração) não é "Registro de Livros"**: é setor FISCAL (05d §1c). Esta sub-regra do 04 é só para livro **contábil** (Diário, Razão…) com nº do livro.
+
 **Relatório LJ Sistemas**: título "RELATÓRIO PERIÓDICO (SALDO/EXTRATO)" com rodapé "LJ SISTEMAS" — é relatório interno de movimentação de caixa/banco gerado pelo próprio sistema contábil do cliente, não um extrato emitido por banco (campo "Conta Nº"/banco fica em branco no documento). Não aplicar Fallback extrato avulso nem `NAO_IDENTIFICADO/BANCO_AUSENTE` nesse caso → `Relatorios LJ\[MÊS E ANO].pdf` (ex. `08-2026.pdf`), pasta na raiz do cliente. Competência ilegível/ausente → `NAO_IDENTIFICADO/COMPETENCIA_AUSENTE`.
 
 **Colisão de maior risco — Bancário × Recebimento de Clientes** (nomes finais quase idênticos): título "Relatório de Recebimentos"/"Títulos Liquidados"/"Relatório de Cobrança"/"Cobrança — Títulos Baixados" → Recebimento; "Extrato de Conta"/"Extrato de Conta Corrente"/"Extrato Financeiro" → Bancários. Dúvida → `NAO_IDENTIFICADO/COLISAO_BANCARIO_RECEBIMENTO`. Nunca decidir por extensão/emissor/nome do arquivo original.

@@ -24,6 +24,7 @@ Raiz: `<cliente_destino>\FISCAL\LUCRO REAL\`
 12. RESSARCIMENTO\          → 05d §3
 13. COMPENSAÇÃO\            → 05d §3
 14. XML\                    → 05d §1b
+15. LIVROS FISCAIS\          → 05d §1c
 ```
 ⚠️ Numeração própria deste regime: aqui DARF=04, DAE=05 (no Presumido são 05 e 06). Pasta vem sempre deste documento, nunca de memória de outro regime.
 

@@ -22,6 +22,7 @@ Raiz: `<cliente_destino>\FISCAL\SIMPLES NACIONAL\`
 10. RESSARCIMENTO\          → 05d §3
 11. COMPENSAÇÃO\            → 05d §3
 12. XML\                    → 05d §1b
+13. LIVROS FISCAIS\          → 05d §1c
 ```
 
 | Tipo | Pasta | Nome final | Dados obrigatórios |

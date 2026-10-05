@@ -62,6 +62,22 @@ RECEBIDOS\ (mesma estrutura ESPECÍFICOS\)
 
 **NFS-e × NF-e**: NFS-e é nota de **serviço** da prefeitura (DANFSe, "Nota Fiscal de Serviço", "Inscrição Municipal", ISS) — vai direto em `EMITIDOS\`/`RECEBIDOS\` (nunca em `ESPECÍFICOS\`) e nunca recebe o nome de NF-e; NF-e é nota de **produto** (SEFAZ, chave de 44 dígitos, "DANFE"). Título e cabeçalho decidem, nunca o nome do arquivo (arquivo "NF 154" pode ser qualquer um dos dois). `[DATA]` = data de emissão da nota; se o documento trouxer só "Data Fato Gerador", use essa. Sem `A DEFINIR`: o tipo arquiva de verdade (antes de 28/09/2026 cai em `NOMENCLATURA_NAO_DEFINIDA`).
 
+**NFC-e em PDF (DANFCe)** (definido em 05/10/2026): cupom/nota de consumidor emitida pelo próprio
+cliente (varejo — centenas por mês). Pasta `EMITIDOS\NFC-e\[ANO]\[MÊS]\` (ano/mês pela data de emissão,
+por causa do volume), nome `[DATA] - NFC-e [Nº NOTA].pdf` (sem razão social: o emitente é o cliente).
+O XML da mesma NFC-e segue a §1b (`XML\NFC-e\`).
+
+**Cancelamento de NF-e em PDF** (definido em 05/10/2026): versão PDF do cancelamento (documento que
+traz "Cancelamento"/"NF-e cancelada" e a chave da nota). Pasta `EMITIDOS\CANCELADAS\` (ou
+`RECEBIDOS\CANCELADAS\` pela regra de Emitido × Recebido), nome
+`[DATA] - CANCELAMENTO NF-e [Nº NOTA] - [RAZÃO SOCIAL EMISSOR].pdf`, `[DATA]` = data do cancelamento.
+
+**Relatório Mensal de Notas Recebidas** (definido em 05/10/2026; espelho do de emitidas): planilha/relatório
+consolidado das notas recebidas no mês (ex. `.xlsx` do FSist: colunas Chave, Emitente, Destinatário…).
+Pasta `RECEBIDOS\RELATÓRIO MENSAL\[ANO]\`, nome
+`[MÊS E ANO] - RELATORIO NOTAS RECEBIDAS - [RAZÃO SOCIAL CLIENTE].[ext]` (extensão original preservada).
+Competência ausente → `NAO_IDENTIFICADO/COMPETENCIA_AUSENTE`.
+
 **Relatório Mensal de Notas Emitidas**: listagem/relatório consolidado de várias notas emitidas no mês (não uma NF-e individual) — reconheça pelo formato de tabela (várias notas, uma linha cada) em vez de uma nota só. Só existe em `EMITIDOS\` (é sempre sobre notas que o próprio cliente emitiu); não há equivalente em `RECEBIDOS\`. Competência ausente → `NAO_IDENTIFICADO/COMPETENCIA_AUSENTE`.
 </regra>
 
@@ -91,6 +107,29 @@ evento (tag `<dhEvento>`, não a data da nota original); `[Nº NOTA]` = dígitos
 normalizado em maiúsculas sem acento (ex. "Cancelamento" → `CANCELAMENTO`, "Carta de
 Correção" → `CARTA DE CORRECAO`). `<chNFe>`/`<dhEvento>`/`<descEvento>` ilegível →
 `NAO_IDENTIFICADO/VOCABULARIO_AUSENTE`.
+
+**Inutilização de numeração** (definido em 05/10/2026; XML raiz `<procInutNFe>`/`<inutNFe>`, arquivo costuma
+terminar em `-inut.xml`): mesma pasta `XML\NF-e\EVENTOS\`, nome
+`[DATA] - INUTILIZACAO NF-e [Nº INICIAL] A [Nº FINAL].xml` — `[DATA]` = `<dhRecbto>`, números das tags
+`<nNFIni>`/`<nNFFin>` sem zeros à esquerda (faixa de um número só repete: `... NF-e 9423 A 9423`).
+</regra>
+
+<regra n="1c" titulo="Livros Fiscais ([NN]. LIVROS FISCAIS\, pasta própria — NN informado pelo doc do regime)">
+Livro fiscal de ICMS/IPI gerado pelo sistema do cliente (ex. LJ Sistemas): **Registro de Entradas**,
+**Registro de Saídas** e **Registro de Apuração de ICMS** — período mensal impresso no cabeçalho
+("01/09/2026 a 30/09/2026"). São livros **fiscais** (setor FISCAL), não livros contábeis: não têm "número
+do livro" e **não** passam pela sub-regra "Registro de Livros" do 04 (que exige nº do livro) — por isso
+caíam em `NAO_IDENTIFICADO/LIVRO_SEM_NUMERO` (bug de 05/10/2026).
+
+| Livro | Nome final |
+|---|---|
+| Registro de Entradas | `[MÊS E ANO] - REGISTRO DE ENTRADAS.pdf` |
+| Registro de Saídas | `[MÊS E ANO] - REGISTRO DE SAIDAS.pdf` |
+| Registro de Apuração de ICMS | `[MÊS E ANO] - APURACAO ICMS.pdf` |
+
+Estrutura `LIVROS FISCAIS\[ANO]\`. `[MÊS E ANO]` = mês do período impresso. Cliente pelo CNPJ/razão do
+cabeçalho "Empresa"/"CNPJ" do livro (filial: raiz igual com sufixo diferente → regra de filial do 03).
+Período ilegível/não mensal → `NAO_IDENTIFICADO/COMPETENCIA_AUSENTE`.
 </regra>
 
 <regra n="2" titulo="Parcelamentos ([NN]. PARCELAMENTOS\, NN=06 Simples · 08 Presumido · 07 Real)">
