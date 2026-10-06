@@ -97,6 +97,8 @@ Se mesmo assim não bater, **releia o número copiando-o literalmente do texto e
 de memória nem "reconstruindo") antes de concluir `CLIENTE_NAO_LOCALIZADO`: leitura com um
 zero deslocado ("06095854900015" no lugar de "60958549000115") já travou o cliente 567.
 
+**Pasta raiz do cliente é achada pelo código**: `2026\<código> - <nome>`. Se já existe pasta começando com o código do cliente (`358 - …`), use-a **como está**, mesmo com grafia diferente da planilha (acento, cedilha, pontuação) — nunca crie uma segunda raiz para o mesmo código e nunca trate grafia como decisão pendente. Só pasta raiz inexistente usa a razão social da planilha.
+
 **CNPJ/CPF do escritório nunca identifica cliente**: NILMA DIAS OLIVEIRA / Nilma Contabilidade (CNPJ 27.872.981/0001-13) e a contadora (CPF 032.318.376-00, CRC MG-088272/O-7) aparecem em balancetes, assinaturas, recibos de honorários e comprovantes de clientes — são o **escritório**, não o cliente. Ignore e procure o cliente pela razão social/CNPJ do cabeçalho (bug de 06/10/2026: balancete-ECD da 575 BDV foi tido como de outro cliente por esse CNPJ). Exceção: documento cujo próprio titular/tomador é a Nilma (ex. nota de honorários emitida *para* a Nilma).
 
 **Matriz e filiais na mesma pasta (confirmado pelo responsável)** — a raiz do CNPJ decide, qualquer sufixo de filial vai para a pasta da matriz, sem `CLIENTE_AMBIGUO`:

@@ -27,6 +27,8 @@ execução é a normal, a mesma da tarefa agendada):
   (um `.rar` grande conta pelos itens que ele gera, não por 1).
 - `pasta=?` — **não processa nada**: lista as pastas de primeiro nível da origem com a
   contagem de arquivos de cada uma (ordem decrescente), para você escolher por onde começar.
+**Nunca segure item pronto esperando decisão de outro item**: o que tem destino e nome definidos é gravado, conferido e sai da origem **nesta rodada**; só os itens com pendência real ficam (`NAO_IDENTIFICADO`/`FORA_DO_ESCOPO` com motivo). Pendência de um item (ex. regime em dúvida para os DARFs) nunca trava contábil/societário do mesmo cliente. Bug de 06/10/2026: rodada da 358 classificou balancetes e 10 documentos constitutivos e não copiou nada "aguardando decisão do responsável".
+
 **Rodada parcial é a rotina inteira num lote menor** — roda **todas** as fases do 01 (0 a 8): verificação (Fase 5), integridade (Fase 6), **remoção para quarentena dos originais já resolvidos (Fase 7)** e relatório do 09 (Fase 8). Nunca encerre uma rodada só com as cópias ("fechamento parcial", "originais permanecem na origem") — foi isso que deixou a pasta Claudio Secretario cheia mesmo com tudo arquivado (rodadas da 584 em 06/10/2026). Original cujo item (ou todos os derivados) ficou `ARQUIVADO`/`JA_ARQUIVADO_ANTERIORMENTE` e passou na Fase 6 sai da origem **na mesma rodada**.
 
 Toda rodada parcial grava log com `id_execucao` e **commit das regras** usado (o mesmo cabeçalho da execução completa) e relê as regras do disco no começo (`git pull`), mesmo dentro de uma sessão aberta há horas — regra alterada no meio do dia vale a partir da rodada seguinte. Repita o comando quantas vezes quiser: o que já foi arquivado sai da origem e o manifesto
