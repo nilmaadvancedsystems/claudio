@@ -28,7 +28,7 @@ vários itens quando o tipo de arquivo for o mesmo.
 1. **Existência** — arquivo existe em `destino_final\nome_final`? Não → `FALHA_INTEGRIDADE / DESTINO_INEXISTENTE`.
 2. **Tamanho** — `tamanho_destino == tamanho_origem` e `> 0`? Zero → `DESTINO_VAZIO`. Diferente → `TAMANHO_DIVERGENTE`.
 3. **Hash** — SHA-256 do arquivo em disco no destino, comparar com `hash_origem` (o de `arquivo_trabalho`). Diferente → `HASH_DIVERGENTE`.
-4. **Legibilidade estrutural** — `.pdf`: cabeçalho `%PDF` + marcador `%%EOF` + nº páginas igual ao esperado (para fragmento, igual a `paginas_origem`). `.xml`: bem formado, tag raiz esperada. `.xlsx`/`.txt`: abre sem erro. Falhou → `ARQUIVO_CORROMPIDO`.
+4. **Legibilidade estrutural** — `.pdf`: cabeçalho `%PDF` **nos primeiros 1024 bytes** (não precisa ser o byte 0: alguns emissores, ex. DACTE de CT-e, gravam texto como `<br />` antes do `%PDF` e o arquivo abre normal — aceito por decisão do responsável em 06/10/2026) + marcador `%%EOF` + nº páginas igual ao esperado (para fragmento, igual a `paginas_origem`). `.xml`: bem formado, tag raiz esperada. `.xlsx`/`.txt`: abre sem erro. Falhou → `ARQUIVO_CORROMPIDO`.
 5. **Origem intacta** — `arquivo_trabalho` na origem ainda tem o `hash_origem` recebido? Mudou → `ORIGEM_ALTERADA_DURANTE_EXECUCAO`.
 
 Passou nos 5 → `integridade_ok=true`, devolva `hash_destino`.

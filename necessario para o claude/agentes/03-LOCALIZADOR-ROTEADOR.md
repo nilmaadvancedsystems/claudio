@@ -89,12 +89,21 @@ arquivo; conteúdo diferente = arquivo novo, volta a ser `CLIENTE_NAO_LOCALIZADO
 | da752bfbd3b83177484ce280ff7f3e262d8f79075d81ef5e8529c52dc2ae4f32 | extrato_unicred_consolidado - Copia.xlsx | 584 - EMPREENDIMENTOS IMOBILIARIOS M&A LTDA | 06/10/2026 |
 | b5131c8dc30d5bb5f3b9f72bada2216c1c1afb1a4e1b43a0c910d69abafd0926 | CCF07052026_0002- APTO.pdf (recibo de emolumentos, compra e venda, 15/12/2025 → Venda de Ativos 2025) | 584 - EMPREENDIMENTOS IMOBILIARIOS M&A LTDA | 06/10/2026 |
 | dd56e069fa619f1f5a39c574d7f50bab50a50c635a7251b43aa163337e006e05 | CCF07052026_0006.pdf (matrícula 246.333, mesma do CCF07052026_0005 → Venda de Ativos 2025) | 584 - EMPREENDIMENTOS IMOBILIARIOS M&A LTDA | 06/10/2026 |
+| 8bf8a1df2177acadf84e66aeff6314e6990bb801bf3da3313864e7852bc03dbe | Captura de tela 2026-07-01 165129.png (print do cadastro da empresa no sistema contábil → `SOCIETÁRIO\DOCUMENTOS CONSTITUTIVOS\`, nome original) | 584 - EMPREENDIMENTOS IMOBILIARIOS M&A LTDA | 06/10/2026 |
 
 **CNPJ do documento diferente do cadastro por um dígito deslocado**: CNPJ impresso sem
 pontuação ("60958549000115") é comum e é o mesmo CNPJ — normalize e compare os 14 dígitos.
 Se mesmo assim não bater, **releia o número copiando-o literalmente do texto extraído** (nunca
 de memória nem "reconstruindo") antes de concluir `CLIENTE_NAO_LOCALIZADO`: leitura com um
 zero deslocado ("06095854900015" no lugar de "60958549000115") já travou o cliente 567.
+
+**CNPJ/CPF do escritório nunca identifica cliente**: NILMA DIAS OLIVEIRA / Nilma Contabilidade (CNPJ 27.872.981/0001-13) e a contadora (CPF 032.318.376-00, CRC MG-088272/O-7) aparecem em balancetes, assinaturas, recibos de honorários e comprovantes de clientes — são o **escritório**, não o cliente. Ignore e procure o cliente pela razão social/CNPJ do cabeçalho (bug de 06/10/2026: balancete-ECD da 575 BDV foi tido como de outro cliente por esse CNPJ). Exceção: documento cujo próprio titular/tomador é a Nilma (ex. nota de honorários emitida *para* a Nilma).
+
+**Matriz e filiais na mesma pasta (confirmado pelo responsável)** — a raiz do CNPJ decide, qualquer sufixo de filial vai para a pasta da matriz, sem `CLIENTE_AMBIGUO`:
+
+| Raiz do CNPJ | Cliente (pasta) | Confirmado em |
+|---|---|---|
+| 53.636.418 | 591 - ZELO AGROINDUSTRIAS LTDA (matriz /0001-56 + filiais 2, 3, 4) | 06/10/2026 |
 
 **CNPJ que não bate com nenhuma linha nos 14 dígitos completos**: não caia direto pra
 Inscrição Estadual/nome. Compare a **raiz** (8 primeiros dígitos) contra a raiz de cada CNPJ
