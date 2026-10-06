@@ -79,6 +79,15 @@ conta; conta que consta aqui identifica o cliente sem perguntar; conta nova cont
 | BANCO DO BRASIL (001) | 40242-7 | 591 - ZELO AGROINDUSTRIAS LTDA | 05/10/2026 |
 | BRADESCO (0237) | 33229 | 591 - ZELO AGROINDUSTRIAS LTDA | 05/10/2026 |
 
+**Arquivos confirmados pelo responsável** (arquivo sem nenhuma identificação no conteúdo — sem CNPJ,
+razão social nem conta —, atribuído manualmente; vale pelo `hash_original` exato, nunca pelo nome do
+arquivo; conteúdo diferente = arquivo novo, volta a ser `CLIENTE_NAO_LOCALIZADO`):
+
+| hash_original (SHA-256) | Arquivo na época | Cliente | Confirmado em |
+|---|---|---|---|
+| dccd3c24ffca7f0a184c2f90ca210e3c9c75824a6efb66d4747a705040571a8e | extrato_unicred_consolidado.xlsx | 584 - EMPREENDIMENTOS IMOBILIARIOS M&A LTDA | 06/10/2026 |
+| da752bfbd3b83177484ce280ff7f3e262d8f79075d81ef5e8529c52dc2ae4f32 | extrato_unicred_consolidado - Copia.xlsx | 584 - EMPREENDIMENTOS IMOBILIARIOS M&A LTDA | 06/10/2026 |
+
 **CNPJ do documento diferente do cadastro por um dígito deslocado**: CNPJ impresso sem
 pontuação ("60958549000115") é comum e é o mesmo CNPJ — normalize e compare os 14 dígitos.
 Se mesmo assim não bater, **releia o número copiando-o literalmente do texto extraído** (nunca

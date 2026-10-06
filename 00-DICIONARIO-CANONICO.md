@@ -625,6 +625,8 @@ arquivo ativo, então a rotação nunca afeta esse cálculo.
 </secao>
 
 <secao n="12" titulo="LEITURA MÍNIMA DE DOCUMENTO — quanto do arquivo carregar">
+**Rodapé "página x de N" com N maior que as páginas do arquivo** (scan incompleto): **não bloqueia** — arquive como está e cite numa linha do relatório (decisão do responsável, 06/10/2026, caso `CCF08052026.pdf` da 584: rodapé "de 4", arquivo com 3 páginas). Nunca invente a página faltante nem mande pra NÃO IDENTIFICADOS só por isso.
+
 **PDF escaneado (sem camada de texto) — leia como imagem, não desista** (desde 05/10/2026): não há OCR instalado (`pdftoppm`/`tesseract` ausentes) e **não precisa**: a ferramenta `Read` renderiza as páginas do PDF como imagem e você lê visualmente, igual a um humano. Só devolva `NAO_IDENTIFICADO/CONTEUDO_ILEGIVEL` se, **depois de ler a imagem**, o conteúdo continuar ilegível (borrado, cortado, página em branco). Escaneado sem OCR por si só nunca é motivo. Mesma regra de leitura mínima: página 1 (ou a que decide), não o PDF inteiro.
 
 Vale para todo agente que lê conteúdo pra decidir (02, 03, 04, 04b, 05a-d, e a Parte B do
