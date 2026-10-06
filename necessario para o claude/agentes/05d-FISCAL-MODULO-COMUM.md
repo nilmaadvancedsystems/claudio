@@ -188,6 +188,8 @@ Regime ISENTA (05e): DARF=02, DAE=03, DAM=04 (numeração própria do 05e). Isen
 
 **DAM × DAE × DARF** (guias que podem chegar juntas): DAM = "Documento de Arrecadação Municipal", tributo/taxa de competência municipal (ex. ISS, taxas municipais) — órgão emissor é a prefeitura/secretaria municipal de fazenda, nunca estadual ou federal. Dúvida entre as três → `NAO_IDENTIFICADO/COLISAO_GUIAS_FEDERAL_ESTADUAL` (mesmo motivo já usado pra DARF×DAE×DAPI no Presumido/Real — a colisão é sempre "de qual ente é essa guia").
 
+**DARF de contribuição previdenciária** (DCTFWeb / composição com códigos como 1646 patronal rural, 1657 GILRAT, 1213 Senar, 1138/1082 patronal/segurados): `[TRIBUTO]` = `INSS`, mesmo quando a guia soma vários códigos (decisão do responsável, 06/10/2026, caso 358). Vai para a pasta DARF do regime, não para Folha.
+
 `[VENCIMENTO DA GUIA]` no formato `[DATA]` do Dicionário §2 (DD-MM-AAAA). `[MÊS E ANO]` = período de apuração/competência da guia, nunca a data de vencimento nem a de download. Tributo, valor ou vencimento ilegível → `NAO_IDENTIFICADO/VOCABULARIO_AUSENTE`.
 </regra>
 
