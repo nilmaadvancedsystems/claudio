@@ -23,6 +23,7 @@ Raiz: `<cliente_destino>\FISCAL\SIMPLES NACIONAL\`
 11. COMPENSAÇÃO\            → 05d §3
 12. XML\                    → 05d §1b
 13. LIVROS FISCAIS\          → 05d §1c
+14. DEFIS\                  → abaixo
 ```
 
 | Tipo | Pasta | Nome final | Dados obrigatórios |
@@ -30,6 +31,7 @@ Raiz: `<cliente_destino>\FISCAL\SIMPLES NACIONAL\`
 | DAS | 01. DAS\ | `MM-YYYY` | valor, vencimento, período de apuração |
 | DeSTDA | 04. DeSTDA\ | `MM-YYYY` | competência |
 | Sintegra | 05. SINTEGRA\ | `MM-YYYY` | competência |
+| DEFIS (declaração anual do Simples) e recibo | 14. DEFIS\ | `[ANO-CALENDÁRIO] - DEFIS.pdf` / `[ANO-CALENDÁRIO] - RECIBO DEFIS.pdf` | ano-calendário |
 
 Referência do padrão antigo pro DAS, se quiser reaproveitar: `DAS_R$[VALOR]_[VENCIMENTO]_[PERÍODO].pdf`. Enquanto nome final = `A DEFINIR` (tipos do 05d) → `FORA_DO_ESCOPO/NOMENCLATURA_NAO_DEFINIDA`, intocado na origem.
 </regras>

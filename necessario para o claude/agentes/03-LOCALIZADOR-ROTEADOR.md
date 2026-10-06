@@ -68,6 +68,8 @@ a ser `CLIENTE_AMBIGUO`):
 |---|---|---|---|
 | FITO A (com ou sem sufixo societário: "FITO A EIRELI ME", "FITO A LTDA") | 309 - FITO ALIMENTOS LTDA | 02/10/2026 | "FITO A" é a abreviação de **FITO ALIMENTOS** (explicação do responsável). Não confundir com a 292 - FITO INDUSTRIA E COMERCIO DE ALIMENTOS LTDA, que nos documentos aparece como "FITO IND. E COM. DE ALIMENTOS" ou "FITO INDUSTRIA E COMERCIO...". Caso original: extrato de cartão Sicoob, conta cartão 7563144207668 |
 
+| FACIL VISTORIAS (razão social **anterior** da Mitra — contrato de constituição e alterações antigas) | 358 - MITRA TRANSPORTE E SERVICOS LTDA | 06/10/2026 | documentos societários antigos emitidos com o nome antigo; destino Documentos Constitutivos |
+
 Novo apelido só entra aqui por decisão do responsável, nunca por inferência do agente.
 
 **Contas bancárias confirmadas pelo responsável** (extrato `.ofx` não traz CNPJ, só banco e
@@ -100,6 +102,8 @@ zero deslocado ("06095854900015" no lugar de "60958549000115") já travou o clie
 **Pasta raiz do cliente é achada pelo código**: `2026\<código> - <nome>`. Se já existe pasta começando com o código do cliente (`358 - …`), use-a **como está**, mesmo com grafia diferente da planilha (acento, cedilha, pontuação) — nunca crie uma segunda raiz para o mesmo código e nunca trate grafia como decisão pendente. Só pasta raiz inexistente usa a razão social da planilha.
 
 **CNPJ/CPF do escritório nunca identifica cliente**: NILMA DIAS OLIVEIRA / Nilma Contabilidade (CNPJ 27.872.981/0001-13) e a contadora (CPF 032.318.376-00, CRC MG-088272/O-7) aparecem em balancetes, assinaturas, recibos de honorários e comprovantes de clientes — são o **escritório**, não o cliente. Ignore e procure o cliente pela razão social/CNPJ do cabeçalho (bug de 06/10/2026: balancete-ECD da 575 BDV foi tido como de outro cliente por esse CNPJ). Exceção: documento cujo próprio titular/tomador é a Nilma (ex. nota de honorários emitida *para* a Nilma).
+
+**Filial com código próprio na planilha tem pasta própria**: CNPJ completo (14 dígitos) igual ao de uma linha da planilha decide sozinho, mesmo que a raiz seja de outro cliente — ex. 359 (Mitra filial, CNPJ 22.633.579/0002-43) é cliente próprio; cria `2026\359 - …` se não existir (com a reconfirmação de CNPJ de sempre). Não é `CLIENTE_AMBIGUO` (bug de 06/10/2026, TFAMG 2024 da filial). A regra de raiz/ambiguidade abaixo é só para CNPJ que **não** bate nos 14 dígitos.
 
 **Matriz e filiais na mesma pasta (confirmado pelo responsável)** — a raiz do CNPJ decide, qualquer sufixo de filial vai para a pasta da matriz, sem `CLIENTE_AMBIGUO`:
 

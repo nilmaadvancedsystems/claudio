@@ -148,7 +148,11 @@ DÍVIDA ATIVA\[ANO]\[MÊS]\ · PREVIDENCIÁRIA\[ANO]\[MÊS]\ · SIMPLES NACIONAL
 
 `FEDERAL\` = parcelamento ordinário de tributo federal (Receita Federal), diferente de `DÍVIDA ATIVA\` (que é especificamente PGFN/dívida inscrita). Não existe em cliente do Simples (lá, débito federal em atraso vira parcelamento do próprio Simples ou Dívida Ativa, nunca "Federal" à parte). `ESTADUAL\` = parcelamento de ICMS/tributo estadual junto à Sefaz, existe nos três regimes.
 
-`[MÊS E ANO]` = competência da parcela (mês de referência do parcelamento), nunca a data de emissão do boleto. Nº da parcela ou valor ilegível → `NAO_IDENTIFICADO/VOCABULARIO_AUSENTE`.
+`[MÊS E ANO]` = competência da parcela (mês de referência do parcelamento), nunca a data de emissão do boleto. Valor ilegível → `NAO_IDENTIFICADO/VOCABULARIO_AUSENTE`.
+
+**Guia de parcelamento sem nº de parcela impresso** (comum no DARF/DAS de parcelamento da PGFN, decisão do responsável 06/10/2026): troque o trecho da parcela pelo vencimento — `[MÊS E ANO] - PARCELAMENTO PGFN - VENCIMENTO [DATA] - VALOR [VALOR].pdf` (idem INSS/SIMPLES/FEDERAL/ESTADUAL, trocando a sigla). Não é `VOCABULARIO_AUSENTE`.
+
+**Consulta/extrato de parcelamento ou transação PGFN** (relação de prestações, situação do acordo — não é guia): mesma pasta da modalidade (`DÍVIDA ATIVA\[ANO]\[MÊS]\` da data da consulta), nome `[DATA] - CONSULTA PARCELAMENTO PGFN.pdf`.
 </regra>
 
 <regra n="3" titulo="Restituição, Reembolso, Ressarcimento, Compensação — família PER/DCOMP (pastas próprias no nível [NN], uma por tipo)">

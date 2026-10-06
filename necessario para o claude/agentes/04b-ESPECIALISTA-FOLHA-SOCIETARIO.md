@@ -137,7 +137,7 @@ pelo CNPJ no nome do arquivo (padrão `RAZAO SOCIAL_<CNPJ>.pfx`); sem CNPJ →
 renovado) segue a numeração `(N)` do Dicionário §2 — nunca sobrescreve o anterior.
 
 **Documentos Constitutivos** (ativado em 05/10/2026, decisão do responsável): contrato social,
-alterações contratuais, atas, estatuto, ato constitutivo e **cartão CNPJ** (comprovante de inscrição
+alterações contratuais, atas, estatuto, ato constitutivo, **quadro societário/QSA ("Capital Social")** e **cartão CNPJ** (comprovante de inscrição
 e situação cadastral) → nome original preservado em `DOCUMENTOS CONSTITUTIVOS\`, **sem subpasta de
 ano** — evento não-periódico (uma alteração contratual não tem "competência"), a lista cronológica
 pelo próprio nome/data do arquivo já basta. **Contrato de constituição não tem CNPJ** (é anterior à
