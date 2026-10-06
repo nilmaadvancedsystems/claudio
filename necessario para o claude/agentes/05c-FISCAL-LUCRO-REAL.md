@@ -37,6 +37,8 @@ Raiz: `<cliente_destino>\FISCAL\LUCRO REAL\`
 | DAPI | 06. DAPI\ | `MM-YYYY` | competência |
 | ECF (e recibo) | 16. ECF\ | `[ANO-CALENDÁRIO] - ECF.pdf` / `[ANO-CALENDÁRIO] - RECIBO ECF.pdf` | ano-calendário |
 | DIRF (e relatório de fontes pagadoras) | 17. DIRF\ | `[ANO-CALENDÁRIO] - DIRF.pdf` | ano-calendário |
+
+**ECF/DIRF/DEFIS — `[ANO-CALENDÁRIO]`** é o ano declarado no documento (campo "Ano-calendário"/"Período"/"Exercício anterior"), nunca o ano de entrega nem o do nome do arquivo: ECF entregue em 2026 sobre 2025 → `2025`. Leia antes de nomear.
 | Controle de Créditos Fiscais | 09. CONTROLES\CONTROLE DE CRÉDITOS FISCAIS\ | `MM-YYYY` | competência |
 
 Tipo sem nome definido (ou documento fiscal identificado sem tipo) → `OUTROS DOCUMENTOS\[ANO]\` na pasta do regime, nome original (05d regra 0, desde 06/10/2026).

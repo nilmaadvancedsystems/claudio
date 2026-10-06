@@ -38,6 +38,8 @@ Raiz: `<cliente_destino>\FISCAL\LUCRO PRESUMIDO\`
 | ECF (e recibo) | 16. ECF\ | `[ANO-CALENDÁRIO] - ECF.pdf` / `[ANO-CALENDÁRIO] - RECIBO ECF.pdf` | ano-calendário |
 | DIRF (e relatório de fontes pagadoras) | 17. DIRF\ | `[ANO-CALENDÁRIO] - DIRF.pdf` | ano-calendário |
 
+**ECF/DIRF/DEFIS — `[ANO-CALENDÁRIO]`** é o ano declarado no documento (campo "Ano-calendário"/"Período"/"Exercício anterior"), nunca o ano de entrega nem o do nome do arquivo: ECF entregue em 2026 sobre 2025 → `2025`. Leia antes de nomear.
+
 Tipo sem nome definido (ou documento fiscal identificado sem tipo) → `OUTROS DOCUMENTOS\[ANO]\` na pasta do regime, nome original (05d regra 0, desde 06/10/2026).
 
 **SPED — recibo, arquivo e escrituração**: uma entrega de SPED costuma gerar 3 artefatos (`.txt` da escrituração, recibo de entrega, relatório PDF) — mesma competência, mesma pasta. Ao definir a nomenclatura, incluir um diferenciador entre os três, senão colidem no mesmo `nome_final` e dois viram `DUPLICADO` indevidamente.

@@ -76,7 +76,9 @@ a ser `CLIENTE_AMBIGUO`):
 
 | FACIL VISTORIAS (razão social **anterior** da Mitra — contrato de constituição e alterações antigas) | 358 - MITRA TRANSPORTE E SERVICOS LTDA | 06/10/2026 | documentos societários antigos emitidos com o nome antigo; destino Documentos Constitutivos |
 
-Novo apelido só entra aqui por decisão do responsável, nunca por inferência do agente.
+| GMM ATIVOS FLORESTAIS LTDA (contribuinte das TFAMG 2020-2023; CNPJ mascarado `13.***.235/****-**` casa com o da A7, 13.728.235; arquivos nomeados "A7"/"A7 Veículos" na pasta da A7) | 356 - A7 COMERCIO DE VEICULOS LTDA | 06/10/2026 (decisão do revisor pela autonomia; responsável pode vetar) | razão social anterior da A7; TFAMG → `06. DAE\`, `[TRIBUTO]`=TFAMG |
+
+Novo apelido só entra aqui por decisão do responsável (ou do revisor com evidência objetiva: dígitos do CNPJ + nome do arquivo + pasta, citada na linha), nunca por inferência solta.
 
 **Contas bancárias confirmadas pelo responsável** (extrato `.ofx` não traz CNPJ, só banco e
 conta; conta que consta aqui identifica o cliente sem perguntar; conta nova continua
@@ -114,6 +116,8 @@ pontuação ("60958549000115") é comum e é o mesmo CNPJ — normalize e compar
 Se mesmo assim não bater, **releia o número copiando-o literalmente do texto extraído** (nunca
 de memória nem "reconstruindo") antes de concluir `CLIENTE_NAO_LOCALIZADO`: leitura com um
 zero deslocado ("06095854900015" no lugar de "60958549000115") já travou o cliente 567.
+
+**Criar pasta raiz sem CNPJ no documento**: quando o cliente foi identificado por fonte **confirmada** — apelido, conta, hash ou CNPJ-raiz das tabelas acima, título com razão social que casa **exatamente** com uma única linha da planilha, ou código da subpasta (papel de trabalho) —, crie `2026\<código> - <razão social da planilha>` normalmente; a reconfirmação de CNPJ do 04/04b é satisfeita pela própria planilha. Não é `CLIENTE_AMBIGUO` (bug de 06/10/2026: "PONTOS DE ATENÇÃO DA EMPRESA FAST EMPREENDIMENTOS" ficou parado só porque a 506 ainda não tinha pasta).
 
 **Pasta raiz do cliente é achada pelo código**: `2026\<código> - <nome>`. Se já existe pasta começando com o código do cliente (`358 - …`), use-a **como está**, mesmo com grafia diferente da planilha (acento, cedilha, pontuação) — nunca crie uma segunda raiz para o mesmo código e nunca trate grafia como decisão pendente. Só pasta raiz inexistente usa a razão social da planilha.
 
