@@ -25,6 +25,8 @@ Raiz: `<cliente_destino>\FISCAL\LUCRO REAL\`
 13. COMPENSAÇÃO\            → 05d §3
 14. XML\                    → 05d §1b
 15. LIVROS FISCAIS\          → 05d §1c
+16. ECF\                    → abaixo
+17. DIRF\                   → abaixo
 ```
 ⚠️ Numeração própria deste regime: aqui DARF=04, DAE=05 (no Presumido são 05 e 06). Pasta vem sempre deste documento, nunca de memória de outro regime.
 
@@ -33,9 +35,11 @@ Raiz: `<cliente_destino>\FISCAL\LUCRO REAL\`
 | SPED Fiscal (EFD ICMS/IPI) | 01. SPED FISCAL\ | `MM-YYYY` | competência |
 | SPED Contribuições (EFD-Contribuições) | 02. SPED CONTRIBUIÇÕES\ | `MM-YYYY` | competência |
 | DAPI | 06. DAPI\ | `MM-YYYY` | competência |
+| ECF (e recibo) | 16. ECF\ | `[ANO-CALENDÁRIO] - ECF.pdf` / `[ANO-CALENDÁRIO] - RECIBO ECF.pdf` | ano-calendário |
+| DIRF (e relatório de fontes pagadoras) | 17. DIRF\ | `[ANO-CALENDÁRIO] - DIRF.pdf` | ano-calendário |
 | Controle de Créditos Fiscais | 09. CONTROLES\CONTROLE DE CRÉDITOS FISCAIS\ | `MM-YYYY` | competência |
 
-Enquanto `A DEFINIR` (tipos do 05d): `FORA_DO_ESCOPO/NOMENCLATURA_NAO_DEFINIDA`, intocado na origem.
+Tipo sem nome definido (ou documento fiscal identificado sem tipo) → `OUTROS DOCUMENTOS\[ANO]\` na pasta do regime, nome original (05d regra 0, desde 06/10/2026).
 
 **SPED — recibo, arquivo e escrituração**: mesma regra do Presumido — `.txt` da escrituração, recibo de entrega e relatório PDF da mesma competência vão pra mesma pasta; nomenclatura precisa diferenciá-los (senão colidem e viram `DUPLICADO` indevido).
 

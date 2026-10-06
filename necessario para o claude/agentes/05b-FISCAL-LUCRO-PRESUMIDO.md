@@ -25,6 +25,8 @@ Raiz: `<cliente_destino>\FISCAL\LUCRO PRESUMIDO\`
 13. COMPENSAÇÃO\            → 05d §3
 14. XML\                    → 05d §1b
 15. LIVROS FISCAIS\          → 05d §1c
+16. ECF\                    → abaixo
+17. DIRF\                   → abaixo
 ```
 
 | Tipo | Pasta | Nome final | Dados obrigatórios |
@@ -33,8 +35,10 @@ Raiz: `<cliente_destino>\FISCAL\LUCRO PRESUMIDO\`
 | SPED Contribuições (EFD-Contribuições) | 02. SPED CONTRIBUIÇÕES\ | `MM-YYYY` | competência |
 | MIT (Módulo de Inclusão de Tributos) | 04. MIT\ | `MM-YYYY` | competência |
 | DAPI | 07. DAPI\ | `MM-YYYY` | competência |
+| ECF (e recibo) | 16. ECF\ | `[ANO-CALENDÁRIO] - ECF.pdf` / `[ANO-CALENDÁRIO] - RECIBO ECF.pdf` | ano-calendário |
+| DIRF (e relatório de fontes pagadoras) | 17. DIRF\ | `[ANO-CALENDÁRIO] - DIRF.pdf` | ano-calendário |
 
-Enquanto `A DEFINIR` (tipos do 05d): `FORA_DO_ESCOPO/NOMENCLATURA_NAO_DEFINIDA`, intocado na origem.
+Tipo sem nome definido (ou documento fiscal identificado sem tipo) → `OUTROS DOCUMENTOS\[ANO]\` na pasta do regime, nome original (05d regra 0, desde 06/10/2026).
 
 **SPED — recibo, arquivo e escrituração**: uma entrega de SPED costuma gerar 3 artefatos (`.txt` da escrituração, recibo de entrega, relatório PDF) — mesma competência, mesma pasta. Ao definir a nomenclatura, incluir um diferenciador entre os três, senão colidem no mesmo `nome_final` e dois viram `DUPLICADO` indevidamente.
 </regras>

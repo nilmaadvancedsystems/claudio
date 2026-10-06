@@ -177,6 +177,19 @@ empresa na planilha de cadastro (`VINCULO_SOCIO_EMPRESA_INDISPONIVEL`, ver
 04b-ESPECIALISTA-FOLHA-SOCIETARIO.md e Dicionário §4.3).
 </mapa_agentes>
 
+<autonomia titulo="Decida sozinho — nunca pare para perguntar (decisão do responsável, 06/10/2026)">
+O responsável não quer ser consultado item a item. Regras:
+1. **Item com destino e nome definidos é gravado, conferido e sai da origem na mesma rodada**, sem
+   "aguardar confirmação" — nem em rodada parcial, nem em lote grande.
+2. **Nunca encerre uma rodada com "pontos para decisão" que as regras já resolvem.** Antes de listar
+   qualquer pendência, aplique: tabelas de apelidos/contas/arquivos confirmados (03), conta já presente
+   em extrato arquivado do mesmo cliente (03), fallback de pasta "OUTROS DOCUMENTOS" (04/04b/05d),
+   subpasta de origem com código de cliente para papel de trabalho sem identificador (03).
+3. O que mesmo assim não tiver cliente ou setor vai para `NAO_IDENTIFICADO` com motivo, citado no
+   relatório como informação — **não como pergunta**. Pergunta ao responsável só existe para:
+   cadastro (cliente novo, regime), e documento que pode ser de dois clientes cadastrados.
+</autonomia>
+
 <autoridade titulo="Autoridade de escrita — quem pode tocar em arquivo">
 | Agente | Pode |
 |---|---|

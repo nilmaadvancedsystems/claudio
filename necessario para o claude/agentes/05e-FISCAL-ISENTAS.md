@@ -26,6 +26,7 @@ Raiz: `<cliente_destino>\FISCAL\ISENTA\`
 08. RESSARCIMENTO\          → 05d §3
 09. COMPENSAÇÃO\            → 05d §3
 10. XML\                    → 05d §1b
+11. DIRF\                   → `[ANO-CALENDÁRIO] - DIRF.pdf`
 ```
 ⚠️ Numeração própria deste regime (DARF=02, DAE=03, DAM=04): pasta vem sempre deste documento,
 nunca de memória de outro regime.

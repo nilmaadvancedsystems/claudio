@@ -24,6 +24,7 @@ Raiz: `<cliente_destino>\FISCAL\SIMPLES NACIONAL\`
 12. XML\                    → 05d §1b
 13. LIVROS FISCAIS\          → 05d §1c
 14. DEFIS\                  → abaixo
+15. DIRF\                   → abaixo
 ```
 
 | Tipo | Pasta | Nome final | Dados obrigatórios |
@@ -31,9 +32,10 @@ Raiz: `<cliente_destino>\FISCAL\SIMPLES NACIONAL\`
 | DAS | 01. DAS\ | `MM-YYYY` | valor, vencimento, período de apuração |
 | DeSTDA | 04. DeSTDA\ | `MM-YYYY` | competência |
 | Sintegra | 05. SINTEGRA\ | `MM-YYYY` | competência |
+| DIRF (e relatório de fontes pagadoras) | 15. DIRF\ | `[ANO-CALENDÁRIO] - DIRF.pdf` | ano-calendário |
 | DEFIS (declaração anual do Simples) e recibo | 14. DEFIS\ | `[ANO-CALENDÁRIO] - DEFIS.pdf` / `[ANO-CALENDÁRIO] - RECIBO DEFIS.pdf` | ano-calendário |
 
-Referência do padrão antigo pro DAS, se quiser reaproveitar: `DAS_R$[VALOR]_[VENCIMENTO]_[PERÍODO].pdf`. Enquanto nome final = `A DEFINIR` (tipos do 05d) → `FORA_DO_ESCOPO/NOMENCLATURA_NAO_DEFINIDA`, intocado na origem.
+Referência do padrão antigo pro DAS, se quiser reaproveitar: `DAS_R$[VALOR]_[VENCIMENTO]_[PERÍODO].pdf`. Tipo sem nome definido (ou documento fiscal identificado sem tipo) → `OUTROS DOCUMENTOS\[ANO]\` na pasta do regime, nome original (05d regra 0, desde 06/10/2026).
 </regras>
 
 <nunca_faz>

@@ -42,6 +42,12 @@ execução, reler a cada item é desperdício.
 dígitos, ou vice-versa; comparar sem normalizar gera falso `CLIENTE_NAO_LOCALIZADO`.
 Clientes Pessoa Física têm CPF (11 dígitos) na coluna CNPJ, não confundir com CNPJ inválido.
 
+**Título com nome de empresa decide**: relatório/documento interno cujo título nomeia a empresa ("PONTOS DE ATENÇÃO DA EMPRESA FAST EMPREENDIMENTOS 2025") é desse cliente, mesmo que traga prints/telas de outro — prints são exemplo, não titular.
+
+**Papel de trabalho sem nenhum identificador** (planilha/docx interno do escritório sem CNPJ, razão social ou conta no conteúdo — controle de estoque, correção de estoque, depreciação, controle de empréstimo, notas de encerramento): use o **código de cliente no início do nome da subpasta de origem** (`356 A7 …` → 356), desde que o código exista na planilha. Só para esse tipo de arquivo; documento com identificação no conteúdo segue o conteúdo, nunca a pasta.
+
+**Cliente que não está na planilha** (ex. "357", ou contribuinte GMM ATIVOS FLORESTAIS em guias com CNPJ mascarado na pasta da A7): `NAO_IDENTIFICADO/CLIENTE_NAO_LOCALIZADO`, citado no relatório — nunca atribua ao cliente dono da subpasta e nunca transforme em pergunta.
+
 **Documento de outro cliente dentro da subpasta de um cliente** não é decisão pendente: o CNPJ do documento decide o cliente (a subpasta de origem não importa, Dicionário §1). Ex. 06/10/2026: um documento da 314 (M A REFLORESTAMENTO) chegou na pasta da 584 — vai para a 314 normalmente (criando a raiz dela, se preciso, com a reconfirmação de CNPJ de sempre).
 
 **Documento com mais de um CNPJ** (comum: extrato bancário do cliente citando CNPJ do banco;
@@ -80,6 +86,12 @@ conta; conta que consta aqui identifica o cliente sem perguntar; conta nova cont
 |---|---|---|---|
 | BANCO DO BRASIL (001) | 40242-7 | 591 - ZELO AGROINDUSTRIAS LTDA | 05/10/2026 |
 | BRADESCO (0237) | 33229 | 591 - ZELO AGROINDUSTRIAS LTDA | 05/10/2026 |
+| ITAU (ag 3110) | 99699-2 | 356 - A7 COMERCIO DE VEICULOS LTDA | 06/10/2026 |
+| BNB (ag 60) | 62.684-0 | 356 - A7 COMERCIO DE VEICULOS LTDA | 06/10/2026 |
+| SANTANDER (ag 3504) | 13.009817-5 | 356 - A7 COMERCIO DE VEICULOS LTDA | 06/10/2026 |
+| SANTANDER (ag 3504) | 13.009958-5 | 515 - A7 MOBILE LTDA | 06/10/2026 |
+
+**Conta que não está na tabela, mas aparece em extrato já arquivado de um cliente**: procure o número da conta (só dígitos) nos extratos já gravados em `2026\*\CONTÁBIL\EXTRATOS\` do mesmo banco; achou em **um único** cliente → é dele, arquive sem perguntar e cite no relatório (foi assim que as contas da 356 acima foram confirmadas). Achou em dois clientes ou em nenhum → `CLIENTE_NAO_LOCALIZADO`.
 
 **Arquivos confirmados pelo responsável** (arquivo sem nenhuma identificação no conteúdo — sem CNPJ,
 razão social nem conta —, atribuído manualmente; vale pelo `hash_original` exato, nunca pelo nome do

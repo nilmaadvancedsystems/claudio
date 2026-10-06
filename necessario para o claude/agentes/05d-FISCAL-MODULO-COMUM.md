@@ -28,8 +28,7 @@ Sobrescrever · inventar nomenclatura não definida · apagar · tocar `arquivo_
 <regra n="0" titulo="Nomenclatura ainda não definida">
 A árvore de pastas do Fiscal está pronta; **a nomenclatura de arquivo, na maior
 parte dos tipos, ainda não**. Enquanto a coluna "Nome final" de um tipo estiver
-`A DEFINIR`: `status=FORA_DO_ESCOPO`, `motivo=NOMENCLATURA_NAO_DEFINIDA: <tipo>`.
-Arquivo intocado na origem, reportado. **Não arquive com nome provisório** — um
+`A DEFINIR` (ou documento fiscal de cliente identificado que não casa com nenhum tipo): **desde 06/10/2026** arquive em `OUTROS DOCUMENTOS\[ANO]\` dentro da pasta do regime, nome original preservado, e liste no relatório (seção "Arquivado em OUTROS") para virar regra depois — decisão do responsável, que não quer itens parados esperando regra. O texto abaixo fica como histórico. **Não arquive com nome provisório** — um
 arquivo no lugar certo com nome errado é pior que um arquivo ainda na origem (parece
 resolvido, entra no manifesto, vira dívida invisível). Quando o responsável definir
 o padrão, preenche a linha e aquele tipo passa a operar sozinho, sem tocar em mais
@@ -77,6 +76,10 @@ consolidado das notas recebidas no mês (ex. `.xlsx` do FSist: colunas Chave, Em
 Pasta `RECEBIDOS\RELATÓRIO MENSAL\[ANO]\`, nome
 `[MÊS E ANO] - RELATORIO NOTAS RECEBIDAS - [RAZÃO SOCIAL CLIENTE].[ext]` (extensão original preservada).
 Competência ausente → `NAO_IDENTIFICADO/COMPETENCIA_AUSENTE`.
+
+**Relatório de ISS / notas emitidas de qualquer período** (mensal, anual, acumulado — "Relatório de NFS-e", livro/relatório de ISS da prefeitura): mesma pasta do relatório mensal, `EMITIDOS\RELATÓRIO MENSAL\[ANO]\`, nome `[MÊS E ANO ou ANO] - RELATORIO NOTAS EMITIDAS - [RAZÃO SOCIAL EMISSOR].pdf` (período anual/acumulado → só o ano). Não é DAM.
+
+**NFS-e cancelada** (a própria nota com marca/tarja "CANCELADA"): `EMITIDOS\CANCELADAS\` (ou `RECEBIDOS\CANCELADAS\`), nome normal da NFS-e + ` - CANCELADA` antes da extensão.
 
 **Relatório Mensal de Notas Emitidas**: listagem/relatório consolidado de várias notas emitidas no mês (não uma NF-e individual) — reconheça pelo formato de tabela (várias notas, uma linha cada) em vez de uma nota só. Só existe em `EMITIDOS\` (é sempre sobre notas que o próprio cliente emitiu); não há equivalente em `RECEBIDOS\`. Competência ausente → `NAO_IDENTIFICADO/COMPETENCIA_AUSENTE`.
 </regra>
@@ -151,6 +154,8 @@ DÍVIDA ATIVA\[ANO]\[MÊS]\ · PREVIDENCIÁRIA\[ANO]\[MÊS]\ · SIMPLES NACIONAL
 `[MÊS E ANO]` = competência da parcela (mês de referência do parcelamento), nunca a data de emissão do boleto. Valor ilegível → `NAO_IDENTIFICADO/VOCABULARIO_AUSENTE`.
 
 **Guia de parcelamento sem nº de parcela impresso** (comum no DARF/DAS de parcelamento da PGFN, decisão do responsável 06/10/2026): troque o trecho da parcela pelo vencimento — `[MÊS E ANO] - PARCELAMENTO PGFN - VENCIMENTO [DATA] - VALOR [VALOR].pdf` (idem INSS/SIMPLES/FEDERAL/ESTADUAL, trocando a sigla). Não é `VOCABULARIO_AUSENTE`.
+
+**Natureza do parcelamento PGFN** quando o documento não diz: "previdenciário"/INSS/contribuição social no texto → `PREVIDENCIÁRIA\`; caso contrário → `DÍVIDA ATIVA\`. Nunca pergunte.
 
 **Consulta/extrato de parcelamento ou transação PGFN** (relação de prestações, situação do acordo — não é guia): mesma pasta da modalidade (`DÍVIDA ATIVA\[ANO]\[MÊS]\` da data da consulta), nome `[DATA] - CONSULTA PARCELAMENTO PGFN.pdf`.
 </regra>

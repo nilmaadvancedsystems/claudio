@@ -27,9 +27,9 @@ Sobrescrever arquivo existente · inventar CPF/CNPJ/data/ano · apagar algo · t
 <regra n="0" titulo="Nomenclatura ainda não definida">
 Parte dos tipos deste setor ainda não tem regra de nome de arquivo definida. **Ativos hoje**:
 Certificado Digital e Documentos Constitutivos (inclui cartão CNPJ e contrato social); IRPF definido
-mas suspenso (ver nota). FGTS, Folha, Certidões e Documentos de Sócios seguem `A DEFINIR`. Enquanto a coluna "Nome final" de um tipo estiver `A DEFINIR`:
-`status=FORA_DO_ESCOPO`, `motivo=NOMENCLATURA_NAO_DEFINIDA: <tipo>`. Arquivo intocado na
-origem, reportado. **Não arquive com nome provisório** — mesmo princípio do Módulo Comum
+mas suspenso (ver nota). FGTS, Folha, Certidões e Documentos de Sócios ativados em 06/10/2026 (autonomia dada pelo responsável), com as propostas que já estavam escritas abaixo; o que não casar com nenhum vai para `OUTROS DOCUMENTOS\[ANO]\`. Enquanto a coluna "Nome final" de um tipo estiver `A DEFINIR`:
+arquive em `OUTROS DOCUMENTOS\[ANO]\` com nome original (desde 06/10/2026; antes ficava
+`FORA_DO_ESCOPO`), e liste no relatório. **Não arquive com nome provisório** — mesmo princípio do Módulo Comum
 Fiscal (05d §0): um arquivo no lugar certo com nome errado é pior que um arquivo ainda na
 origem. Quando o responsável definir o padrão de um tipo, preencha a linha na tabela e ele
 passa a operar sozinho, sem tocar em mais nada.
@@ -64,12 +64,13 @@ Todo caminho abaixo é relativo a `<cliente_destino>\SOCIETÁRIO\`.
 | Sub-regra | Caminho | Nome final | Dados obrigatórios |
 |---|---|---|---|
 | IRPF ⚠️ | `IMPOSTOS\IRPF\[ANO]\` | nome original preservado, `nome_original_preservado=true` — **suspenso, ver nota abaixo** | ano-exercício (ano-calendário da declaração, não o ano de entrega) |
-| FGTS | `IMPOSTOS\FGTS\[ANO]\` | A DEFINIR | A DEFINIR |
-| Folha de Pagamento | `FOLHA DE PAGAMENTO\[ANO]\[MÊS]\` | A DEFINIR | A DEFINIR |
-| Certidões | `CERTIDÕES\` | A DEFINIR | A DEFINIR |
+| FGTS | `IMPOSTOS\FGTS\[ANO]\` | `[MÊS E ANO].pdf` | competência |
+| Folha de Pagamento | `FOLHA DE PAGAMENTO\[ANO]\[MÊS]\` | nome original preservado, `nome_original_preservado=true` | competência |
+| Certidões | `CERTIDÕES\[TIPO]\` (FEDERAL, ESTADUAL, MUNICIPAL, TRABALHISTA, FGTS) | `[DATA].pdf` (data de emissão) | tipo+data |
 | Certificado Digital | `CERTIFICADO DIGITAL\` (sem subpasta de ano) | nome original preservado, `nome_original_preservado=true` | nenhum |
 | Documentos Constitutivos | `DOCUMENTOS CONSTITUTIVOS\` (sem subpasta de ano) | nome original preservado, `nome_original_preservado=true` | nenhum |
-| Documentos de Sócios (outros, não-IRPF) | `DOCUMENTOS DE SÓCIOS\` | A DEFINIR | A DEFINIR |
+| Documentos de Sócios (outros, não-IRPF) | `DOCUMENTOS DE SÓCIOS\` | nome original preservado | nenhum |
+| Qualquer outro documento do setor sem sub-regra | `OUTROS DOCUMENTOS\[ANO]\` | nome original preservado | ano |
 
 Caminhos dos tipos `A DEFINIR` são a estrutura de pasta já prevista (não é `A DEFINIR` em
 si) — só o nome do arquivo final e os dados obrigatórios de cada um ainda faltam. Enquanto
