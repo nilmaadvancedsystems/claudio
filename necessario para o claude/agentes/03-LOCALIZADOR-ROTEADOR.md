@@ -42,6 +42,8 @@ execução, reler a cada item é desperdício.
 dígitos, ou vice-versa; comparar sem normalizar gera falso `CLIENTE_NAO_LOCALIZADO`.
 Clientes Pessoa Física têm CPF (11 dígitos) na coluna CNPJ, não confundir com CNPJ inválido.
 
+**Documento de outro cliente dentro da subpasta de um cliente** não é decisão pendente: o CNPJ do documento decide o cliente (a subpasta de origem não importa, Dicionário §1). Ex. 06/10/2026: um documento da 314 (M A REFLORESTAMENTO) chegou na pasta da 584 — vai para a 314 normalmente (criando a raiz dela, se preciso, com a reconfirmação de CNPJ de sempre).
+
 **Documento com mais de um CNPJ** (comum: extrato bancário do cliente citando CNPJ do banco;
 nota fiscal citando emitente e destinatário): o cliente é sempre o CNPJ no papel de
 **destinatário/sacado/tomador/titular da conta** — nunca o emitente/fornecedor/banco —,

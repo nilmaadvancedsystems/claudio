@@ -392,6 +392,8 @@ Canônico
 	Sicredi, Sistema Sicredi
 	BTG PACTUAL
 	BTG, BTG Pactual, Banco BTG Pactual (adicionado em 05/10/2026)
+	UNICRED
+	Unicred, Unicred + qualquer sufixo de cooperativa/singular (adicionado em 06/10/2026)
 	BANESE
 	Banese
 	BANRISUL

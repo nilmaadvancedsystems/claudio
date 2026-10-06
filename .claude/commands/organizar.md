@@ -27,7 +27,7 @@ execução é a normal, a mesma da tarefa agendada):
   (um `.rar` grande conta pelos itens que ele gera, não por 1).
 - `pasta=?` — **não processa nada**: lista as pastas de primeiro nível da origem com a
   contagem de arquivos de cada uma (ordem decrescente), para você escolher por onde começar.
-Repita o comando quantas vezes quiser: o que já foi arquivado sai da origem e o manifesto
+Toda rodada parcial grava log com `id_execucao` e **commit das regras** usado (o mesmo cabeçalho da execução completa) e relê as regras do disco no começo (`git pull`), mesmo dentro de uma sessão aberta há horas — regra alterada no meio do dia vale a partir da rodada seguinte. Repita o comando quantas vezes quiser: o que já foi arquivado sai da origem e o manifesto
 impede refazer, então cada rodada continua de onde a anterior parou.
 
 Siga a sequência de fases exatamente como escrita no arquivo. Carregue na sessão principal

@@ -109,6 +109,10 @@ Todo caminho abaixo é relativo a `<cliente_destino>\CONTÁBIL\`.
 
 **Escritura de imóvel → Venda de Ativos** (decisão do responsável, 05/10/2026): escritura pública de compra e venda de imóvel (e documentos que a acompanham no mesmo PDF, como certidão de ônus/matrícula) vai para a sub-regra **Venda de Ativos**: `VENDA DE ATIVOS\[ANO]\`, nome original preservado, `[ANO]` = ano da lavratura da escritura. A guia do ITBI (DAM municipal) que vier junto **não** vai pra cá — é documento fiscal (05d §4, DAM).
 
+**Documento acessório da escritura** (certidão de matrícula/ônus, guia de ITBI, recibo) **no mesmo PDF pai** de uma escritura já atribuída a um cliente: herda o **cliente** da escritura do mesmo PDF, mesmo que traga CNPJ/CPF de terceiro (vendedor, antigo proprietário, construtora) — esse CNPJ é de parte do negócio, não do cliente. Certidão de matrícula/ônus → Venda de Ativos junto com a escritura; ITBI → DAM fiscal. Matrícula **avulsa** (PDF sem escritura nenhuma) não herda nada: cliente pelo adquirente/proprietário atual impresso; sem ele → `NAO_IDENTIFICADO/CLIENTE_NAO_LOCALIZADO`.
+
+**Comprovante de pagamento de tributo no banco** (ex. comprovante Unicred/Sicoob de pagamento de DAM/ITBI/DARF): é **comprovante bancário** (sub-regra Comprovantes, `...\COMPROVANTES\[BANCO]\`), não a guia. A guia em si (o documento de arrecadação) é que vai para o fiscal.
+
 **Pasta de fornecedor nova não pede confirmação**: criar `[FORNECEDOR]\` dentro de um cliente que **já tem pasta** é automático (o Orquestrador cria, Fase 3-4) — só pasta **raiz de cliente** exige a reconfirmação de CNPJ. Relatório de 05/10 listou "confirmar criação das pastas de fornecedor" como decisão pendente: não é.
 
 **Fornecedor** (§5.2 Dicionário): maiúsculas, remover sufixo societário (LTDA/ME/EPP/EIRELI/S.A....), remover pontuação, colapsar espaços. Antes de criar pasta nova, normalizar pastas existentes em `[ANO]\[MÊS]\` e reutilizar se coincidir. Nome ilegível → `VOCABULARIO_AUSENTE`.
