@@ -92,6 +92,10 @@ arquivo; conteúdo diferente = arquivo novo, volta a ser `CLIENTE_NAO_LOCALIZADO
 | b5131c8dc30d5bb5f3b9f72bada2216c1c1afb1a4e1b43a0c910d69abafd0926 | CCF07052026_0002- APTO.pdf (recibo de emolumentos, compra e venda, 15/12/2025 → Venda de Ativos 2025) | 584 - EMPREENDIMENTOS IMOBILIARIOS M&A LTDA | 06/10/2026 |
 | dd56e069fa619f1f5a39c574d7f50bab50a50c635a7251b43aa163337e006e05 | CCF07052026_0006.pdf (matrícula 246.333, mesma do CCF07052026_0005 → Venda de Ativos 2025) | 584 - EMPREENDIMENTOS IMOBILIARIOS M&A LTDA | 06/10/2026 |
 | 8bf8a1df2177acadf84e66aeff6314e6990bb801bf3da3313864e7852bc03dbe | Captura de tela 2026-07-01 165129.png (print do cadastro da empresa no sistema contábil → `SOCIETÁRIO\DOCUMENTOS CONSTITUTIVOS\`, nome original) | 584 - EMPREENDIMENTOS IMOBILIARIOS M&A LTDA | 06/10/2026 |
+| 50d18b3ac3eb39c03318a74c19f01436b0c842cf005875f469837731edb106d8 | TFAMG 2024 _Mitra.pdf (CNPJ mascarado `22.***.579/****-**`; Montezuma/MG = **matriz**, a filial 359 é em Tanque Novo/BA; taxa estadual → DAE, `[TRIBUTO]`=TFAMG) | 358 - MITRA TRANSPORTE E SERVICOS LTDA | 06/10/2026 |
+| 20e9669e6912372a6244a0a3a598a1a267c25a7611c4eb39845333e80d789b6c | Alteracao Contratual_03032016.pdf (Documentos Constitutivos) | 358 - MITRA TRANSPORTE E SERVICOS LTDA | 06/10/2026 |
+| 7e7d073c73b34ac734566803ab78110f1ee97695c281a36fae5698a74538833e | Alteracao Contratual_12062015.pdf (contrato de constituição, ainda como FACIL VISTORIAS; Documentos Constitutivos) | 358 - MITRA TRANSPORTE E SERVICOS LTDA | 06/10/2026 |
+| d822931f9674c02f5bc61d3801a24ce3af0f24fabab3cf68dc23c4fa03455909 | Alteracao Contratual_05122019.pdf (escaneado; transformação/enquadramento EPP; Documentos Constitutivos) | 358 - MITRA TRANSPORTE E SERVICOS LTDA | 06/10/2026 |
 
 **CNPJ do documento diferente do cadastro por um dígito deslocado**: CNPJ impresso sem
 pontuação ("60958549000115") é comum e é o mesmo CNPJ — normalize e compare os 14 dígitos.
@@ -100,6 +104,8 @@ de memória nem "reconstruindo") antes de concluir `CLIENTE_NAO_LOCALIZADO`: lei
 zero deslocado ("06095854900015" no lugar de "60958549000115") já travou o cliente 567.
 
 **Pasta raiz do cliente é achada pelo código**: `2026\<código> - <nome>`. Se já existe pasta começando com o código do cliente (`358 - …`), use-a **como está**, mesmo com grafia diferente da planilha (acento, cedilha, pontuação) — nunca crie uma segunda raiz para o mesmo código e nunca trate grafia como decisão pendente. Só pasta raiz inexistente usa a razão social da planilha.
+
+**CNPJ mascarado** (`22.***.579/****-**`, comum em guia estadual/municipal impressa da internet): os dígitos visíveis + razão social + município do documento decidem — matriz × filial pelo município/UF do estabelecimento, nunca `CLIENTE_AMBIGUO` só por causa da máscara quando o nome casa com um único grupo.
 
 **CNPJ/CPF do escritório nunca identifica cliente**: NILMA DIAS OLIVEIRA / Nilma Contabilidade (CNPJ 27.872.981/0001-13) e a contadora (CPF 032.318.376-00, CRC MG-088272/O-7) aparecem em balancetes, assinaturas, recibos de honorários e comprovantes de clientes — são o **escritório**, não o cliente. Ignore e procure o cliente pela razão social/CNPJ do cabeçalho (bug de 06/10/2026: balancete-ECD da 575 BDV foi tido como de outro cliente por esse CNPJ). Exceção: documento cujo próprio titular/tomador é a Nilma (ex. nota de honorários emitida *para* a Nilma).
 
