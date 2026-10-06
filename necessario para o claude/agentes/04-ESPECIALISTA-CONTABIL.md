@@ -89,6 +89,8 @@ Todo caminho abaixo é relativo a `<cliente_destino>\CONTÁBIL\`.
 
 **Extrato bancário consolidado de vários meses** (planilha/relatório com lançamentos de mais de um mês, ex. `extrato_unicred_consolidado.xlsx` com 11/2025 a 02/2026): sub-regra Bancários, mas `[ANO]\[MÊS]` = **último** mês do período e nome `[MÊS E ANO inicial] A [MÊS E ANO final].[ext]` (ex. `EXTRATOS\2026\02\BANCÁRIOS\UNICRED\11-2025 A 02-2026.xlsx`), extensão preservada. Período pelas datas dos lançamentos quando não houver período impresso.
 
+**Período sobreposto não é duplicidade**: dois extratos do mesmo banco com meses em comum (ex. PDF de 11/2025 a 03/2026 e planilha de 11/2025 a 02/2026 da 584) são arquivos diferentes — arquive os dois normalmente; só hash idêntico é `DUPLICADO`. Não peça confirmação por isso.
+
 **Fatura / extrato de cartão de crédito** (ex. "EXTRATO DE CARTÃO DE CRÉDITO" do Sicoob, fatura Mastercard): ainda sem sub-regra própria — cai no Fallback extrato avulso abaixo (`EXTRATOS\[ANO]\[MÊS]\EXTRATO_[BANCO]_[MÊS E ANO].pdf`). `[MÊS]` = mês do **vencimento** da fatura ("Fatura de JANEIRO, vencimento 03/01" → 01; fatura com vencimento "3 SET 2026" → 09), nunca o mês dos gastos nem o da data de emissão do relatório.
 
 **Fallback extrato avulso**: banco identificável, categoria não → `EXTRATOS\[ANO]\[MÊS]\` (sem subpasta), nome `EXTRATO_[BANCO]_[MÊS E ANO].pdf`. Banco também não identificável → `NAO_IDENTIFICADO` (não usar fallback).

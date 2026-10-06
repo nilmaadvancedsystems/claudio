@@ -388,7 +388,7 @@ fora não são extraídos nesta execução (sem staging pra limpar).
 origem (as exclusões de sempre continuam valendo); `limite=` substitui `LIMITE_ITENS` só
 nesta execução; `fracao=1/N` equivale a `limite=ceil(N_pais_do_inventario / N)`. `pasta=?` só lista as pastas de 1º nível da origem com a contagem de arquivos
 e encerra sem processar nem criar lock/relatório. Informe no relatório quando a execução foi
-parcial ("pasta=…, limite=…"). A tarefa agendada nunca passa esses argumentos.
+parcial ("pasta=…, limite=…"). A tarefa agendada nunca passa esses argumentos. **Parcial muda só o tamanho do inventário: todas as fases (5 a 8, inclusive a remoção para quarentena) rodam igual** — rodada parcial que termina sem Fase 7 é execução incompleta.
 
 **Teto de itens por execução** (`LIMITE_ITENS`, padrão 60 pais por execução): se o
 inventário trouxer mais que isso, processe os `LIMITE_ITENS` primeiros (ordem alfabética de

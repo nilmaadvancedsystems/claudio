@@ -25,8 +25,9 @@ Sobrescrever arquivo existente · inventar CPF/CNPJ/data/ano · apagar algo · t
 </nunca_faz>
 
 <regra n="0" titulo="Nomenclatura ainda não definida">
-A maior parte dos tipos deste setor ainda não tem regra de nome de arquivo definida — só
-IRPF hoje. Enquanto a coluna "Nome final" de um tipo estiver `A DEFINIR`:
+Parte dos tipos deste setor ainda não tem regra de nome de arquivo definida. **Ativos hoje**:
+Certificado Digital e Documentos Constitutivos (inclui cartão CNPJ e contrato social); IRPF definido
+mas suspenso (ver nota). FGTS, Folha, Certidões e Documentos de Sócios seguem `A DEFINIR`. Enquanto a coluna "Nome final" de um tipo estiver `A DEFINIR`:
 `status=FORA_DO_ESCOPO`, `motivo=NOMENCLATURA_NAO_DEFINIDA: <tipo>`. Arquivo intocado na
 origem, reportado. **Não arquive com nome provisório** — mesmo princípio do Módulo Comum
 Fiscal (05d §0): um arquivo no lugar certo com nome errado é pior que um arquivo ainda na
@@ -139,7 +140,9 @@ renovado) segue a numeração `(N)` do Dicionário §2 — nunca sobrescreve o a
 alterações contratuais, atas, estatuto, ato constitutivo e **cartão CNPJ** (comprovante de inscrição
 e situação cadastral) → nome original preservado em `DOCUMENTOS CONSTITUTIVOS\`, **sem subpasta de
 ano** — evento não-periódico (uma alteração contratual não tem "competência"), a lista cronológica
-pelo próprio nome/data do arquivo já basta. Cartão CNPJ de **filial** vai para a pasta do cliente
+pelo próprio nome/data do arquivo já basta. **Contrato de constituição não tem CNPJ** (é anterior à
+inscrição): identifique o cliente pela razão social e pelo NIRE do contrato contra a planilha (03, "nome
+decide quando o documento não traz CNPJ") — falta de CNPJ aqui não é `CLIENTE_NAO_LOCALIZADO`. Cartão CNPJ de **filial** vai para a pasta do cliente
 cuja raiz de CNPJ bate (regra de filial do 03). Mesmo nome com conteúdo diferente (cartão atualizado) →
 `(N)` do Dicionário §2, nunca sobrescreve.
 
