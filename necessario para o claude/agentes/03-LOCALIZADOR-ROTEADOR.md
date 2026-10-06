@@ -87,6 +87,8 @@ arquivo; conteúdo diferente = arquivo novo, volta a ser `CLIENTE_NAO_LOCALIZADO
 |---|---|---|---|
 | dccd3c24ffca7f0a184c2f90ca210e3c9c75824a6efb66d4747a705040571a8e | extrato_unicred_consolidado.xlsx | 584 - EMPREENDIMENTOS IMOBILIARIOS M&A LTDA | 06/10/2026 |
 | da752bfbd3b83177484ce280ff7f3e262d8f79075d81ef5e8529c52dc2ae4f32 | extrato_unicred_consolidado - Copia.xlsx | 584 - EMPREENDIMENTOS IMOBILIARIOS M&A LTDA | 06/10/2026 |
+| b5131c8dc30d5bb5f3b9f72bada2216c1c1afb1a4e1b43a0c910d69abafd0926 | CCF07052026_0002- APTO.pdf (recibo de emolumentos, compra e venda, 15/12/2025 → Venda de Ativos 2025) | 584 - EMPREENDIMENTOS IMOBILIARIOS M&A LTDA | 06/10/2026 |
+| dd56e069fa619f1f5a39c574d7f50bab50a50c635a7251b43aa163337e006e05 | CCF07052026_0006.pdf (matrícula 246.333, mesma do CCF07052026_0005 → Venda de Ativos 2025) | 584 - EMPREENDIMENTOS IMOBILIARIOS M&A LTDA | 06/10/2026 |
 
 **CNPJ do documento diferente do cadastro por um dígito deslocado**: CNPJ impresso sem
 pontuação ("60958549000115") é comum e é o mesmo CNPJ — normalize e compare os 14 dígitos.

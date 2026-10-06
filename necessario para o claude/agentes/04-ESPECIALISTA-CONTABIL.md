@@ -115,6 +115,8 @@ Todo caminho abaixo é relativo a `<cliente_destino>\CONTÁBIL\`.
 
 **Documento acessório da escritura** (certidão de matrícula/ônus, guia de ITBI, recibo) **no mesmo PDF pai** de uma escritura já atribuída a um cliente: herda o **cliente** da escritura do mesmo PDF, mesmo que traga CNPJ/CPF de terceiro (vendedor, antigo proprietário, construtora) — esse CNPJ é de parte do negócio, não do cliente. Certidão de matrícula/ônus → Venda de Ativos junto com a escritura; ITBI → DAM fiscal. Matrícula **avulsa** (PDF sem escritura nenhuma) não herda nada: cliente pelo adquirente/proprietário atual impresso; sem ele → `NAO_IDENTIFICADO/CLIENTE_NAO_LOCALIZADO`.
 
+**Recibo de emolumentos de cartório de registro de imóveis** ("Recibo de emolumentos", natureza "Compra e venda", com "Interessado: <cliente>") é acessório da escritura mesmo vindo em PDF separado: cliente = o **Interessado**, destino Venda de Ativos `[ANO]` da data do recibo.
+
 **Comprovante de pagamento de tributo no banco** (ex. comprovante Unicred/Sicoob de pagamento de DAM/ITBI/DARF): é **comprovante bancário** (sub-regra Comprovantes, `...\COMPROVANTES\[BANCO]\`), não a guia. A guia em si (o documento de arrecadação) é que vai para o fiscal.
 
 **Pasta de fornecedor nova não pede confirmação**: criar `[FORNECEDOR]\` dentro de um cliente que **já tem pasta** é automático (o Orquestrador cria, Fase 3-4) — só pasta **raiz de cliente** exige a reconfirmação de CNPJ. Relatório de 05/10 listou "confirmar criação das pastas de fornecedor" como decisão pendente: não é.
