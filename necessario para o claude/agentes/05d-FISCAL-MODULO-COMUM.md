@@ -59,6 +59,10 @@ RECEBIDOS\ (mesma estrutura ESPECÍFICOS\)
 
 `[RAZÃO SOCIAL EMISSOR]` segue a normalização do Dicionário §5.2 (maiúsculas, sem sufixo societário, sem pontuação). Dado obrigatório ausente/ilegível pro tipo (nº da nota/CIOT/CT-e/manifesto/apólice, data, ou razão social do emissor) → não force o nome: `NAO_IDENTIFICADO/VOCABULARIO_AUSENTE`.
 
+**Competência da NFS-e** (pasta `[ANO]\[MÊS]` quando a regra usa mês): o campo impresso "Competência da NFS-e"/data da prestação; sem ele, a data de emissão. O `[DATA]` do nome é sempre a emissão (09/10/2026: classificador e reclassificador divergiam).
+
+**Eventos de CT-e** (XML `procEventoCTe`: cancelamento, comprovante de entrega, desacordo): `XML\CT-e\EVENTOS\`, nome `[DATA] - [TIPO EVENTO] CT-e [Nº CT-e].xml`, mesma lógica dos eventos de NF-e (§1b).
+
 **NFS-e × NF-e**: NFS-e é nota de **serviço** da prefeitura (DANFSe, "Nota Fiscal de Serviço", "Inscrição Municipal", ISS) — vai direto em `EMITIDOS\`/`RECEBIDOS\` (nunca em `ESPECÍFICOS\`) e nunca recebe o nome de NF-e; NF-e é nota de **produto** (SEFAZ, chave de 44 dígitos, "DANFE"). Título e cabeçalho decidem, nunca o nome do arquivo (arquivo "NF 154" pode ser qualquer um dos dois). `[DATA]` = data de emissão da nota; se o documento trouxer só "Data Fato Gerador", use essa. Sem `A DEFINIR`: o tipo arquiva de verdade (antes de 28/09/2026 cai em `NOMENCLATURA_NAO_DEFINIDA`).
 
 **NFC-e em PDF (DANFCe)** (definido em 05/10/2026): cupom/nota de consumidor emitida pelo próprio

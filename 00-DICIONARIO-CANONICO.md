@@ -192,9 +192,9 @@ Nunca use o texto da planilha diretamente — sempre normalize para o valor can�
 desta tabela. Valor da planilha fora desta lista → NAO_IDENTIFICADO, motivo
 VOCABULARIO_AUSENTE (regime novo, decisão humana antes de adicionar aqui).
 
-MEI, PESSOA FISICA e DOMESTICA ainda não têm sub-especialista com regras de
-documento definidas (SIMPLES NACIONAL/LUCRO PRESUMIDO/LUCRO REAL têm 05a/05b/05c e ISENTA tem o 05e, desde 05/10/2026).
-Até existirem: item FISCAL com um desses 3 regimes → FORA_DO_ESCOPO, motivo
+MEI e DOMESTICA ainda não têm sub-especialista com regras de
+documento definidas (SIMPLES NACIONAL/LUCRO PRESUMIDO/LUCRO REAL têm 05a/05b/05c ISENTA tem o 05e (05/10/2026) e PESSOA FISICA o 05f (09/10/2026)).
+Até existirem: item FISCAL com um desses 2 regimes → FORA_DO_ESCOPO, motivo
 REGIME_SEM_ESPECIALISTA — **só para o setor FISCAL** (05): o setor CONTÁBIL (04) e o FOLHA_SOCIETARIO (04b) não dependem do regime e arquivam normalmente para cliente MEI/Física/Isenta/Doméstica (balancete de cliente ISENTO, p. ex., arquiva; bug de 05/10/2026: balancete da CDL, regime Isentas, parou como FORA_DO_ESCOPO). Intocado na origem, mesmo tratamento dado a setor sem
 especialista.
 </secao>

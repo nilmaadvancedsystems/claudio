@@ -76,6 +76,7 @@ a ser `CLIENTE_AMBIGUO`):
 
 | FACIL VISTORIAS (razão social **anterior** da Mitra — contrato de constituição e alterações antigas) | 358 - MITRA TRANSPORTE E SERVICOS LTDA | 06/10/2026 | documentos societários antigos emitidos com o nome antigo; destino Documentos Constitutivos |
 
+| CARLOS LUCAS MENDES (CPF 424.607.276-15 — a planilha tem 4 linhas para ele: 62, 226, 228, 555) | 62 - CARLOS LUCAS MENDES | 09/10/2026 (autonomia: menor código, nenhuma das 4 tinha pasta) | linhas duplicadas no cadastro; todo documento com esse CPF vai para a 62 |
 | GMM ATIVOS FLORESTAIS LTDA (contribuinte das TFAMG 2020-2023; CNPJ mascarado `13.***.235/****-**` casa com o da A7, 13.728.235; arquivos nomeados "A7"/"A7 Veículos" na pasta da A7) | 356 - A7 COMERCIO DE VEICULOS LTDA | 06/10/2026 (decisão do revisor pela autonomia; responsável pode vetar) | razão social anterior da A7; TFAMG → `06. DAE\`, `[TRIBUTO]`=TFAMG |
 
 Novo apelido só entra aqui por decisão do responsável (ou do revisor com evidência objetiva: dígitos do CNPJ + nome do arquivo + pasta, citada na linha), nunca por inferência solta.
@@ -119,6 +120,10 @@ de memória nem "reconstruindo") antes de concluir `CLIENTE_NAO_LOCALIZADO`: lei
 zero deslocado ("06095854900015" no lugar de "60958549000115") já travou o cliente 567.
 
 **Criar pasta raiz sem CNPJ no documento**: quando o cliente foi identificado por fonte **confirmada** — apelido, conta, hash ou CNPJ-raiz das tabelas acima, título com razão social que casa **exatamente** com uma única linha da planilha, ou código da subpasta (papel de trabalho) —, crie `2026\<código> - <razão social da planilha>` normalmente; a reconfirmação de CNPJ do 04/04b é satisfeita pela própria planilha. Não é `CLIENTE_AMBIGUO` (bug de 06/10/2026: "PONTOS DE ATENÇÃO DA EMPRESA FAST EMPREENDIMENTOS" ficou parado só porque a 506 ainda não tinha pasta).
+
+**Subpastas da origem com código de cliente são pastas normais**: `292 FITO INDUSTRIA E COMERCIO`, `309 FITO EIRELI - Simples`, `413 BRAZILIAN…` etc. dentro de `Claudio Secretario\` são processadas como qualquer outra — documento antigo (2020-2025) vai para o ano do próprio documento. Não são "pastas legadas" nem decisão pendente (09/10/2026).
+
+**Relatório consolidado do cliente com linha de outro cliente** (ex. relatório FSist da GRANMIX 448 com 1 nota da filial 449): arquive só no cliente do cabeçalho; nunca duplique para o outro.
 
 **Pasta raiz do cliente é achada pelo código**: `2026\<código> - <nome>`. Se já existe pasta começando com o código do cliente (`358 - …`), use-a **como está**, mesmo com grafia diferente da planilha (acento, cedilha, pontuação) — nunca crie uma segunda raiz para o mesmo código e nunca trate grafia como decisão pendente. Só pasta raiz inexistente usa a razão social da planilha.
 

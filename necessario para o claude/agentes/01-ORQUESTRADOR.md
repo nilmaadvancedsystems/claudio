@@ -163,7 +163,9 @@ intocado na origem, mesmo com regime correto e sub-especialista ativo.
 
 05e (Isentas, desde 05/10/2026) cobre o regime `ISENTA` com os tipos comuns do 05d.
 
-⚠️ **Pendência**: regime `MEI`, `PESSOA FISICA` e `DOMESTICA` (Dicionário §2.1)
+05f (Pessoa Física, desde 09/10/2026) cobre o regime `PESSOA FISICA`.
+
+⚠️ **Pendência**: regime `MEI` e `DOMESTICA` (Dicionário §2.1)
 já são reconhecidos pelo Roteador, mas não têm sub-especialista com regra de documento
 definida — itens **FISCAIS** nesses regimes vão para `FORA_DO_ESCOPO/REGIME_SEM_ESPECIALISTA` (contábil e folha/societário não dependem do regime) (ver
 05-ESPECIALISTA-FISCAL-DESPACHANTE.md). Escrever 05f/05g/05h é passo pendente.
@@ -387,6 +389,8 @@ container (sem recópia, sem sufixo `(N)`). Sem isso o container reextraído nun
 elegível: ~770 itens já arquivados viravam `DUPLICADO` e travavam a saída do `.rar` da origem. Não confirmado
 depois → Conferente devolve `MANIFESTO_DESATUALIZADO`, reentra pela fase 2 como novo.
 
+**Ordem da fila — retidos por último** (desde 09/10/2026): mantenha `_CONTROLE\MANIFESTO\retidos.jsonl` (uma linha por `hash_original` que terminou uma execução sem sair da origem — `FORA_DO_ESCOPO`, container retido, `PDF_COMPOSTO_NAO_SEPARADO` —, com `id_execucao`, `motivo` e commit das regras). No inventário, pais **nunca vistos** vêm primeiro (ordem alfabética); pais cujo hash está em `retidos.jsonl` vão **para o fim da fila** e só são reavaliados se o commit das regras mudou desde o registro. Sem isso, 99 itens bloqueados (CARLOS LUCAS MENDES, containers FITO) ocupavam a frente da fila em toda rodada e escondiam o lote novo de 15 mil arquivos (09/10/2026).
+
 **Teto por derivados** (`LIMITE_DERIVADOS`, padrão 1500 itens; desde 05/10/2026): o teto de pais
 sozinho não basta — 6 `.rar` geraram 1.890 itens e a execução de 05/10 13:28 abortou sem
 escrever nada por "volume". Nunca aborte por volume. Em vez disso, extraia os containers do
@@ -552,6 +556,8 @@ dois arquivos de nome igual vindos de subpastas diferentes da origem se sobrescr
 sobrescreva neste destino também: `caminho_relativo\nome` já existente aqui → aplique `(N)`
 do Dicionário §2. Itens `FORA_DO_ESCOPO` e `PDF_COMPOSTO_NAO_SEPARADO` **não** são movidos —
 ficam exatamente onde estão.
+
+**Quando o container/PDF pai sai da origem** (desde 09/10/2026): todos os derivados têm desfecho final — `ARQUIVADO`, `JA_ARQUIVADO_ANTERIORMENTE`, `DUPLICADO` idêntico, **ou `NAO_IDENTIFICADO`/`FORA_DO_ESCOPO` com a cópia do derivado já gravada em `NÃO IDENTIFICADOS\<id_execucao>\<nome do pai>\`** (o derivado problemático fica preservado lá, então o pai não precisa ficar retido). Antes disso, 3 PDFs de cancelamento em branco travavam para sempre os `.rar` da FITO. Derivado `FORA_DO_ESCOPO` também é copiado para NÃO IDENTIFICADOS nesse caso.
 
 **Item fragmento ou extraído de `.zip`/`.rar`/`.7z`**: nunca toque no `arquivo_original` — ele continua
 retido na origem (é o `.zip`/`.rar`/`.7z` inteiro, ou o PDF composto original, esperando que todos os

@@ -25,9 +25,9 @@ Inferir regime · processar `regime=null` · tocar arquivo.
 | LUCRO PRESUMIDO | 05b | `agentes\05b-FISCAL-LUCRO-PRESUMIDO.md` |
 | LUCRO REAL | 05c | `agentes\05c-FISCAL-LUCRO-REAL.md` |
 | ISENTA | 05e | `agentes\05e-FISCAL-ISENTAS.md` |
+| PESSOA FISICA | 05f | `agentes\05f-FISCAL-PESSOA-FISICA.md` |
 | (todos carregam) | 05d Módulo Comum | `agentes\05d-FISCAL-MODULO-COMUM.md` |
 | MEI | nenhum ainda — ver "Regimes sem sub-especialista" |  |
-| PESSOA FISICA | nenhum ainda — ver "Regimes sem sub-especialista" |  |
 | DOMESTICA | nenhum ainda — ver "Regimes sem sub-especialista" |  |
 
 Ao chamar sub-especialista, anexar sempre doc 00 + 05d (regras idênticas nos 3 regimes vivem só no 05d — não duplicar).
@@ -49,8 +49,8 @@ tente encaixar no padrão de SIMPLES/PRESUMIDO/REAL.
 
 <procedimento>
 - `regime=null` → `NAO_IDENTIFICADO/REGIME_INDEFINIDO`. Nunca deduzir regime pelo tipo de documento (DAS em Lucro Real é erro a detectar, não pista).
-- `regime ∈ {SIMPLES NACIONAL, LUCRO PRESUMIDO, LUCRO REAL, ISENTA}` → despachar ao sub-agente correspondente, devolver resposta intacta.
-- `regime ∈ {MEI, PESSOA FISICA, DOMESTICA}` → `FORA_DO_ESCOPO/REGIME_SEM_ESPECIALISTA`. Arquivo intocado na origem. Ver regra "Regimes sem sub-especialista". **`regime=ISENTA` → 05e**, com uma exceção: **NFS-e recebida** (DANFSe/NFS-e cujo tomador do serviço é o próprio cliente): não é `FORA_DO_ESCOPO`; devolva ao Orquestrador `setor=CONTABIL` para o 04 aplicar a sub-regra "Nota de Serviço Recebida" (`CONTÁBIL\NOTAS DE SERVIÇO RECEBIDAS\`). NFS-e emitida pelo próprio isento, e qualquer outro documento fiscal dele, seguem o 05e (`FISCAL\ISENTA\`).
+- `regime ∈ {SIMPLES NACIONAL, LUCRO PRESUMIDO, LUCRO REAL, ISENTA, PESSOA FISICA}` → despachar ao sub-agente correspondente, devolver resposta intacta.
+- `regime ∈ {MEI, DOMESTICA}` → `FORA_DO_ESCOPO/REGIME_SEM_ESPECIALISTA`. Arquivo intocado na origem. Ver regra "Regimes sem sub-especialista". **`regime=ISENTA` → 05e**, com uma exceção: **NFS-e recebida** (DANFSe/NFS-e cujo tomador do serviço é o próprio cliente): não é `FORA_DO_ESCOPO`; devolva ao Orquestrador `setor=CONTABIL` para o 04 aplicar a sub-regra "Nota de Serviço Recebida" (`CONTÁBIL\NOTAS DE SERVIÇO RECEBIDAS\`). NFS-e emitida pelo próprio isento, e qualquer outro documento fiscal dele, seguem o 05e (`FISCAL\ISENTA\`).
 - **DEFIS em cliente que hoje não é do Simples** (decisão do responsável, 06/10/2026 — caso 358 Mitra, hoje Presumido): a DEFIS prova que o cliente **era** do Simples no ano-calendário dela — não é incompatível, é histórico. Despache ao 05a (não ao sub-especialista do regime atual) e arquive em `FISCAL\SIMPLES NACIONAL\14. DEFIS\`, criando a pasta do regime antigo dentro do cliente. Vale só para DEFIS (declaração anual, sempre de período passado); DAS/DeSTDA/Sintegra continuam incompatíveis com o regime atual.
 - Sub-especialista responde `TIPO_INCOMPATIVEL_COM_REGIME` (ex.: DeSTDA em Lucro Real, MIT em Simples) → não tentar outro sub-agente. `NAO_IDENTIFICADO/TIPO_INCOMPATIVEL_COM_REGIME: <tipo> não previsto em <regime>`. Causas possíveis (todas exigem humano): regime errado na planilha, doc do cliente errado, mudança de regime no período — você não resolve sozinho.
 </procedimento>
