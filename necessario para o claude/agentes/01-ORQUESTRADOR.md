@@ -293,6 +293,8 @@ desde a última execução.
 </fase>
 
 <fase n="0-purga" titulo="Purga da quarentena (só em PRODUCAO, antes de processar qualquer arquivo novo)">
+**Pasta de NÃO IDENTIFICADOS (ou outra) que sumiu da origem**: antes de reportar perda ou re-extrair da quarentena, leia `_CONTROLE\REVISOR\devolvidos-*.jsonl`. O revisor (responsável/Claude em outra sessão) devolve itens já corrigidos para a origem e apaga a pasta vazia de NÃO IDENTIFICADOS — os arquivos estão na origem (campo `para`) e devem ser processados de lá. Re-extrair do zip em quarentena gera duplicata (caso 13/10/2026: execução 20261013-164344 tratou como "pasta apagada pelo Drive" e re-extraiu 30 DARF que já estavam devolvidos em `DARF DCTFWEB 09-2026 (devolvidos 13-10)\`).
+
 Liste
 as pastas-dia em `BACKUP ROTINA\`. Para cada uma:
 - `_CONTROLE\STAGING\<id>\` ou `STAGING-SIMULACAO\<id>\` de execução **já encerrada** (o
