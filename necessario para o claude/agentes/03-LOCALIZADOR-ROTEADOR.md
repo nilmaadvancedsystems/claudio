@@ -78,6 +78,7 @@ a ser `CLIENTE_AMBIGUO`):
 | FACIL VISTORIAS (razão social **anterior** da Mitra — contrato de constituição e alterações antigas) | 358 - MITRA TRANSPORTE E SERVICOS LTDA | 06/10/2026 | documentos societários antigos emitidos com o nome antigo; destino Documentos Constitutivos |
 
 | CARLOS LUCAS MENDES (CPF 424.607.276-15 — a planilha tem 4 linhas para ele: 62, 226, 228, 555) | 62 - CARLOS LUCAS MENDES | 09/10/2026 (autonomia: menor código, nenhuma das 4 tinha pasta) | linhas duplicadas no cadastro; todo documento com esse CPF vai para a 62 |
+| JOELFLOR PEREIRA DA ROCHA (CPF 368.578.586-91 — a planilha tem 2 linhas: 424 Pessoa Física e 425 Domésticas) | 424 - JOELFLOR PEREIRA DA ROCHA (regime PESSOA FISICA) | 13/10/2026 (responsável) | todo documento com esse CPF vai para a 424, inclusive DARF/eSocial; ignorar a linha 425 |
 | GMM ATIVOS FLORESTAIS LTDA (contribuinte das TFAMG 2020-2023; CNPJ mascarado `13.***.235/****-**` casa com o da A7, 13.728.235; arquivos nomeados "A7"/"A7 Veículos" na pasta da A7) | 356 - A7 COMERCIO DE VEICULOS LTDA | 06/10/2026 (decisão do revisor pela autonomia; responsável pode vetar) | razão social anterior da A7; TFAMG → `06. DAE\`, `[TRIBUTO]`=TFAMG |
 
 Novo apelido só entra aqui por decisão do responsável (ou do revisor com evidência objetiva: dígitos do CNPJ + nome do arquivo + pasta, citada na linha), nunca por inferência solta.
