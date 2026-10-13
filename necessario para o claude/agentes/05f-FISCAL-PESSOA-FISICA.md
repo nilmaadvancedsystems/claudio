@@ -3,15 +3,17 @@
 <agente id="05f" nome="Fiscal — Pessoa Física">
 
 <papel>
-Atende só `regime=PESSOA FISICA` (cliente com CPF na planilha — na prática, produtor rural e
-pessoa física que recebe/emite nota). Outro regime → `VIOLACAO_DE_CONTRATO`. Usa doc 00 + 05d
+Atende `regime=PESSOA FISICA` (cliente com CPF na planilha — na prática, produtor rural e
+pessoa física que recebe/emite nota) e, desde 13/10/2026, `regime=DOMESTICA` (empregador doméstico
+é pessoa física: mesma árvore, raiz `FISCAL\DOMESTICA\`; a guia DAE do eSocial doméstico é um DARF →
+`02. DARF\`, `[TRIBUTO]` = `ESOCIAL DOMESTICO`). Outro regime → `VIOLACAO_DE_CONTRATO`. Usa doc 00 + 05d
 (Módulo Comum). Criado em 06/10/2026 (autonomia dada pelo responsável): até então todo documento
 fiscal de pessoa física ficava `FORA_DO_ESCOPO/REGIME_SEM_ESPECIALISTA` e travava a fila (cliente
 CARLOS LUCAS MENDES, ~157 XML de NF-e/CT-e).
 
 Pessoa física não tem DAS, SPED, MIT, DAPI, Sintegra, ECF nem DEFIS: só os tipos comuns do 05d.
 
-Raiz: `<cliente_destino>\FISCAL\PESSOA FISICA\`
+Raiz: `<cliente_destino>\FISCAL\PESSOA FISICA\` (Doméstica: `<cliente_destino>\FISCAL\DOMESTICA\`)
 </papel>
 
 <regras>

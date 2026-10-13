@@ -25,6 +25,7 @@ Raiz: `<cliente_destino>\FISCAL\SIMPLES NACIONAL\`
 13. LIVROS FISCAIS\          → 05d §1c
 14. DEFIS\                  → abaixo
 15. DIRF\                   → abaixo
+16. DARF\                   → nome no 05d §4
 ```
 
 | Tipo | Pasta | Nome final | Dados obrigatórios |
@@ -39,7 +40,7 @@ Referência do padrão antigo pro DAS, se quiser reaproveitar: `DAS_R$[VALOR]_[V
 </regras>
 
 <nunca_faz>
-Arquivar ou improvisar pasta para tipos incompatíveis com este regime — devolva `TIPO_INCOMPATIVEL_COM_REGIME`: SPED Fiscal · SPED Contribuições · MIT · DARF · DAPI · Controle de Créditos Fiscais. (Um DARF em cliente do Simples geralmente = regime desatualizado na planilha, documento do cliente errado, ou mudança de regime no período — todos exigem humano.) **Exceção**: DAE é válido no Simples (pasta 02), não rejeitar.
+Arquivar ou improvisar pasta para tipos incompatíveis com este regime — devolva `TIPO_INCOMPATIVEL_COM_REGIME`: SPED Fiscal · SPED Contribuições · MIT · DAPI · Controle de Créditos Fiscais. **Exceções**: DAE é válido no Simples (pasta 02); **DARF também é válido** (pasta 16, desde 13/10/2026) — empresa do Simples recolhe por DARF o INSS da DCTFWeb (lote `GuiaPagamento_<CNPJ>_<MMAAAA>_*.pdf`), IRRF, parcelamentos federais avulsos etc. Bug de 13/10/2026: 28 DARF de DCTFWeb de clientes do Simples foram para NÃO IDENTIFICADOS como incompatíveis. Não rejeitar DARF por regime.
 </nunca_faz>
 
 <desambiguacao titulo="DAS × DAE (guias mensais, podem chegar juntas)">

@@ -190,7 +190,7 @@ DAE, DARF e DAM aparecem em mais de um regime — nome mora aqui uma vez só; o 
 | Guia | Regimes | Pasta [NN] por regime | Nome final |
 |---|---|---|---|
 | DAE | Simples · Presumido · Real | 02 · 06 · 05 | `[MÊS E ANO] - DAE [TRIBUTO] - VALOR [VALOR] - VENCIMENTO [VENCIMENTO DA GUIA].pdf` |
-| DARF | Presumido · Real | 05 · 04 | `[MÊS E ANO] - DARF [TRIBUTO] - VALOR [VALOR] - VENCIMENTO [VENCIMENTO DA GUIA].pdf` |
+| DARF | Simples · Presumido · Real · Pessoa Física/Doméstica | 16 · 05 · 04 · 02 | `[MÊS E ANO] - DARF [TRIBUTO] - VALOR [VALOR] - VENCIMENTO [VENCIMENTO DA GUIA].pdf` |
 | DAM | Simples · Presumido · Real | NN próprio, informado pelo doc do regime (pasta nova) | `[MÊS E ANO] - DAM [TRIBUTO] - VALOR [VALOR] - VENCIMENTO [VENCIMENTO DA GUIA].pdf` |
 
 Regime ISENTA (05e): DARF=02, DAE=03, DAM=04 (numeração própria do 05e). Isentas usam os mesmos nomes de arquivo.

@@ -41,6 +41,7 @@ execução, reler a cada item é desperdício.
 — a planilha traz CNPJ formatado (`36.462.778/0001-60`) e o documento pode trazer só
 dígitos, ou vice-versa; comparar sem normalizar gera falso `CLIENTE_NAO_LOCALIZADO`.
 Clientes Pessoa Física têm CPF (11 dígitos) na coluna CNPJ, não confundir com CNPJ inválido.
+**CPF dentro da razão social** (empresário individual/EIRELI: "FULANO DE TAL 12345678901") não é CNPJ: o CNPJ é só o campo rotulado CNPJ/CPF-CNPJ do contribuinte. Nunca monte um CNPJ juntando dígitos do nome (bug de 13/10/2026, item 003 do lote DARF).
 
 **Título com nome de empresa decide**: relatório/documento interno cujo título nomeia a empresa ("PONTOS DE ATENÇÃO DA EMPRESA FAST EMPREENDIMENTOS 2025") é desse cliente, mesmo que traga prints/telas de outro — prints são exemplo, não titular.
 
