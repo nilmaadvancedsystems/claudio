@@ -329,8 +329,7 @@ seria purgado agora): leia `<pasta-dia>\_quarentena.jsonl` e confirme, em lote, 
 `"tipo": "container_extraido"` (08 §5) não tem `destino_final` próprio** — confirme em vez
 disso que `MANIFESTO\manifesto.jsonl` tem pelo menos uma linha com este mesmo
 `hash_original`, e que o `destino_final` de **todas** elas existe em disco com tamanho > 0;
-zero linhas encontradas também é não confirmável, nunca trate ausência de linha como
-sucesso. Alguma entrada não confirmável (arquivo ausente, ou 0 bytes) → **não purgue**: `resultado=BLOQUEADA` em
+zero linhas encontradas não é sucesso — mas antes de bloquear, faça a **conferência por derivado**: abra o contêiner que está na própria quarentena (mesmas ferramentas da Fase 1), calcule o SHA-256 de cada arquivo de dentro e confirme que cada um aparece no manifesto como `hash_origem` (arquivado inteiro) **ou** como `hash_original` (PDF composto separado em trechos `__pN-M`), com todos os destinos existindo em disco. Todos confirmados → a entrada está confirmada (caso 16/10/2026: `DOC 584.zip` foi bloqueado por dias com os 14 arquivos internos arquivados — 9 inteiros e 5 em trechos). Algum derivado sem destino conferido → `BLOQUEADA` como abaixo, citando o nome do derivado. Linhas no manifesto cujo destino **não existe** (caso 309/FITO: 12 extratos de 2020 registrados e nunca copiados) não se resolvem sozinhas: se o derivado está no contêiner da quarentena e o hash bate, **recopie-o** para o destino do manifesto (é restauração do próprio arquivo, não decisão nova), confira o hash e só então considere confirmado. Alguma entrada não confirmável (arquivo ausente, ou 0 bytes) → **não purgue**: `resultado=BLOQUEADA` em
 `purgas.jsonl` (Dicionário §9), motivo `DESTINO_NAO_CONFIRMAVEL`, destaque no relatório e no
 e-mail. Pasta-dia sem `_quarentena.jsonl` legível também não é purgada — mesmo motivo. Só
 purgue de verdade a pasta-dia inteira depois que **todas** as entradas dela confirmarem. Esta
