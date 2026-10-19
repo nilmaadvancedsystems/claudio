@@ -38,7 +38,9 @@ nome que o Orquestrador vai usar): `STAGING\<id_execucao>\` (modo PRODUCAO) ou
 
 **Separar quando** (qualquer um): muda CNPJ/razão social/cliente · muda banco/operadora/emissor · muda competência (não é período contínuo) · muda cabeçalho/layout/tipo · reinício de numeração de página. Volume de páginas sozinho **não** justifica corte.
 
-**Não separar** (documento único mesmo com várias páginas/transações): comprovantes agrupados do mesmo banco+competência · relatórios analíticos listando vários credores numa emissão única · extratos com período contínuo cruzando virada de mês.
+**Comprovantes — só separa por mês** (decisão do responsável, 19/10/2026): páginas seguidas de comprovantes de pagamento/transferência/PIX do **mesmo cliente** ficam num documento só, mesmo que mudem o banco, o favorecido, o layout ou o tipo de pagamento. O **único** corte entre comprovantes é a mudança de mês (competência = data do pagamento): comprovantes de setembro e de outubro no mesmo PDF → 2 trechos, um por mês. Continua cortando quando muda o cliente, e quando entra uma página que **não** é comprovante (guia, nota, boleto, extrato) — ela sai do bloco de comprovantes. Bloco com bancos diferentes vai para a pasta do banco que aparece em mais páginas (empate → o da 1ª página).
+
+**Não separar** (documento único mesmo com várias páginas/transações): comprovantes do mesmo cliente e mesmo mês (regra acima) · relatórios analíticos listando vários credores numa emissão única · extratos com período contínuo cruzando virada de mês.
 </regras>
 
 <procedimento>

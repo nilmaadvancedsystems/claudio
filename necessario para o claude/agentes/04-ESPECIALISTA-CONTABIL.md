@@ -66,7 +66,7 @@ Todo caminho abaixo é relativo a `<cliente_destino>\CONTÁBIL\`.
 |---|---|---|---|
 | Aplicações | `EXTRATOS\[ANO]\[MÊS]\APLICAÇÕES\[BANCO]\` | `[MÊS E ANO].pdf` | banco+competência |
 | Bancários | `...\BANCÁRIOS\[BANCO]\` | `[MÊS E ANO].[ext]` (`.pdf` normalmente; `.ofx` preserva a extensão, nunca converte pra `.pdf` — ver Dicionário §6.1.4) | banco+competência |
-| Comprovantes | `...\COMPROVANTES\[BANCO]\` | `Comprovantes [MÊS E ANO].pdf` | banco+competência |
+| Comprovantes | `...\COMPROVANTES\[BANCO]\` | `Comprovantes [MÊS E ANO].pdf` | banco+competência. Um PDF com comprovantes de bancos diferentes do mesmo mês fica inteiro (02, 19/10/2026): [BANCO] = o banco com mais páginas (empate → 1ª página). |
 | Maquininhas | `...\MAQUININHAS\[OPERADORA]\` | `[MÊS E ANO].pdf` (relatório) — se a operadora também exportar a mesma competência em `.xlsx` (planilha do mesmo relatório, mesmo banco/operadora/competência do `.pdf` par), arquivar junto na mesma pasta como `[MÊS E ANO].xlsx` | banco+competência |
 | Op. Crédito | `OPERAÇÕES DE CRÉDITO\[ANO]\[TIPO]\[BANCO]\[Nº CONTRATO]\` (TIPO=CONSÓRCIO\|EMPRÉSTIMO\|FINANCIAMENTO) | Contrato: `CONTRATO.pdf`; Extrato: `EXTRATO [MÊS/ANO ini] [MÊS/ANO fim].pdf` | tipo+banco+nº contrato (+período p/ extrato) — nº com pontos (`60.2024.1351.58454`): troque os pontos por hífens (`60-2024-1351-58454`), nunca `VOCABULARIO_AUSENTE`. **Seguro vinculado ao contrato** (seguro prestamista/PRONAMPE): mesma pasta do contrato, `SEGURO.pdf` |
 | Op. Câmbio | `OPERAÇÕES DE CÂMBIO\[ANO]\[BANCO]\[Nº CONTRATO]\` | Contrato: `CONTRATO.pdf`; Comprovante: `COMPROVANTE [DATA].pdf` | banco+nº contrato (+data p/ comprovante) |
