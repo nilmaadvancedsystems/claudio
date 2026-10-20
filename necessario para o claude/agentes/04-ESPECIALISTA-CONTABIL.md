@@ -42,7 +42,7 @@ SANTANDER, §6.1.2, onde a página 2 é o padrão, não escalada).
 
 **Papéis de trabalho contábeis** (estoque trimestral/anual e correção de estoque, depreciação do ativo imobilizado, controles/planilhas de empréstimo, notas e checklists de encerramento, "Pasta1.xlsx" de PGFN etc.): `PAPÉIS DE TRABALHO\[ANO]\`, nome original preservado. Cliente pelo conteúdo; sem identificador, pelo código da subpasta de origem (03).
 
-**Nunca devolva `FORA_DO_ESCOPO`**: esse status é do módulo Fiscal (05d) e do Dicionário §6.2 (Informe de Rendimentos, carve-out explícito) — não existe pra Contábil fora desses casos. Documento contábil sem sub-regra correspondente sempre cai num dos dois caminhos já definidos: banco/operadora identificável → Fallback extrato avulso (linha abaixo); não identificável → `NAO_IDENTIFICADO/SETOR_INDETERMINADO` (regra acima). Um documento de banco/instituição financeira reconhecível (ex. "Detalhamento de Remessa", relatório de antecipação de recebíveis) sem sub-regra própria **é** o caso do Fallback — banco identificável é banco identificável, mesmo quando o documento não é literalmente chamado de "extrato".
+**Nunca devolva `FORA_DO_ESCOPO`**: esse status é do módulo Fiscal (05d) e do Dicionário §6.2 (Informe de Rendimentos tinha carve-out até 20/10/2026; agora tem sub-regra aqui) — não existe pra Contábil fora desses casos. Documento contábil sem sub-regra correspondente sempre cai num dos dois caminhos já definidos: banco/operadora identificável → Fallback extrato avulso (linha abaixo); não identificável → `NAO_IDENTIFICADO/SETOR_INDETERMINADO` (regra acima). Um documento de banco/instituição financeira reconhecível (ex. "Detalhamento de Remessa", relatório de antecipação de recebíveis) sem sub-regra própria **é** o caso do Fallback — banco identificável é banco identificável, mesmo quando o documento não é literalmente chamado de "extrato".
 
 **Nome já existe no destino, conteúdo diferente**: nunca sobrescreva. Aplique a regra de
 numeração do Dicionário §2 — acrescente ` (1)`, ` (2)`, ... antes da extensão até achar
@@ -76,6 +76,7 @@ Todo caminho abaixo é relativo a `<cliente_destino>\CONTÁBIL\`.
 | Venda de Ativos | `VENDA DE ATIVOS\[ANO]\` | nome original, `nome_original_preservado=true` | ano |
 | Registro de Livros | `REGISTRO DE LIVROS\([Nº 3 dígitos]) [ANO]\` (ex. `(001) 2026`) | nome original preservado | nº do livro+ano |
 | Balancete / Balancete-ECD (balancete anual ou mensal, escrituração contábil digital) | `REGISTRO DE LIVROS\(001) [ANO]\` — o balancete é arquivado como o livro **nº 001** do ano | nome original preservado, `nome_original_preservado=true` | ano do balancete (nunca exige nº de livro) |
+| Informe de Rendimentos (Dicionário §6.2, desde 20/10/2026) | `INFORME DE RENDIMENTOS\[ANO-CALENDÁRIO]\` | `[ANO-CALENDÁRIO] - INFORME DE RENDIMENTOS [FONTE PAGADORA].pdf` | ano-calendário+fonte pagadora; beneficiário = o cliente (sócio PF → 04b Documentos de Sócios) |
 | Relatório LJ Sistemas | `Relatorios LJ\` — **exceção**: fora de `CONTÁBIL`, direto em `<cliente_destino>\Relatorios LJ\` | `[MÊS E ANO].pdf` | competência |
 | Nota de Serviço Recebida (só `regime=ISENTA`) | `NOTAS DE SERVIÇO RECEBIDAS\[ANO]\[MÊS]\` | `[DATA] - NFS-e [Nº NOTA] - [PRESTADOR].pdf` | data de emissão+nº da nota+prestador |
 

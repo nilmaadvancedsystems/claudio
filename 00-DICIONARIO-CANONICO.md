@@ -523,7 +523,7 @@ Identifique o banco pelas tags internas do arquivo (ex. `<ORG>`, `<FID>`, `<BANK
 </subsecao>
 
 <subsecao n="6.2" titulo="Informe de Rendimentos">
-Ainda sem destino definido. Enquanto não houver decisão: FORA_DO_ESCOPO, motivo DESTINO_NAO_DEFINIDO: informe de rendimentos. Nunca alocar em APLICAÇÕES.
+Destino definido em 20/10/2026 (autonomia — antes ia para `FORA_DO_ESCOPO/DESTINO_NAO_DEFINIDO` e travava a fila): setor CONTABIL, sub-regra "Informe de Rendimentos" do 04 — `CONTÁBIL\INFORME DE RENDIMENTOS\[ANO-CALENDÁRIO]\`, nome `[ANO-CALENDÁRIO] - INFORME DE RENDIMENTOS [FONTE PAGADORA].pdf` (fonte pagadora = banco/empresa que emitiu). Vale para informe cujo beneficiário é o próprio cliente (CNPJ, ou CPF de cliente Pessoa Física). Informe em nome do **sócio** pessoa física (CPF que não é cliente) é documento do sócio → 04b `DOCUMENTOS DE SÓCIOS\`. Nunca alocar em APLICAÇÕES nem devolver FORA_DO_ESCOPO.
 </subsecao>
 </secao>
 
